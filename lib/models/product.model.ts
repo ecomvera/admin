@@ -21,16 +21,20 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  material: {
-    type: String,
+  parentCategory: {
+    type: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     required: true,
   },
-  category: {
+  subCategory: {
     type: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     required: true,
   },
   image: {
     type: [String],
+    required: true,
+  },
+  material: {
+    type: String,
     required: true,
   },
   sizes: {
