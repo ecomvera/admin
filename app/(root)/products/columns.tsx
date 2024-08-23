@@ -38,6 +38,17 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => <div className="capitalize">{row.getValue("category")}</div>,
   },
   {
+    accessorKey: "quantity",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-end" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Quantity <LuArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      );
+    },
+    cell: ({ row }) => <div className="text-right font-medium">{row.getValue("quantity")}</div>,
+  },
+  {
     accessorKey: "amount",
     header: ({ column }) => {
       return (
@@ -91,6 +102,9 @@ export const columns: ColumnDef<Product>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>Edit</DropdownMenuItem>
             <DropdownMenuItem>View product details</DropdownMenuItem>
+            <DropdownMenuItem>
+              Mark as <code className="text-red-600 ml-2">outofstock</code>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
           </DropdownMenuContent>
