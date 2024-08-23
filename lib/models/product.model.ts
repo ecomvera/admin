@@ -55,8 +55,8 @@ const productSchema = new mongoose.Schema({
   isBestSeller: {
     type: Boolean,
   },
-  keyHeighlights: {
-    type: { type: mongoose.Schema.Types.ObjectId, ref: "Heighlight" },
+  attributes: {
+    type: [{ key: String, value: String }],
     required: true,
   },
 });
