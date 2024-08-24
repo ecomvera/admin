@@ -88,7 +88,7 @@ const EditProduct = ({
 
     toast({
       title: "Success",
-      variant: "success",
+      // variant: "success",
       description: "Product created successfully",
     });
 

@@ -80,7 +80,7 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
 
     toast({
       title: "Success",
-      variant: "success",
+      // variant: "success",
       description: "Product created successfully",
       action: (
         <Link href={`/products`}>

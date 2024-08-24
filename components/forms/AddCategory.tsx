@@ -39,7 +39,7 @@ const AddCategory = () => {
       setSlug("");
       toast({
         title: "Success",
-        variant: "success",
+        // variant: "success",
         description: "Category created successfully",
       });
     }

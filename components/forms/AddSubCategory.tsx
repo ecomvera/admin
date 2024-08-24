@@ -52,7 +52,7 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
       setParentId("");
       toast({
         title: "Success",
-        variant: "success",
+        // variant: "success",
         description: "Category created successfully",
       });
     }

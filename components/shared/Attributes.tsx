@@ -42,7 +42,7 @@ const Attributes = ({ attributes }: { attributes: { title: string; _id: object }
       form.reset();
       toast({
         title: "Success",
-        variant: "success",
+        // variant: "success",
         description: "Attribute created successfully",
       });
     }
