@@ -41,13 +41,92 @@ export const createProduct = async (product: IProduct) => {
   }
 };
 
+export const updateProduct = async (id: string | undefined, product: IProduct, path: string) => {
+  if (!id) {
+    return { ok: false, error: "Invalid product ID" };
+  }
+
+  await connectDB();
+
+  try {
+    const data = await Product.findById(id);
+    if (!data) {
+      return { ok: false, error: "Product not found" };
+    }
+
+    // Fetch related categories
+    const parentCategory = await Category.findById(data.parentCategory);
+    const subCategory = await Category.findById(data.subCategory);
+
+    if (!parentCategory || !subCategory) {
+      return { ok: false, error: "Related categories not found" };
+    }
+
+    if (data.parentCategory.toString() !== product.parentCategory) {
+      // Remove the product from the old parent and sub categories
+      parentCategory.products = parentCategory.products.filter((item: Object) => item.toString() !== id);
+      await parentCategory.save();
+
+      subCategory.products = subCategory.products.filter((item: Object) => item.toString() !== id);
+      await subCategory.save();
+
+      // Add the product to the new parent category
+      const newParentCategory = await Category.findById(product.parentCategory);
+      if (!newParentCategory) {
+        return { ok: false, error: "New parent category not found" };
+      }
+      newParentCategory.products.push(data._id);
+      await newParentCategory.save();
+
+      // Add the product to the new sub category
+      const newSubCategory = await Category.findById(product.subCategory);
+      if (!newSubCategory) {
+        return { ok: false, error: "New sub category not found" };
+      }
+      newSubCategory.products.push(data._id);
+      await newSubCategory.save();
+    } else if (data.subCategory.toString() !== product.subCategory) {
+      // Remove the product from the old sub category
+      subCategory.products = subCategory.products.filter((item: Object) => item.toString() !== id);
+      await subCategory.save();
+
+      // Add the product to the new sub category
+      const newSubCategory = await Category.findById(product.subCategory);
+      if (!newSubCategory) {
+        return { ok: false, error: "New sub category not found" };
+      }
+      newSubCategory.products.push(data._id);
+      await newSubCategory.save();
+    }
+
+    // Update the product with new values
+    await Product.findByIdAndUpdate(id, product, { new: true });
+
+    revalidatePath(path);
+    return { ok: true };
+  } catch (error: any) {
+    console.error(error);
+    return { ok: false, error: error.message };
+  }
+};
+
 export const getProducts = async () => {
   await connectDB();
 
   const res = await Product.find()
     .populate({ path: "parentCategory", select: "name" })
     .populate({ path: "subCategory", select: "name" });
-  const data = convertToArray(res, "product");
+  const data: IProduct[] = convertToArray(res, "product");
 
   return data;
+};
+
+export const getProductDetails = async (id: string) => {
+  await connectDB();
+  const res = await Product.findById(id);
+
+  const data = convertToArray([res], "product", true);
+
+  // console.log(data[0]);
+  return data[0];
 };

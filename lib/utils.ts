@@ -22,7 +22,7 @@ export async function computeSHA256(file: File) {
 export const generateFileName = (bytes = 32) => c.randomBytes(bytes).toString("hex");
 
 // convert mongoose object to javascript object
-export const convertToArray = (arr: any[], path?: string) => {
+export const convertToArray = (arr: any[], path?: string, singleRow?: boolean) => {
   const converted = arr.map((item) => {
     const { _id, __v, ...rest } = item.toObject();
     // category model
@@ -34,8 +34,10 @@ export const convertToArray = (arr: any[], path?: string) => {
     if (path === "product") {
       rest.images = convertToArray(item.images);
       rest.attributes = convertToArray(item.attributes);
-      rest.parentCategory = item.parentCategory.name;
-      rest.subCategory = item.subCategory.name;
+      // check if it is a single row
+      const isSingleRow = path === "product" && singleRow;
+      rest.parentCategory = isSingleRow ? item.parentCategory.toString() : convertToArray([item.parentCategory])[0].name;
+      rest.subCategory = isSingleRow ? item.subCategory.toString() : convertToArray([item.subCategory])[0].name;
     }
 
     return {

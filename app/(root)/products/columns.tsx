@@ -104,7 +104,7 @@ export const columns: ColumnDef<IProduct>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link href={`/e/${row.original._id}`}>
+            <Link href={`/e/${row.original._id}?path=/products`}>
               <DropdownMenuItem>Edit</DropdownMenuItem>
             </Link>
             <Link href={`/p/${row.original._id}`}>
