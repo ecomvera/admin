@@ -18,7 +18,7 @@ const validation = z.object({
   name: z.string().min(3, { message: "Minimum 3 characters." }).max(30, { message: "Maximum 30 caracters." }),
 });
 
-const Attributes = ({ attributes }: { attributes: { title: string; _id: string }[] }) => {
+const Attributes = ({ attributes }: { attributes: { title: string; _id: object }[] }) => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
 
@@ -88,13 +88,13 @@ const Attributes = ({ attributes }: { attributes: { title: string; _id: string }
               <CommandEmpty>No results found.</CommandEmpty>
 
               {attributes?.map((attribute) => (
-                <CommandItem key={attribute._id} className="flex justify-between items-center">
+                <CommandItem key={attribute._id.toString()} className="flex justify-between items-center">
                   <p>{attribute.title}</p>
                   <MdDeleteOutline
                     className="text-lg cursor-pointer"
                     fill="red"
                     onClick={async () => {
-                      await deleteAttribute(attribute._id, "/category");
+                      await deleteAttribute(attribute._id.toString(), "/category");
                     }}
                   />
                 </CommandItem>

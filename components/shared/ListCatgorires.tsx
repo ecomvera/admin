@@ -1,34 +1,23 @@
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "@/components/ui/command";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { ICategory } from "@/types";
 
-const ListCatgorires = () => {
+const ListCatgorires = ({ allCategories }: { allCategories: ICategory[] }) => {
   return (
     <div className="w-full">
-      <h2 className="head-text py-5">All Categories</h2>
+      <h2 className="head-text py-5 tablet:py-8">All Categories</h2>
 
       <Command>
         <CommandInput placeholder="Type a category or search..." />
-        <CommandList>
+        <CommandList className="max-h-[1000px]">
           <CommandEmpty>No results found.</CommandEmpty>
 
-          <CommandGroup heading="Suggestions">
-            <CommandItem>Calendar</CommandItem>
-            <CommandItem>Search Emoji</CommandItem>
-            <CommandItem>Calculator</CommandItem>
-          </CommandGroup>
-          <CommandSeparator />
-          <CommandGroup heading="Settings">
-            <CommandItem>Profile</CommandItem>
-            <CommandItem>Billing</CommandItem>
-            <CommandItem>Settings</CommandItem>
-          </CommandGroup>
+          {allCategories?.map((category) => (
+            <CommandGroup key={category._id} heading={category.name}>
+              {category?.children?.map((child) => (
+                <CommandItem key={child._id}>{child.name}</CommandItem>
+              ))}
+            </CommandGroup>
+          ))}
         </CommandList>
       </Command>
     </div>

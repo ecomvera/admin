@@ -1,49 +1,62 @@
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-
-const validation = z.object({
-  name: z.string().min(3, { message: "Minimum 3 characters." }).max(30, { message: "Maximum 30 caracters." }),
-});
+import { createCategory } from "@/lib/actions/category.action";
+import { ChangeEvent, useState } from "react";
+import { Label } from "../ui/label";
+import { toast } from "../ui/use-toast";
 
 const AddParentCategory = () => {
-  const form = useForm<z.infer<typeof validation>>({
-    resolver: zodResolver(validation),
-    defaultValues: {
-      name: "",
-    },
-  });
+  const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
 
-  const onSubmit = async (values: z.infer<typeof validation>) => {
-    console.log("values", values);
+  const handleInput = (e: any) => {
+    setName(e.target.value.trim());
+    setSlug(e.target.value.trim().replace(/\s+/g, "-").toLowerCase());
+  };
+
+  const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!name) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "Please enter a category name",
+      });
+      return;
+    }
+
+    const res = await createCategory(name, slug, "/category");
+
+    if (!res?.ok) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: res?.error,
+      });
+    } else {
+      setName("");
+      setSlug("");
+      toast({
+        title: "Success",
+        variant: "success",
+        description: "Category created successfully",
+      });
+    }
   };
 
   return (
-    <Form {...form}>
-      <form className="flex flex-col justify-start gap-5 border p-2" onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="flex w-full flex-col">
-              <FormLabel className="text-base text-dark-3">Category Name</FormLabel>
-              <FormControl>
-                <Input type="text" className="account-form_input no-focus" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <form className="flex flex-col justify-start gap-3 border p-2" onSubmit={onSubmit}>
+      <Label className="text-base text-dark-3">Category Name</Label>
+      <div>
+        <Input type="text" className="account-form_input no-focus" value={name} onChange={handleInput} />
+        <Label className="account-form_label text-sm text-dark-3">{slug}</Label>
+      </div>
 
-        <Button type="submit" className="bg-dark-3 w-[100px] rounded-xl">
-          Add
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="bg-dark-3 w-[100px] rounded-xl">
+        Add
+      </Button>
+    </form>
   );
 };
 

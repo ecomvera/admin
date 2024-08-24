@@ -7,13 +7,15 @@ const categorySchema = new mongoose.Schema({
   },
   slug: {
     type: String,
+    unique: true,
     required: true,
   },
   parentId: {
     type: String,
   },
-  children: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+  children: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
+  products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 });
 
-const Category = mongoose.models?.category || mongoose.model("Category", categorySchema);
+const Category = mongoose.models?.Category || mongoose.model("Category", categorySchema);
 export default Category;

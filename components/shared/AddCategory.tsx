@@ -4,10 +4,9 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddSubCategory from "../forms/AddSubCategory";
 import AddParentCategory from "../forms/AddParentCategory";
+import { ICategory } from "@/types";
 
-interface Props {}
-
-const AddCategory = ({}: Props) => {
+const AddCategory = ({ parentCategories }: { parentCategories: ICategory[] }) => {
   const [categoryType, setCategoryType] = useState("sub-category");
 
   return (
@@ -22,7 +21,7 @@ const AddCategory = ({}: Props) => {
       </TabsList>
 
       <TabsContent value="sub-category">
-        <AddSubCategory />
+        <AddSubCategory parentCategories={parentCategories} />
       </TabsContent>
       <TabsContent value="parent-category">
         <AddParentCategory />

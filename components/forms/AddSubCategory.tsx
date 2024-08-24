@@ -1,69 +1,88 @@
-import * as z from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { ChangeEvent, useState } from "react";
+import { Label } from "../ui/label";
+import { createSubCategory } from "@/lib/actions/category.action";
+import { toast } from "../ui/use-toast";
+import { ICategory } from "@/types";
 
-const validation = z.object({
-  name: z.string().min(3, { message: "Minimum 3 characters." }).max(30, { message: "Maximum 30 caracters." }),
-  parentCategory: z.string().nonempty({ message: "Please select the parent category." }),
-});
+const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] }) => {
+  const [name, setName] = useState("");
+  const [slug, setSlug] = useState("");
+  const [parentId, setParentId] = useState("");
 
-const AddSubCategory = () => {
-  const form = useForm<z.infer<typeof validation>>({
-    resolver: zodResolver(validation),
-    defaultValues: {
-      name: "",
-      parentCategory: "",
-    },
-  });
+  const handleInput = (e: any) => {
+    setName(e.target.value.trim());
+    setSlug(e.target.value.trim().replace(/\s+/g, "-").toLowerCase());
+  };
 
-  const onSubmit = async (values: z.infer<typeof validation>) => {
-    console.log("values", values);
+  const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!parentId) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "Please select a parent category",
+      });
+      return;
+    }
+
+    if (!name) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "Please enter a category name",
+      });
+      return;
+    }
+
+    const res = await createSubCategory(parentId, name, slug, "/category");
+
+    if (!res?.ok) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: res?.error,
+      });
+    } else {
+      setName("");
+      setSlug("");
+      setParentId("");
+      toast({
+        title: "Success",
+        variant: "success",
+        description: "Category created successfully",
+      });
+    }
   };
 
   return (
-    <Form {...form}>
-      <form className="flex flex-col justify-start gap-5 border p-2" onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="parentCategory"
-          render={({ field }) => (
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
-              <SelectTrigger className="text-base">
-                <SelectValue placeholder="Select the parent category" />
-              </SelectTrigger>
-              <FormMessage />
-              <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
-              </SelectContent>
-            </Select>
-          )}
-        />
+    <form className="flex flex-col justify-start gap-5 border p-2" onSubmit={onSubmit}>
+      <Select onValueChange={(v) => setParentId(v)} value={parentId}>
+        <SelectTrigger className="text-base">
+          <SelectValue placeholder="Select the parent category" />
+        </SelectTrigger>
+        <SelectContent>
+          {parentCategories.map((category) => (
+            <SelectItem key={category._id} value={category._id}>
+              {category.name}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
 
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="flex w-full flex-col">
-              <FormLabel className="text-base text-dark-3">Sub-Category Name</FormLabel>
-              <FormControl>
-                <Input type="text" className="account-form_input no-focus" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      <div>
+        <Label className="text-base text-dark-3">Category Name</Label>
+        <Input type="text" className="account-form_input no-focus mt-2" value={name} onChange={handleInput} />
+        <Label className="account-form_label text-sm text-dark-3">{slug}</Label>
+      </div>
 
-        <Button type="submit" className="bg-dark-3 w-[100px] rounded-xl">
-          Add
-        </Button>
-      </form>
-    </Form>
+      <Button type="submit" className="bg-dark-3 w-[100px] rounded-xl">
+        Add
+      </Button>
+    </form>
   );
 };
 
