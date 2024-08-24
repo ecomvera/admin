@@ -181,7 +181,7 @@ const EditProduct = ({
 
           <Button
             type="submit"
-            className={`${loading ? "bg-gray-500" : "bg-success"} rounded-[5px] h-10 text-lg font-semibold my-5`}
+            className={`${loading ? "bg-gray-500" : "bg-gray-700"} rounded-[5px] h-10 text-lg font-semibold my-5`}
           >
             {loading ? "Loading..." : "Submit"}
           </Button>

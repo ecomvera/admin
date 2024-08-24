@@ -31,7 +31,7 @@ const Attributes = ({ attributes }: { attributes: { title: string; _id: object }
 
   const onSubmit = async (values: z.infer<typeof validation>) => {
     const value = values.name.trim().slice(0, 1).toUpperCase() + values.name.trim().slice(1);
-    const res = await createAttribute(value, "/category");
+    const res = await createAttribute(value, "/categories");
     if (!res?.ok) {
       toast({
         title: "Error",
@@ -94,7 +94,7 @@ const Attributes = ({ attributes }: { attributes: { title: string; _id: object }
                     className="text-lg cursor-pointer"
                     fill="red"
                     onClick={async () => {
-                      await deleteAttribute(attribute._id.toString(), "/category");
+                      await deleteAttribute(attribute._id.toString(), "/categories");
                     }}
                   />
                 </CommandItem>

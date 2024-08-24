@@ -26,7 +26,7 @@ const AddCategory = () => {
       return;
     }
 
-    const res = await createCategory(name.trim(), slug, "/category");
+    const res = await createCategory(name.trim(), slug, "/categories");
 
     if (!res?.ok) {
       toast({

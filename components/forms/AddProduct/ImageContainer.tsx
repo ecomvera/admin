@@ -6,7 +6,6 @@ import { computeSHA256 } from "@/lib/utils";
 import { deleteFile, getSignedURL } from "@/lib/actions/aws";
 import { toast } from "@/components/ui/use-toast";
 import { RxCrossCircled } from "react-icons/rx";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface Props {
   files: { key: string; blob: string; url: string }[];
@@ -122,7 +121,7 @@ const ImageBox = ({
       </div>
       <div className="flex justify-around w-full items-center">
         {loading?.id === label ? (
-          <Skeleton className="w-full h-[20px] rounded-full" />
+          <p className="text-sm">Uploading...</p>
         ) : (
           <>
             <p className="text-sm">{label.slice(0, 1).toUpperCase() + label.slice(1)}</p>

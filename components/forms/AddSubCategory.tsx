@@ -38,7 +38,7 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
       return;
     }
 
-    const res = await createSubCategory(parentId, name.trim(), slug, "/category");
+    const res = await createSubCategory(parentId, name.trim(), slug, "/categories");
 
     if (!res?.ok) {
       toast({

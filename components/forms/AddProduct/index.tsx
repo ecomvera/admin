@@ -17,6 +17,7 @@ import AttributesInput from "./AttributesInput";
 import { createProduct } from "@/lib/actions/product.action";
 import ImageContainer from "./ImageContainer";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; attributesData: IAttribute[] }) => {
   const { toast } = useToast();
@@ -82,14 +83,11 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
       variant: "success",
       description: "Product created successfully",
       action: (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => router.push("/products")}
-          className="rounded-xl font-semibold text-black"
-        >
-          View
-        </Button>
+        <Link href={`/products`}>
+          <Button variant="outline" size="sm" className="rounded-xl font-semibold text-black">
+            View
+          </Button>
+        </Link>
       ),
     });
 
@@ -188,7 +186,7 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
 
           <Button
             type="submit"
-            className={`${loading ? "bg-gray-500" : "bg-success"} rounded-[5px] h-10 text-lg font-semibold my-5`}
+            className={`${loading ? "bg-gray-500" : "bg-gray-700"} rounded-[5px] h-10 text-lg font-semibold my-5`}
           >
             {loading ? "Loading..." : "Submit"}
           </Button>
