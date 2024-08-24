@@ -10,7 +10,7 @@ const AddParentCategory = () => {
   const [slug, setSlug] = useState("");
 
   const handleInput = (e: any) => {
-    setName(e.target.value.trim());
+    setName(e.target.value);
     setSlug(e.target.value.trim().replace(/\s+/g, "-").toLowerCase());
   };
 
@@ -26,7 +26,7 @@ const AddParentCategory = () => {
       return;
     }
 
-    const res = await createCategory(name, slug, "/category");
+    const res = await createCategory(name.trim(), slug, "/category");
 
     if (!res?.ok) {
       toast({

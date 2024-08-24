@@ -13,7 +13,7 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
   const [parentId, setParentId] = useState("");
 
   const handleInput = (e: any) => {
-    setName(e.target.value.trim());
+    setName(e.target.value);
     setSlug(e.target.value.trim().replace(/\s+/g, "-").toLowerCase());
   };
 
@@ -38,7 +38,7 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
       return;
     }
 
-    const res = await createSubCategory(parentId, name, slug, "/category");
+    const res = await createSubCategory(parentId, name.trim(), slug, "/category");
 
     if (!res?.ok) {
       toast({
