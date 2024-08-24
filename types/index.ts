@@ -15,7 +15,7 @@ export interface IProduct {
   price: number;
   mrp: number;
   images: { key: string; url: string }[];
-  parentCategory: string;
+  category: string;
   subCategory: string;
   material: string;
   quantity: number;

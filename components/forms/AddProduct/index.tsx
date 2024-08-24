@@ -55,7 +55,7 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
       quantity: Number(values.quantity),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
-      parentCategory: category,
+      category: category,
       subCategory,
       sizes,
       attributes,
@@ -147,7 +147,7 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
             <InputField control={form.control} name="mrp" label="MRP" type="number" />
           </div>
           <div className="flex gap-3">
-            <SelectField value={category} onChange={setCategory} data={categories} label="Parent Category" />
+            <SelectField value={category} onChange={setCategory} data={categories} label="Category" />
             <SelectField value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />
           </div>
           <div className="flex gap-3">

@@ -24,7 +24,7 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
       toast({
         title: "Error",
         variant: "destructive",
-        description: "Please select a parent category",
+        description: "Please select a category",
       });
       return;
     }
@@ -62,7 +62,7 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
     <form className="flex flex-col justify-start gap-5 border p-2" onSubmit={onSubmit}>
       <Select onValueChange={(v) => setParentId(v)} value={parentId}>
         <SelectTrigger className="text-base">
-          <SelectValue placeholder="Select the parent category" />
+          <SelectValue placeholder="Select the category" />
         </SelectTrigger>
         <SelectContent>
           {parentCategories.map((category) => (

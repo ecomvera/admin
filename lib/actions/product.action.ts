@@ -11,7 +11,7 @@ export const createProduct = async (product: IProduct) => {
   await connectDB();
 
   try {
-    const category = await Category.findOne({ _id: product.parentCategory });
+    const category = await Category.findOne({ _id: product.category });
     if (!category) {
       return { ok: false, error: "Category not found" };
     }
@@ -55,28 +55,28 @@ export const updateProduct = async (id: string | undefined, product: IProduct, p
     }
 
     // Fetch related categories
-    const parentCategory = await Category.findById(data.parentCategory);
+    const category = await Category.findById(data.category);
     const subCategory = await Category.findById(data.subCategory);
 
-    if (!parentCategory || !subCategory) {
+    if (!category || !subCategory) {
       return { ok: false, error: "Related categories not found" };
     }
 
-    if (data.parentCategory.toString() !== product.parentCategory) {
+    if (data.category.toString() !== product.category) {
       // Remove the product from the old parent and sub categories
-      parentCategory.products = parentCategory.products.filter((item: Object) => item.toString() !== id);
-      await parentCategory.save();
+      category.products = category.products.filter((item: Object) => item.toString() !== id);
+      await category.save();
 
       subCategory.products = subCategory.products.filter((item: Object) => item.toString() !== id);
       await subCategory.save();
 
-      // Add the product to the new parent category
-      const newParentCategory = await Category.findById(product.parentCategory);
-      if (!newParentCategory) {
-        return { ok: false, error: "New parent category not found" };
+      // Add the product to the new category
+      const newCategory = await Category.findById(product.category);
+      if (!newCategory) {
+        return { ok: false, error: "New category not found" };
       }
-      newParentCategory.products.push(data._id);
-      await newParentCategory.save();
+      newCategory.products.push(data._id);
+      await newCategory.save();
 
       // Add the product to the new sub category
       const newSubCategory = await Category.findById(product.subCategory);
@@ -114,7 +114,7 @@ export const getProducts = async () => {
   await connectDB();
 
   const res = await Product.find()
-    .populate({ path: "parentCategory", select: "name" })
+    .populate({ path: "category", select: "name" })
     .populate({ path: "subCategory", select: "name" });
   const data: IProduct[] = convertToArray(res, "product");
 

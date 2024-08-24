@@ -5,7 +5,7 @@ import { ChangeEvent, useState } from "react";
 import { Label } from "../ui/label";
 import { toast } from "../ui/use-toast";
 
-const AddParentCategory = () => {
+const AddCategory = () => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
 
@@ -60,4 +60,4 @@ const AddParentCategory = () => {
   );
 };
 
-export default AddParentCategory;
+export default AddCategory;

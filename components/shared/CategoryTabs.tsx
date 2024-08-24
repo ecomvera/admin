@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddSubCategory from "../forms/AddSubCategory";
-import AddParentCategory from "../forms/AddParentCategory";
+import AddCategory from "../forms/AddCategory";
 import { ICategory } from "@/types";
 
-const AddCategory = ({ parentCategories }: { parentCategories: ICategory[] }) => {
+const CategoryTabs = ({ parentCategories }: { parentCategories: ICategory[] }) => {
   const [categoryType, setCategoryType] = useState("sub-category");
 
   return (
@@ -16,7 +16,7 @@ const AddCategory = ({ parentCategories }: { parentCategories: ICategory[] }) =>
           Sub-Category
         </TabsTrigger>
         <TabsTrigger value="parent-category" className="w-full" onClick={() => setCategoryType("parent-category")}>
-          Parent Category
+          Category
         </TabsTrigger>
       </TabsList>
 
@@ -24,10 +24,10 @@ const AddCategory = ({ parentCategories }: { parentCategories: ICategory[] }) =>
         <AddSubCategory parentCategories={parentCategories} />
       </TabsContent>
       <TabsContent value="parent-category">
-        <AddParentCategory />
+        <AddCategory />
       </TabsContent>
     </Tabs>
   );
 };
 
-export default AddCategory;
+export default CategoryTabs;

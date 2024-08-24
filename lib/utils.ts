@@ -36,7 +36,7 @@ export const convertToArray = (arr: any[], path?: string, singleRow?: boolean) =
       rest.attributes = convertToArray(item.attributes);
       // check if it is a single row
       const isSingleRow = path === "product" && singleRow;
-      rest.parentCategory = isSingleRow ? item.parentCategory.toString() : convertToArray([item.parentCategory])[0].name;
+      rest.category = isSingleRow ? item.category.toString() : convertToArray([item.category])[0].name;
       rest.subCategory = isSingleRow ? item.subCategory.toString() : convertToArray([item.subCategory])[0].name;
     }
 

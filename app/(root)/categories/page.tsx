@@ -1,4 +1,4 @@
-import AddCategory from "@/components/shared/AddCategory";
+import CategoryTabs from "@/components/shared/CategoryTabs";
 import Attributes from "@/components/shared/Attributes";
 import ListCatgorires from "@/components/shared/ListCatgorires";
 import { fetchAttributes } from "@/lib/actions/attribute.action";
@@ -13,7 +13,7 @@ const page = async () => {
     <div className="flex flex-col gap-5 tablet:flex-row">
       <div className="w-full">
         <h2 className="head-text py-8">Add Category</h2>
-        <AddCategory parentCategories={parentCategories} />
+        <CategoryTabs parentCategories={parentCategories} />
 
         <Attributes attributes={attributes} />
       </div>

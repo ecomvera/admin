@@ -74,7 +74,7 @@ function DataTable<TData, TValue>({ columns, data, categories }: DataTableProps<
 
   React.useEffect(() => {
     table.getAllColumns().forEach((column) => {
-      if (column.id === "parentCategory" || column.id === "subCategory") {
+      if (column.id === "category" || column.id === "subCategory") {
         column.toggleVisibility(false);
       }
     });
@@ -118,10 +118,10 @@ function DataTable<TData, TValue>({ columns, data, categories }: DataTableProps<
       </div>
       <div className="w-full flex gap-5 pb-3">
         <Select
-          value={(table.getColumn("parentCategory")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("category")?.getFilterValue() as string) ?? ""}
           onValueChange={(value) => {
             setCategory(value);
-            table.getColumn("parentCategory")?.setFilterValue(value === "all" ? "" : value);
+            table.getColumn("category")?.setFilterValue(value === "all" ? "" : value);
           }}
         >
           <SelectTrigger className="w-full">

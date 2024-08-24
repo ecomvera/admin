@@ -33,7 +33,7 @@ const EditProduct = ({
   const { toast } = useToast();
   const router = useRouter();
   const [sizes, setSizes] = useState<string[]>(product.sizes);
-  const [category, setCategory] = useState(product.parentCategory);
+  const [category, setCategory] = useState(product.category);
   const [subCategory, setSubCategory] = useState(product.subCategory);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [attributes, setAttributes] = useState<{ key: string; value: string }[]>(product.attributes);
@@ -68,7 +68,7 @@ const EditProduct = ({
       quantity: Number(values.quantity),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
-      parentCategory: category,
+      category: category,
       subCategory,
       sizes,
       attributes,
@@ -154,7 +154,7 @@ const EditProduct = ({
             <InputField control={form.control} name="mrp" label="MRP" type="number" />
           </div>
           <div className="flex gap-3">
-            <SelectField value={category} onChange={setCategory} data={categories} label="Parent Category" />
+            <SelectField value={category} onChange={setCategory} data={categories} label="Category" />
             <SelectField value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />
           </div>
           <div className="flex gap-3">

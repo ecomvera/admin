@@ -32,9 +32,9 @@ export const columns: ColumnDef<IProduct>[] = [
     ),
   },
   {
-    accessorKey: "parentCategory",
-    header: "Parent Category",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("parentCategory")}</div>,
+    accessorKey: "category",
+    header: "Category",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("category")}</div>,
   },
   {
     accessorKey: "subCategory",
