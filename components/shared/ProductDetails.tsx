@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Carousel from "./Carousel";
 import { useState } from "react";
 import { IProduct } from "@/types";
 import { Button } from "../ui/button";
@@ -28,20 +27,19 @@ const LeftGallaryView = ({ images }: { images: IProduct["images"] }) => {
   return (
     <div className="gap-2 tablet:gap-5 flex justify-center py-8 h-fit">
       <div className="w-[80px]">
-        <Carousel isVertical infinite nodots>
-          {images.map((image, index) => (
+        {images.map((image, index) => (
+          <div key={index} className="flex items-center cursor-pointer border m-1 h-20 overflow-hidden bg-gray-100">
             <Image
-              key={index}
               src={image.url}
               alt="product"
-              width={20}
+              width={80}
               height={0}
               sizes="100vw"
               onClick={() => handleSlideChange(image.url)}
-              className="cursor-pointer"
+              className="object-cover"
             />
-          ))}
-        </Carousel>
+          </div>
+        ))}
       </div>
 
       <div className="">
