@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { IProduct } from "@/types";
 import Link from "next/link";
+import { deleteProduct } from "@/lib/actions/product.action";
 
 export const columns: ColumnDef<IProduct>[] = [
   {
@@ -114,7 +115,12 @@ export const columns: ColumnDef<IProduct>[] = [
               Mark as <code className="text-red-600 ml-2">outofstock</code>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600" onClick={() => {}}>
+            <DropdownMenuItem
+              className="text-red-600"
+              onClick={async () => {
+                await deleteProduct(row.original._id, "/products");
+              }}
+            >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>

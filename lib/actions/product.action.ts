@@ -6,6 +6,7 @@ import { IProduct } from "@/types";
 import { convertToArray } from "../utils";
 import Category from "../models/category.model";
 import Product from "../models/product.model";
+import { deleteFile } from "./aws";
 
 export const createProduct = async (product: IProduct) => {
   await connectDB();
@@ -129,4 +130,40 @@ export const getProductDetails = async (id: string) => {
 
   // console.log(data[0]);
   return data[0];
+};
+
+export const deleteProduct = async (id: string | undefined, path: string) => {
+  await connectDB();
+
+  // delete the connection between the product and the category
+  const product = await Product.findById(id);
+  if (!product) {
+    return;
+  }
+
+  const category = await Category.findById(product.category);
+  if (!category) {
+    return;
+  }
+
+  category.products = category.products.filter((item: Object) => item.toString() !== id);
+  await category.save();
+
+  const subCategory = await Category.findById(product.subCategory);
+  if (!subCategory) {
+    return;
+  }
+
+  subCategory.products = subCategory.products.filter((item: Object) => item.toString() !== id);
+  await subCategory.save();
+
+  // delete the images from s3
+  for (const image of product.images) {
+    const url = image.url.split("/").pop();
+    await deleteFile(url, "/products");
+  }
+
+  // delete the product from the database
+  await Product.findByIdAndDelete(id);
+  revalidatePath(path);
 };
