@@ -12,12 +12,12 @@ import SelectField from "./SelectField";
 import InputField from "./InputField";
 import SwitchField from "./SwitchField";
 import { useToast } from "@/components/ui/use-toast";
-import { ICategory, IProduct } from "@/types";
+import { IAttribute, ICategory, IProduct } from "@/types";
 import AttributesInput from "./AttributesInput";
 import { createProduct } from "@/lib/actions/product.action";
 import ImageContainer from "./ImageContainer";
 
-const AddProduct = ({ categories }: { categories: ICategory[] }) => {
+const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; attributesData: IAttribute[] }) => {
   const { toast } = useToast();
   const [sizes, setSizes] = useState<string[]>([]);
   const [category, setCategory] = useState("");
@@ -155,7 +155,12 @@ const AddProduct = ({ categories }: { categories: ICategory[] }) => {
             <InputField control={form.control} name="quantity" label="Quantity" type="number" />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <AttributesInput label="Attributes" attributes={attributes} setAttributes={setAttributes} />
+            <AttributesInput
+              label="Attributes"
+              attributes={attributes}
+              setAttributes={setAttributes}
+              attributesData={attributesData}
+            />
             <div className="w-full flex flex-col gap-5 desktop:flex-row">
               <Sizes control={form.control} name="sizes" label="Select Sizes" value={sizes} onChange={setSizes} />
               <SwitchField control={form.control} name="inStock" label="In Stock" />

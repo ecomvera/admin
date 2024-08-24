@@ -12,14 +12,24 @@ import SelectField from "./SelectField";
 import InputField from "./InputField";
 import SwitchField from "./SwitchField";
 import { useToast } from "@/components/ui/use-toast";
-import { ICategory, IProduct } from "@/types";
+import { IAttribute, ICategory, IProduct } from "@/types";
 import AttributesInput from "./AttributesInput";
 import { createProduct, updateProduct } from "@/lib/actions/product.action";
 import ImageContainer from "./ImageContainer";
 import { revalidatePath } from "next/cache";
 import { useRouter } from "next/navigation";
 
-const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
+const EditProduct = ({
+  categories,
+  product,
+  path,
+  attributesData,
+}: {
+  categories: ICategory[];
+  product: IProduct;
+  path: string;
+  attributesData: IAttribute[];
+}) => {
   const { toast } = useToast();
   const router = useRouter();
   const [sizes, setSizes] = useState<string[]>(product.sizes);
@@ -152,7 +162,12 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             <InputField control={form.control} name="quantity" label="Quantity" type="number" />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <AttributesInput label="Attributes" attributes={attributes} setAttributes={setAttributes} />
+            <AttributesInput
+              label="Attributes"
+              attributes={attributes}
+              setAttributes={setAttributes}
+              attributesData={attributesData}
+            />
             <div className="w-full flex flex-col gap-5 desktop:flex-row">
               <Sizes control={form.control} name="sizes" label="Select Sizes" value={sizes} onChange={setSizes} />
               <SwitchField control={form.control} name="inStock" label="In Stock" />

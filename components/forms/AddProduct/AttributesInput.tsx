@@ -3,6 +3,7 @@ import { FormItem, FormLabel } from "@/components/ui/form";
 import { Dispatch, SetStateAction } from "react";
 import { Input } from "../../ui/input";
 import { Button } from "../../ui/button";
+import { IAttribute } from "@/types";
 
 interface Props {
   label: string;
@@ -18,17 +19,16 @@ interface Props {
       }[]
     >
   >;
+  attributesData: IAttribute[];
 }
 
-const keys = ["sleeve", "neck", "fit", "washCare", "design"];
-
-const AttributesInput = ({ label, attributes, setAttributes }: Props) => {
+const AttributesInput = ({ label, attributes, setAttributes, attributesData }: Props) => {
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
 
       {attributes?.map((item, index) => (
-        <div className="flex gap-3">
+        <div className="flex gap-3" key={index}>
           <Input value={item.key} aria-checked className="text-base font-semibold" />
           <Input
             type="text"
@@ -55,11 +55,11 @@ const AttributesInput = ({ label, attributes, setAttributes }: Props) => {
           <SelectValue placeholder={`Select the key`} />
         </SelectTrigger>
         <SelectContent>
-          {keys
-            .filter((key) => !attributes.some((k) => k.key === key))
-            .map((key) => (
-              <SelectItem key={key} value={key}>
-                {key}
+          {attributesData
+            .filter((a) => !attributes.some((k) => k.key === a.title))
+            .map((a) => (
+              <SelectItem key={a._id} value={a.title}>
+                {a.title}
               </SelectItem>
             ))}
         </SelectContent>

@@ -24,3 +24,8 @@ export interface IProduct {
   inStock: boolean;
   isNewArrival: boolean;
 }
+
+export interface IAttribute {
+  _id: string;
+  title: string;
+}
