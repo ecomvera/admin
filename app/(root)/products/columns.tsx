@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { IProduct } from "@/types";
+import Link from "next/link";
 
 export const columns: ColumnDef<IProduct>[] = [
   {
@@ -24,7 +25,11 @@ export const columns: ColumnDef<IProduct>[] = [
         </Button>
       );
     },
-    cell: ({ row }) => <div className="lowercase ml-2 tablet:ml-4">{row.getValue("name")}</div>,
+    cell: ({ row }) => (
+      <div className="lowercase ml-2 tablet:ml-4">
+        <Link href={`/p/${row.original._id}`}>{row.getValue("name")}</Link>
+      </div>
+    ),
   },
   {
     accessorKey: "parentCategory",
@@ -99,13 +104,19 @@ export const columns: ColumnDef<IProduct>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => {}}>Edit</DropdownMenuItem>
-            <DropdownMenuItem>View product details</DropdownMenuItem>
-            <DropdownMenuItem>
+            <Link href={`/e/${row.original._id}`}>
+              <DropdownMenuItem>Edit</DropdownMenuItem>
+            </Link>
+            <Link href={`/p/${row.original._id}`}>
+              <DropdownMenuItem>View product details</DropdownMenuItem>
+            </Link>
+            <DropdownMenuItem onClick={() => {}}>
               Mark as <code className="text-red-600 ml-2">outofstock</code>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+            <DropdownMenuItem className="text-red-600" onClick={() => {}}>
+              Delete
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );

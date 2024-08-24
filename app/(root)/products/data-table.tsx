@@ -69,13 +69,14 @@ function DataTable<TData, TValue>({ columns, data, categories }: DataTableProps<
         setSubCategory("all");
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   React.useEffect(() => {
     table.getAllColumns().forEach((column) => {
-      // if (column.id === "parentCategory" || column.id === "subCategory") {
-      //   column.toggleVisibility(false);
-      // }
+      if (column.id === "parentCategory" || column.id === "subCategory") {
+        column.toggleVisibility(false);
+      }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
