@@ -29,7 +29,7 @@ export const createProduct = async (product: IProduct) => {
     await category.save();
     await subCategory.save();
 
-    revalidatePath("/add-product");
+    revalidatePath("/products");
     return { ok: true };
   } catch (error: any) {
     if (error.code === 11000) {

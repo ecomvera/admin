@@ -14,9 +14,8 @@ import SwitchField from "./SwitchField";
 import { useToast } from "@/components/ui/use-toast";
 import { IAttribute, ICategory, IProduct } from "@/types";
 import AttributesInput from "./AttributesInput";
-import { createProduct, updateProduct } from "@/lib/actions/product.action";
+import { updateProduct } from "@/lib/actions/product.action";
 import ImageContainer from "./ImageContainer";
-import { revalidatePath } from "next/cache";
 import { useRouter } from "next/navigation";
 
 const EditProduct = ({
@@ -38,6 +37,7 @@ const EditProduct = ({
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [attributes, setAttributes] = useState<{ key: string; value: string }[]>(product.attributes);
   const [files, setFiles] = useState<{ key: string; blob?: string; url: string }[]>(product.images);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
@@ -57,6 +57,7 @@ const EditProduct = ({
     const res = validateData();
     if (!res?.ok) return;
 
+    setLoading(true);
     const data: IProduct = {
       name: values.name,
       slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
@@ -81,6 +82,7 @@ const EditProduct = ({
         variant: "destructive",
         description: response?.error,
       });
+      setLoading(false);
       return;
     }
 
@@ -90,6 +92,7 @@ const EditProduct = ({
       description: "Product created successfully",
     });
 
+    setLoading(false);
     router.back();
   };
 
@@ -139,6 +142,7 @@ const EditProduct = ({
     if (category) {
       setSubCategories(categories.find((item) => item._id === category)?.children || []);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   return (
@@ -175,8 +179,11 @@ const EditProduct = ({
             </div>
           </div>
 
-          <Button type="submit" className="bg-success rounded-[5px] h-10 text-lg font-semibold my-5">
-            Update
+          <Button
+            type="submit"
+            className={`${loading ? "bg-gray-500" : "bg-success"} rounded-[5px] h-10 text-lg font-semibold my-5`}
+          >
+            {loading ? "Loading..." : "Submit"}
           </Button>
         </form>
       </Form>

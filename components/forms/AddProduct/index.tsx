@@ -16,15 +16,18 @@ import { IAttribute, ICategory, IProduct } from "@/types";
 import AttributesInput from "./AttributesInput";
 import { createProduct } from "@/lib/actions/product.action";
 import ImageContainer from "./ImageContainer";
+import { useRouter } from "next/navigation";
 
 const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; attributesData: IAttribute[] }) => {
   const { toast } = useToast();
+  const router = useRouter();
   const [sizes, setSizes] = useState<string[]>([]);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [attributes, setAttributes] = useState<{ key: string; value: string }[]>([]);
   const [files, setFiles] = useState<{ key: string; blob: string; url: string }[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
@@ -44,6 +47,7 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
     const res = validateData();
     if (!res?.ok) return;
 
+    setLoading(true);
     const data: IProduct = {
       name: values.name,
       slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
@@ -68,6 +72,8 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
         variant: "destructive",
         description: response?.error,
       });
+
+      setLoading(false);
       return;
     }
 
@@ -75,9 +81,20 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
       title: "Success",
       variant: "success",
       description: "Product created successfully",
+      action: (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => router.push("/products")}
+          className="rounded-xl font-semibold text-black"
+        >
+          View
+        </Button>
+      ),
     });
 
     form.reset();
+    setLoading(false);
     setSizes([]);
     setCategory("");
     setSubCategory("");
@@ -132,6 +149,7 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
     if (category) {
       setSubCategories(categories.find((item) => item._id === category)?.children || []);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   return (
@@ -168,8 +186,11 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
             </div>
           </div>
 
-          <Button type="submit" className="bg-success rounded-[5px] h-10 text-lg font-semibold my-5">
-            Save
+          <Button
+            type="submit"
+            className={`${loading ? "bg-gray-500" : "bg-success"} rounded-[5px] h-10 text-lg font-semibold my-5`}
+          >
+            {loading ? "Loading..." : "Submit"}
           </Button>
         </form>
       </Form>

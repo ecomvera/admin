@@ -18,7 +18,7 @@ function LeftSidebar() {
             <Link
               href={link.route}
               key={link.label}
-              className={`leftsidebar_link ${isActive && "font-bold border-b-4 border-blue-500"}`}
+              className={`leftsidebar_link ${isActive && "font-bold border-b-4 border-gray-800"}`}
             >
               <Image src={link.imgURL} alt={link.label} width={28} height={28} />
               <p className={`text-dark-3 max-lg:hidden`}>{link.label}</p>
