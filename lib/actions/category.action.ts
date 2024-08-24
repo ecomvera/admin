@@ -56,10 +56,11 @@ export const getParentCategories = async () => {
   return convertToArray(res);
 };
 
-export const getAllCategories = async () => {
+export const getAllCategories = async (): Promise<ICategory[]> => {
   connectDB();
-  const res: ICategory[] = await Category.find({ parentId: null }).populate({
+  const res: ICategory[] = await Category.find({ parentId: null }, { products: 0 }).populate({
     path: "children",
+    select: { products: 0 },
   });
-  return convertToArray(res);
+  return convertToArray(res, "children");
 };
