@@ -7,6 +7,7 @@ const productSchema = new mongoose.Schema({
   },
   slug: {
     type: String,
+    unique: true,
     required: true,
   },
   description: {
@@ -21,16 +22,10 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  parentCategory: {
-    type: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-    required: true,
-  },
-  subCategory: {
-    type: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-    required: true,
-  },
-  image: {
-    type: [String],
+  parentCategory: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+  subCategory: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+  images: {
+    type: [{ key: String, url: String }],
     required: true,
   },
   material: {
@@ -47,7 +42,6 @@ const productSchema = new mongoose.Schema({
   },
   inStock: {
     type: Boolean,
-    required: true,
   },
   isNewArrival: {
     type: Boolean,
@@ -60,3 +54,6 @@ const productSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+const Product = mongoose.models?.Product || mongoose.model("Product", productSchema);
+export default Product;

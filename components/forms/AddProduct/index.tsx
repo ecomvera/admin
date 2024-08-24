@@ -6,34 +6,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "../../ui/button";
 import { productValidation } from "@/lib/validations/product";
-import { useState } from "react";
-import KeyHighlights from "./KeyHighlights";
+import { useEffect, useState } from "react";
 import Sizes from "./Sizes";
 import SelectField from "./SelectField";
 import InputField from "./InputField";
 import SwitchField from "./SwitchField";
 import { useToast } from "@/components/ui/use-toast";
+import { ICategory, IProduct } from "@/types";
+import AttributesInput from "./AttributesInput";
+import { createProduct } from "@/lib/actions/product.action";
 import ImageContainer from "./ImageContainer";
 
-const AddProduct = () => {
+const AddProduct = ({ categories }: { categories: ICategory[] }) => {
   const { toast } = useToast();
-  const [sizes, setSizes] = useState([]);
-  const [files, setFiles] = useState<{ name: string; value: string }[]>([]);
-  const [keyHighlights, setKeyHighlights] = useState<{ key: string; value: string }[]>([]);
+  const [sizes, setSizes] = useState<string[]>([]);
+  const [category, setCategory] = useState("");
+  const [subCategory, setSubCategory] = useState("");
+  const [subCategories, setSubCategories] = useState<ICategory[]>([]);
+  const [attributes, setAttributes] = useState<{ key: string; value: string }[]>([]);
+  const [files, setFiles] = useState<{ key: string; blob: string; url: string }[]>([]);
 
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
     defaultValues: {
       name: "",
-      slug: "",
       description: "",
       price: "",
       mrp: "",
-      parentCategory: "",
-      subCategory: "",
       material: "",
       quantity: "",
-      inStock: false,
+      inStock: true,
       isNewArrival: false,
     },
   });
@@ -42,42 +44,83 @@ const AddProduct = () => {
     const res = validateData();
     if (!res?.ok) return;
 
-    console.log(files);
+    const data: IProduct = {
+      name: values.name,
+      slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
+      description: values.description,
+      price: Number(values.price),
+      mrp: Number(values.mrp),
+      material: values.material,
+      images: files,
+      quantity: Number(values.quantity),
+      inStock: values.inStock,
+      isNewArrival: values.isNewArrival,
+      parentCategory: category,
+      subCategory,
+      sizes,
+      attributes,
+    };
 
-    console.log({ ...values });
+    const response = await createProduct(data);
+    if (!response?.ok) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: response?.error,
+      });
+      return;
+    }
+
+    toast({
+      title: "Success",
+      variant: "success",
+      description: "Product created successfully",
+    });
+
+    form.reset();
+    setSizes([]);
+    setCategory("");
+    setSubCategory("");
+    setSubCategories([]);
+    setAttributes([]);
+    setFiles([]);
   };
 
   const validateData = () => {
     if (!sizes.length) {
       toast({
+        title: "Error",
         variant: "destructive",
-        title: "Please select the product sizes",
+        description: "Please select the product sizes",
       });
       return;
     }
 
-    if (!keyHighlights.length) {
+    if (!attributes.length) {
       toast({
-        variant: "success",
-        title: "Please add some key highlights",
+        title: "Error",
+        variant: "destructive",
+        description: "Please add some attributes",
       });
       return;
     }
 
-    for (const item of keyHighlights) {
+    for (const item of attributes) {
       if (!item.key || !item.value) {
         toast({
+          title: "Error",
           variant: "destructive",
-          title: "Please fill all key highlights",
+          description: "Please fill all the attributes",
         });
         return;
       }
     }
 
-    if (files.length < 5) {
+    if (files.length !== 5) {
       toast({
+        title: "Error",
         variant: "destructive",
-        title: "Please upload all images",
+        description: "Please upload all the images",
       });
       return;
     }
@@ -85,28 +128,34 @@ const AddProduct = () => {
     return { ok: true };
   };
 
+  useEffect(() => {
+    if (category) {
+      setSubCategories(categories.find((item) => item._id === category)?.children || []);
+    }
+  }, [category]);
+
   return (
     <>
+      <ImageContainer files={files} setFiles={setFiles} />
+
       <Form {...form}>
         <form className="flex flex-col justify-start gap-3 p-2" onSubmit={form.handleSubmit(onSubmit)}>
-          <ImageContainer files={files} setFiles={setFiles} />
           <InputField control={form.control} name="name" label="Product Name" />
-          <InputField control={form.control} name="slug" label="Product Slug" />
           <InputField control={form.control} name="description" label="Product Description" textarea />
           <div className="flex gap-3">
             <InputField control={form.control} name="price" label="Price" type="number" />
             <InputField control={form.control} name="mrp" label="MRP" type="number" />
           </div>
           <div className="flex gap-3">
-            <SelectField control={form.control} name="parentCategory" label="Parent Category" />
-            <SelectField control={form.control} name="subCategory" label="Sub Category" />
+            <SelectField value={category} onChange={setCategory} data={categories} label="Parent Category" />
+            <SelectField value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />
           </div>
           <div className="flex gap-3">
             <InputField control={form.control} name="material" label="Material" />
             <InputField control={form.control} name="quantity" label="Quantity" type="number" />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <KeyHighlights label="Key Highlights" keyHighlights={keyHighlights} setKeyHighlights={setKeyHighlights} />
+            <AttributesInput label="Attributes" attributes={attributes} setAttributes={setAttributes} />
             <div className="w-full flex flex-col gap-5 desktop:flex-row">
               <Sizes control={form.control} name="sizes" label="Select Sizes" value={sizes} onChange={setSizes} />
               <SwitchField control={form.control} name="inStock" label="In Stock" />

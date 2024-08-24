@@ -8,14 +8,19 @@ export interface ICategory {
 }
 
 export interface IProduct {
-  _id: string;
+  _id?: string;
   name: string;
   slug: string;
   description: string;
   price: number;
   mrp: number;
-  category: string;
+  images: { key: string; url: string }[];
+  parentCategory: string;
+  subCategory: string;
+  material: string;
   quantity: number;
+  sizes: string[];
+  attributes: { key: string; value: string }[];
   inStock: boolean;
   isNewArrival: boolean;
 }

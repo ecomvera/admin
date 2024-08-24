@@ -6,11 +6,11 @@ import { Button } from "../../ui/button";
 
 interface Props {
   label: string;
-  keyHighlights: {
+  attributes: {
     key: string;
     value: string;
   }[];
-  setKeyHighlights: Dispatch<
+  setAttributes: Dispatch<
     SetStateAction<
       {
         key: string;
@@ -22,41 +22,41 @@ interface Props {
 
 const keys = ["sleeve", "neck", "fit", "washCare", "design"];
 
-const KeyHighlights = ({ label, keyHighlights, setKeyHighlights }: Props) => {
+const AttributesInput = ({ label, attributes, setAttributes }: Props) => {
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
 
-      {keyHighlights?.map((item, index) => (
+      {attributes?.map((item, index) => (
         <div className="flex gap-3">
           <Input value={item.key} aria-checked className="text-base font-semibold" />
           <Input
             type="text"
             placeholder="value"
             onChange={(e) => {
-              const obj = { ...keyHighlights[index], value: e.target.value };
-              setKeyHighlights([...keyHighlights.slice(0, index), obj, ...keyHighlights.slice(index + 1)]);
+              const obj = { ...attributes[index], value: e.target.value };
+              setAttributes([...attributes.slice(0, index), obj, ...attributes.slice(index + 1)]);
             }}
           />
           <Button
             variant={"outline"}
             className="text-lg p-2 text-red-500 rounded-[5px] font-semibold"
-            onClick={() => setKeyHighlights(keyHighlights.filter((k) => k.key !== item.key))}
+            onClick={() => setAttributes(attributes.filter((k) => k.key !== item.key))}
           >
             X
           </Button>
         </div>
       ))}
 
-      {keyHighlights?.length > 0 && <div className="w-full h-1 bg-gray-200"></div>}
+      {attributes?.length > 0 && <div className="w-full h-1 bg-gray-200"></div>}
 
-      <Select onValueChange={(field) => setKeyHighlights([...keyHighlights, { key: field, value: "" }])} value="">
+      <Select onValueChange={(field) => setAttributes([...attributes, { key: field, value: "" }])} value="">
         <SelectTrigger className="text-base">
           <SelectValue placeholder={`Select the key`} />
         </SelectTrigger>
         <SelectContent>
           {keys
-            .filter((key) => !keyHighlights.some((k) => k.key === key))
+            .filter((key) => !attributes.some((k) => k.key === key))
             .map((key) => (
               <SelectItem key={key} value={key}>
                 {key}
@@ -68,4 +68,4 @@ const KeyHighlights = ({ label, keyHighlights, setKeyHighlights }: Props) => {
   );
 };
 
-export default KeyHighlights;
+export default AttributesInput;
