@@ -1,3 +1,5 @@
+"use client";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { LuArrowUpDown, LuMoreHorizontal } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
@@ -9,17 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { IProduct } from "@/types";
 
-export type Product = {
-  id: string;
-  name: string;
-  quantity: number;
-  amount: number;
-  mrp: number;
-  category: string;
-};
-
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<IProduct>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
@@ -33,9 +27,14 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => <div className="lowercase ml-2 tablet:ml-4">{row.getValue("name")}</div>,
   },
   {
-    accessorKey: "category",
-    header: "Category",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("category")}</div>,
+    accessorKey: "parentCategory",
+    header: "Parent Category",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("parentCategory")}</div>,
+  },
+  {
+    accessorKey: "subCategory",
+    header: "Sub Category",
+    cell: ({ row }) => <div className="capitalize">{row.getValue("subCategory")}</div>,
   },
   {
     accessorKey: "quantity",
@@ -49,7 +48,7 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => <div className="text-right font-medium">{row.getValue("quantity")}</div>,
   },
   {
-    accessorKey: "amount",
+    accessorKey: "price",
     header: ({ column }) => {
       return (
         <div className="flex justify-end" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
@@ -58,13 +57,13 @@ export const columns: ColumnDef<Product>[] = [
       );
     },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("amount"));
+      const price = parseFloat(row.getValue("price"));
 
-      // Format the amount as a dollar amount
+      // Format the price as a dollar price
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
-      }).format(amount);
+      }).format(price);
 
       return <div className="text-right font-medium">{formatted}</div>;
     },
@@ -100,7 +99,7 @@ export const columns: ColumnDef<Product>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {}}>Edit</DropdownMenuItem>
             <DropdownMenuItem>View product details</DropdownMenuItem>
             <DropdownMenuItem>
               Mark as <code className="text-red-600 ml-2">outofstock</code>

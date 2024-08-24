@@ -40,3 +40,14 @@ export const createProduct = async (product: IProduct) => {
     return { ok: false, error: error.message };
   }
 };
+
+export const getProducts = async () => {
+  await connectDB();
+
+  const res = await Product.find()
+    .populate({ path: "parentCategory", select: "name" })
+    .populate({ path: "subCategory", select: "name" });
+  const data = convertToArray(res, "product");
+
+  return data;
+};

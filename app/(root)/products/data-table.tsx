@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import {
   ColumnDef,
@@ -22,13 +24,19 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ICategory } from "@/types";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  categories: ICategory[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+function DataTable<TData, TValue>({ columns, data, categories }: DataTableProps<TData, TValue>) {
+  const [category, setCategory] = React.useState("");
+  const [subCategory, setSubCategory] = React.useState("");
+  const [subCategories, setSubCategories] = React.useState<ICategory[]>([]);
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
@@ -51,10 +59,23 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
   });
 
   React.useEffect(() => {
-    table.getAllColumns().forEach((column) => {
-      if (column.id === "category") {
-        column.toggleVisibility(false);
+    if (category) {
+      setSubCategories(categories.find((item) => item.name === category)?.children || []);
+      table.getColumn("subCategory")?.setFilterValue("");
+      if (category === "all") {
+        setCategory("");
+        setSubCategory("");
+      } else {
+        setSubCategory("all");
       }
+    }
+  }, [category]);
+
+  React.useEffect(() => {
+    table.getAllColumns().forEach((column) => {
+      // if (column.id === "parentCategory" || column.id === "subCategory") {
+      //   column.toggleVisibility(false);
+      // }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -96,8 +117,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
       </div>
       <div className="w-full flex gap-5 pb-3">
         <Select
-          value={(table.getColumn("category")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) => table.getColumn("category")?.setFilterValue(value === "all" ? "" : value)}
+          value={(table.getColumn("parentCategory")?.getFilterValue() as string) ?? ""}
+          onValueChange={(value) => {
+            setCategory(value);
+            table.getColumn("parentCategory")?.setFilterValue(value === "all" ? "" : value);
+          }}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by category" />
@@ -105,16 +129,21 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           <SelectContent>
             <SelectGroup>
               <SelectItem value="all">All</SelectItem>
-              <SelectItem value="masonry">Masonry</SelectItem>
-              <SelectItem value="framing">Framing</SelectItem>
-              <SelectItem value="retaining">Retaining</SelectItem>
+              {categories?.map((item) => (
+                <SelectItem key={item._id} value={item.name}>
+                  {item.name}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
 
         <Select
-          value={(table.getColumn("category")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) => table.getColumn("category")?.setFilterValue(value === "all" ? "" : value)}
+          value={subCategory}
+          onValueChange={(value) => {
+            setSubCategory(value);
+            table.getColumn("subCategory")?.setFilterValue(value === "all" ? "" : value);
+          }}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Filter by sub-category" />
@@ -122,9 +151,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
           <SelectContent>
             <SelectGroup>
               <SelectItem value="all">All</SelectItem>
-              <SelectItem value="masonry">Masonry</SelectItem>
-              <SelectItem value="framing">Framing</SelectItem>
-              <SelectItem value="retaining">Retaining</SelectItem>
+              {subCategories?.map((item) => (
+                <SelectItem key={item._id} value={item.name}>
+                  {item.name}
+                </SelectItem>
+              ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -178,3 +209,5 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     </div>
   );
 }
+
+export default DataTable;

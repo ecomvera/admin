@@ -25,9 +25,17 @@ export const generateFileName = (bytes = 32) => c.randomBytes(bytes).toString("h
 export const convertToArray = (arr: any[], path?: string) => {
   const converted = arr.map((item) => {
     const { _id, __v, ...rest } = item.toObject();
-    // check children array also
-    if (path && item.children?.length > 0) {
+    // category model
+    if (path === "category" && item.children?.length > 0) {
       rest.children = convertToArray(item.children);
+    }
+
+    // product model
+    if (path === "product") {
+      rest.images = convertToArray(item.images);
+      rest.attributes = convertToArray(item.attributes);
+      rest.parentCategory = item.parentCategory.name;
+      rest.subCategory = item.subCategory.name;
     }
 
     return {

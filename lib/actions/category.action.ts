@@ -62,5 +62,5 @@ export const getAllCategories = async (): Promise<ICategory[]> => {
     path: "children",
     select: { products: 0 },
   });
-  return convertToArray(res, "children");
+  return convertToArray(res, "category");
 };
