@@ -14,6 +14,7 @@ export const createAttribute = async (data: string, path: string) => {
     });
 
     revalidatePath(path);
+    revalidatePath("/add-product");
     return { ok: true };
   } catch (error: any) {
     if (error.code === 11000) {
