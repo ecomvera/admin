@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { Button } from "../../ui/button";
 import { productValidation } from "@/lib/validations/product";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Sizes from "./Sizes";
 import SelectField from "./SelectField";
 import InputField from "./InputField";
@@ -18,31 +18,31 @@ import { createProduct } from "@/lib/actions/product.action";
 import ImageContainer from "./ImageContainer";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useFileStore, useProductStore } from "@/stores/product";
+// @ts-ignore
+import { isEqual } from "lodash";
 
 const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; attributesData: IAttribute[] }) => {
-  const { toast } = useToast();
   const router = useRouter();
+  const { toast } = useToast();
+  const { files, setFiles } = useFileStore();
+  const { product, setProduct } = useProductStore();
+
   const [sizes, setSizes] = useState<string[]>([]);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [attributes, setAttributes] = useState<{ key: string; value: string }[]>([]);
-  const [files, setFiles] = useState<{ key: string; blob: string; url: string }[]>([]);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
-    defaultValues: {
-      name: "",
-      description: "",
-      price: "",
-      mrp: "",
-      material: "",
-      quantity: "",
-      inStock: true,
-      isNewArrival: false,
-    },
+    defaultValues: product,
   });
+
+  const formData = form.watch();
+  // useRef to store previous formData to avoid infinite loop
+  const prevFormData = useRef(formData);
 
   const onSubmit = async (values: z.infer<typeof productValidation>) => {
     const res = validateData();
@@ -150,6 +150,14 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
+  useEffect(() => {
+    if (!isEqual(prevFormData.current, formData)) {
+      setProduct(formData);
+      prevFormData.current = formData;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
+
   return (
     <>
       <ImageContainer files={files} setFiles={setFiles} />
@@ -178,7 +186,7 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
               attributesData={attributesData}
             />
             <div className="w-full flex flex-col gap-5 desktop:flex-row">
-              <Sizes control={form.control} name="sizes" label="Select Sizes" value={sizes} onChange={setSizes} />
+              <Sizes name="sizes" label="Select Sizes" onChange={setSizes} />
               <SwitchField control={form.control} name="inStock" label="In Stock" />
               <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
             </div>

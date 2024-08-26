@@ -1,23 +1,9 @@
 import { FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Label } from "../../ui/label";
 
-const Sizes = ({
-  control,
-  name,
-  label,
-  value,
-  onChange,
-}: {
-  control: any;
-  name: string;
-  label: string;
-  value: string[];
-  onChange: any;
-}) => {
+const Sizes = ({ name, label, onChange }: { name: string; label: string; onChange: any }) => {
   return (
     <FormField
-      control={control}
       name={name}
       render={({ field }) => (
         <FormItem className="flex flex-col">
@@ -39,7 +25,6 @@ const Sizes = ({
               2XL
             </ToggleGroupItem>
           </ToggleGroup>
-          {/* {value?.length === 0 && <Label className="text-base text-red-400">Please select atleast 1 size</Label>} */}
         </FormItem>
       )}
     />

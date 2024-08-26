@@ -9,15 +9,13 @@ import { RxCrossCircled } from "react-icons/rx";
 
 interface Props {
   files: { key: string; blob: string; url: string }[];
-  setFiles: Dispatch<
-    SetStateAction<
-      {
-        key: string;
-        blob: string;
-        url: string;
-      }[]
-    >
-  >;
+  setFiles: (
+    files: {
+      key: string;
+      blob: string;
+      url: string;
+    }[]
+  ) => void;
 }
 
 const ImageContainer = ({ files, setFiles }: Props) => {
@@ -65,9 +63,11 @@ const ImageContainer = ({ files, setFiles }: Props) => {
         const i = files.findIndex((f) => f.key === e.target.id);
         const oldURL = files[i].url.split("/")[3];
         await deleteFile(oldURL, "/add-product"); // delete old image
-        setFiles((files) => files.map((f) => (f.key === e.target.id ? { key: e.target.id, blob: blob, url: fileURL } : f)));
+        const newFiles = files.map((f) => (f.key === e.target.id ? { key: e.target.id, blob: blob, url: fileURL } : f));
+        setFiles(newFiles);
       } else {
-        setFiles((files) => [...files, { key: e.target.id, blob: blob, url: fileURL }]);
+        const newFiles = [...files, { key: e.target.id, blob: blob, url: fileURL }];
+        setFiles(newFiles);
       }
     }
 
@@ -78,7 +78,8 @@ const ImageContainer = ({ files, setFiles }: Props) => {
     const fileURL = files.find((f) => f.key === label)?.url || "";
     const key = fileURL.split("/")[fileURL.split("/").length - 1];
     await deleteFile(key, "/add-product");
-    setFiles((files) => files.filter((f) => f.key !== label));
+    const filterdFiles = files.filter((f) => f.key !== label);
+    setFiles(filterdFiles);
   };
 
   return (
