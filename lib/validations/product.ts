@@ -11,7 +11,7 @@ export const productValidation = z
     inStock: z.boolean(),
     isNewArrival: z.boolean(),
   })
-  .refine((data) => data.mrp > data.price, {
+  .refine((data) => Number(data.mrp) > Number(data.price), {
     message: "MRP should be greater than price.",
     path: ["mrp"],
   });
