@@ -2,6 +2,7 @@ export interface ICategory {
   _id: string;
   name: string;
   slug: string;
+  wearType?: string;
   parentId: string | null;
   children?: ICategory[];
   products?: IProduct[];

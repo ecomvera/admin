@@ -26,7 +26,7 @@ export const createCategory = async (name: string, slug: string, path: string) =
   }
 };
 
-export const createSubCategory = async (categoryId: string, name: string, slug: string, path: string) => {
+export const createSubCategory = async (categoryId: string, name: string, slug: string, wearType: string, path: string) => {
   connectDB();
 
   try {
@@ -35,12 +35,13 @@ export const createSubCategory = async (categoryId: string, name: string, slug: 
       return { ok: false, error: "Category not found" };
     }
 
-    const subCategory = new Category({ name, slug, parentId: categoryId });
+    const subCategory = new Category({ name, slug, wearType, parentId: categoryId });
     const res = await subCategory.save();
     category.children.push(res._id);
     await category.save();
 
     revalidatePath(path);
+    revalidatePath("/add-product");
     return { ok: true };
   } catch (error: any) {
     if (error.code === 11000) {

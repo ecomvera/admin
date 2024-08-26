@@ -21,6 +21,7 @@ const validation = z.object({
 const Attributes = ({ attributes }: { attributes: { title: string; _id: object }[] }) => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof validation>>({
     resolver: zodResolver(validation),
@@ -31,7 +32,11 @@ const Attributes = ({ attributes }: { attributes: { title: string; _id: object }
 
   const onSubmit = async (values: z.infer<typeof validation>) => {
     const value = values.name.trim().slice(0, 1).toUpperCase() + values.name.trim().slice(1);
+
+    setLoading(true);
     const res = await createAttribute(value, "/categories");
+    setLoading(false);
+
     if (!res?.ok) {
       toast({
         title: "Error",
@@ -68,8 +73,8 @@ const Attributes = ({ attributes }: { attributes: { title: string; _id: object }
             )}
           />
 
-          <Button type="submit" className="bg-dark-3 w-[100px] rounded-xl">
-            Add
+          <Button type={loading ? "button" : "submit"} className="bg-dark-3 w-[100px] rounded-xl">
+            {loading ? "Adding..." : "Add"}
           </Button>
         </form>
       </Form>

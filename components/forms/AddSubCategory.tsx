@@ -1,4 +1,5 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ChangeEvent, useState } from "react";
@@ -11,6 +12,8 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [parentId, setParentId] = useState("");
+  const [wearType, setWearType] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleInput = (e: any) => {
     setName(e.target.value);
@@ -38,8 +41,18 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
       return;
     }
 
-    const res = await createSubCategory(parentId, name.trim(), slug, "/categories");
+    if (!wearType) {
+      toast({
+        title: "Error",
+        variant: "destructive",
+        description: "Please select the wear type",
+      });
+      return;
+    }
 
+    setLoading(true);
+    const res = await createSubCategory(parentId, name.trim(), slug, wearType, "/categories");
+    setLoading(false);
     if (!res?.ok) {
       toast({
         title: "Error",
@@ -49,6 +62,7 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
     } else {
       setName("");
       setSlug("");
+      setWearType("");
       setParentId("");
       toast({
         title: "Success",
@@ -74,13 +88,30 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
       </Select>
 
       <div>
-        <Label className="text-base text-dark-3">Category Name</Label>
-        <Input type="text" className="account-form_input no-focus mt-2" value={name} onChange={handleInput} />
+        <Label className="text-base text-dark-3">Sub Category Name</Label>
+        <Input
+          type="text"
+          className="account-form_input no-focus mt-2"
+          placeholder="Enter sub category name"
+          value={name}
+          onChange={handleInput}
+        />
         <Label className="account-form_label text-sm text-dark-3">{slug}</Label>
       </div>
 
-      <Button type="submit" className="bg-dark-3 w-[100px] rounded-xl">
-        Add
+      <RadioGroup className="flex" value={wearType} onValueChange={setWearType}>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="topwear" id="topwear" />
+          <Label htmlFor="topwear">TopWear</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <RadioGroupItem value="bottomwear" id="bottomwear" />
+          <Label htmlFor="bottomwear">BottomWear</Label>
+        </div>
+      </RadioGroup>
+
+      <Button type={loading ? "button" : "submit"} className="bg-dark-3 w-[100px] rounded-xl">
+        {loading ? "Adding..." : "Add"}
       </Button>
     </form>
   );

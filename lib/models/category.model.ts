@@ -10,9 +10,8 @@ const categorySchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
-  parentId: {
-    type: String,
-  },
+  wearType: { type: String },
+  parentId: { type: String },
   children: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 });
