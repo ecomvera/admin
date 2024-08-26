@@ -5,6 +5,8 @@ import { connectDB } from "../mongoose";
 import Category from "../models/category.model";
 import { ICategory } from "@/types";
 import { convertToArray } from "../utils";
+import Product from "../models/product.model";
+import { deleteFile } from "./aws";
 
 export const createCategory = async (name: string, slug: string, path: string) => {
   connectDB();
@@ -63,4 +65,40 @@ export const getAllCategories = async (): Promise<ICategory[]> => {
     select: { products: 0 },
   });
   return convertToArray(res, "category");
+};
+
+export const deleteCategory = async (id: string) => {
+  connectDB();
+  const category = await Category.findById(id);
+  if (!category) {
+    return { ok: false, error: "Category not found" };
+  }
+
+  // delete all the products in the category
+  for (const product of category.products) {
+    const res = await Product.findById(product);
+    if (!res) {
+      continue;
+    }
+
+    for (const image of res.images) {
+      const url = image.url.split("/").pop();
+      if (url) {
+        await deleteFile(url, "/products");
+      }
+    }
+
+    await Product.deleteOne({ _id: product });
+  }
+
+  // delete all the subcategories
+  for (const subCategory of category.children) {
+    await Category.deleteOne({ _id: subCategory });
+  }
+
+  await Category.deleteOne({ _id: id });
+  revalidatePath("/categories");
+  revalidatePath("/products");
+
+  return { ok: true };
 };
