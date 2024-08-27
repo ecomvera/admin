@@ -4,10 +4,12 @@ import { createCategory } from "@/lib/actions/category.action";
 import { ChangeEvent, useState } from "react";
 import { Label } from "../ui/label";
 import { toast } from "../ui/use-toast";
+import { Checkbox } from "../ui/checkbox";
 
 const AddCategory = () => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
+  const [isOffer, setIsOffer] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleInput = (e: any) => {
@@ -28,7 +30,7 @@ const AddCategory = () => {
     }
 
     setLoading(true);
-    const res = await createCategory(name.trim(), slug, "/categories");
+    const res = await createCategory(name.trim(), slug, isOffer, "/categories");
     setLoading(false);
 
     if (!res?.ok) {
@@ -40,6 +42,7 @@ const AddCategory = () => {
     } else {
       setName("");
       setSlug("");
+      setIsOffer(false);
       toast({
         title: "Success",
         // variant: "success",
@@ -60,6 +63,13 @@ const AddCategory = () => {
           onChange={handleInput}
         />
         <Label className="account-form_label text-sm text-dark-3">{slug}</Label>
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox id="offer" checked={isOffer} onCheckedChange={setIsOffer} />
+        <label htmlFor="offer" className="font-medium select-none">
+          Check this box if this is an offer
+        </label>
       </div>
 
       <Button type={loading ? "button" : "submit"} className="bg-dark-3 w-[100px] rounded-xl">

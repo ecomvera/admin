@@ -20,7 +20,7 @@ export function DeleteCategory({ id, name, isGroup = false }: { id: string; name
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
+      <DialogTrigger>
         <MdDeleteOutline className="text-lg cursor-pointer" fill="red" onClick={() => setOpen(true)} />
       </DialogTrigger>
       <DialogContent>

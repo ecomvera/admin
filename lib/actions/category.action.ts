@@ -8,11 +8,11 @@ import { convertToArray } from "../utils";
 import Product from "../models/product.model";
 import { deleteFile } from "./aws";
 
-export const createCategory = async (name: string, slug: string, path: string) => {
+export const createCategory = async (name: string, slug: string, isOffer: boolean, path: string) => {
   connectDB();
 
   try {
-    await Category.create({ name, slug });
+    await Category.create({ name, slug, isOffer });
 
     revalidatePath(path);
     return { ok: true };
@@ -61,7 +61,7 @@ export const getParentCategories = async () => {
 
 export const getAllCategories = async (): Promise<ICategory[]> => {
   connectDB();
-  const res: ICategory[] = await Category.find({ parentId: null }, { products: 0 }).populate({
+  const res: ICategory[] = await Category.find({ parentId: null, isOffer: false }, { products: 0 }).populate({
     path: "children",
     select: { products: 0 },
   });

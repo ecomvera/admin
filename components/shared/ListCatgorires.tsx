@@ -21,7 +21,7 @@ const ListCatgorires = ({ allCategories }: { allCategories: ICategory[] }) => {
           <CommandEmpty>No sub-category found.</CommandEmpty>
           <CommandGroup>
             {allCategories?.map((category) => (
-              <>
+              <div key={category._id}>
                 <CommandItem key={category._id} className="flex justify-between">
                   <div>
                     {category.name}
@@ -37,7 +37,7 @@ const ListCatgorires = ({ allCategories }: { allCategories: ICategory[] }) => {
                     <DeleteCategory id={child._id} name={child.name} />
                   </CommandItem>
                 ))}
-              </>
+              </div>
             ))}
           </CommandGroup>
         </CommandList>

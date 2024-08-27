@@ -7,9 +7,11 @@ import { Label } from "../ui/label";
 import { createSubCategory } from "@/lib/actions/category.action";
 import { toast } from "../ui/use-toast";
 import { ICategory } from "@/types";
+import { Checkbox } from "../ui/checkbox";
 
 const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] }) => {
   const [name, setName] = useState("");
+  const [autoGen, setAutoGen] = useState(true);
   const [slug, setSlug] = useState("");
   const [parentId, setParentId] = useState("");
   const [wearType, setWearType] = useState("");
@@ -17,7 +19,7 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
 
   const handleInput = (e: any) => {
     setName(e.target.value);
-    setSlug(e.target.value.trim().replace(/\s+/g, "-").toLowerCase());
+    if (autoGen) setSlug(e.target.value.trim().replace(/\s+/g, "-").toLowerCase());
   };
 
   const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
@@ -96,7 +98,27 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
           value={name}
           onChange={handleInput}
         />
-        <Label className="account-form_label text-sm text-dark-3">{slug}</Label>
+        <div className="flex items-center gap-2 my-1">
+          <Checkbox
+            id="offer"
+            checked={autoGen}
+            onCheckedChange={(val: boolean) => {
+              setAutoGen(val);
+              if (val) setSlug(name.trim().replace(/\s+/g, "-").toLowerCase());
+            }}
+          />
+          <label htmlFor="offer" className="text-sm select-none">
+            Auto generate slug
+          </label>
+        </div>
+        <Input
+          type="text"
+          className="no-focus"
+          value={slug}
+          placeholder="Category slug"
+          disabled={autoGen}
+          onChange={(e) => setSlug(e.target.value)}
+        />
       </div>
 
       <RadioGroup className="flex" value={wearType} onValueChange={setWearType}>

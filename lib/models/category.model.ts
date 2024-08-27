@@ -10,6 +10,7 @@ const categorySchema = new mongoose.Schema({
     unique: true,
     required: true,
   },
+  isOffer: { type: Boolean },
   wearType: { type: String },
   parentId: { type: String },
   children: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
