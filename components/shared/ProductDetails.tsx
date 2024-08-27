@@ -37,7 +37,11 @@ const LeftGallaryView = ({ images }: { images: IProduct["images"] }) => {
                 alt="product"
                 objectFit="contain"
                 objectPosition="center"
-                onClick={() => handleSlideChange(image.url)}
+                onMouseEnter={() => {
+                  if (currentSlide === image.url) return;
+                  handleSlideChange(image.url);
+                }}
+                // onMouseLeave={() => {}}
               />
             </div>
           ))}
