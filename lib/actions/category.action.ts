@@ -55,7 +55,7 @@ export const createSubCategory = async (categoryId: string, name: string, slug: 
 
 export const getParentCategories = async () => {
   connectDB();
-  const res = await Category.find({ parentId: null }, { children: 0, products: 0 });
+  const res = await Category.find({ parentId: null, isOffer: false }, { children: 0, products: 0 });
   return convertToArray(res);
 };
 
