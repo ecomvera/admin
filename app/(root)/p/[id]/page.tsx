@@ -26,6 +26,7 @@ const Page = ({ params }: { params: { id: string } }) => {
       }
     }
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (loading) return <div className="text-center text-xl text-light-3">Loading...</div>;

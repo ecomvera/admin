@@ -16,6 +16,12 @@ export const connectDB = async () => {
 
   try {
     await mongoose.connect(process.env.MONGODB_URI);
+
+    //register all models
+    if (!mongoose.models.Product) mongoose.model("Product", new mongoose.Schema({}));
+    if (!mongoose.models.Category) mongoose.model("Category", new mongoose.Schema({}));
+    if (!mongoose.models.Attribute) mongoose.model("Attribute", new mongoose.Schema({}));
+
     isConnected = true;
     console.log("MongoDB connected!");
   } catch (error: any) {
