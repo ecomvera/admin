@@ -124,12 +124,16 @@ export const getProducts = async () => {
 
 export const getProductDetails = async (id: string) => {
   await connectDB();
-  const res = await Product.findById(id);
 
-  const data = convertToArray([res], "product", true);
+  try {
+    const res = await Product.findById(id);
 
-  // console.log(data[0]);
-  return data[0];
+    const data = convertToArray([res], "product", true);
+
+    return data[0];
+  } catch (error: any) {
+    return null;
+  }
 };
 
 export const deleteProduct = async (id: string | undefined, path: string) => {

@@ -5,11 +5,12 @@ import { ChangeEvent, useState } from "react";
 import { Label } from "../ui/label";
 import { toast } from "../ui/use-toast";
 import { Checkbox } from "../ui/checkbox";
+import { CheckedState } from "@radix-ui/react-checkbox";
 
 const AddCategory = () => {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [isOffer, setIsOffer] = useState(false);
+  const [isOffer, setIsOffer] = useState<CheckedState>(false);
   const [loading, setLoading] = useState(false);
 
   const handleInput = (e: any) => {
@@ -30,7 +31,7 @@ const AddCategory = () => {
     }
 
     setLoading(true);
-    const res = await createCategory(name.trim(), slug, isOffer, "/categories");
+    const res = await createCategory(name.trim(), slug, Boolean(isOffer), "/categories");
     setLoading(false);
 
     if (!res?.ok) {

@@ -15,6 +15,8 @@ export const createCategory = async (name: string, slug: string, isOffer: boolea
     await Category.create({ name, slug, isOffer });
 
     revalidatePath(path);
+    revalidatePath("/add-product");
+    revalidatePath("/products");
     return { ok: true };
   } catch (error: any) {
     if (error.code === 11000) {
@@ -42,6 +44,7 @@ export const createSubCategory = async (categoryId: string, name: string, slug: 
 
     revalidatePath(path);
     revalidatePath("/add-product");
+    revalidatePath("/products");
     return { ok: true };
   } catch (error: any) {
     if (error.code === 11000) {
@@ -100,6 +103,7 @@ export const deleteCategory = async (id: string) => {
   await Category.deleteOne({ _id: id });
   revalidatePath("/categories");
   revalidatePath("/products");
+  revalidatePath("/add-product");
 
   return { ok: true };
 };

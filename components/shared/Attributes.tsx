@@ -18,7 +18,7 @@ const validation = z.object({
   name: z.string().min(3, { message: "Minimum 3 characters." }).max(30, { message: "Maximum 30 caracters." }),
 });
 
-const Attributes = ({ attributes }: { attributes: { title: string; _id: object }[] }) => {
+const Attributes = ({ attributes }: { attributes: { title: string; _id: string }[] }) => {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);

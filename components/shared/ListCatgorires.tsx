@@ -5,8 +5,9 @@ import { ICategory } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import React from "react";
 import { DeleteCategory } from "../dialogs/deleteCategory";
+import { Skeleton } from "../ui/skeleton";
 
-const ListCatgorires = ({ allCategories }: { allCategories: ICategory[] }) => {
+const ListCatgorires = ({ isLoading, allCategories }: { isLoading: boolean; allCategories: ICategory[] }) => {
   return (
     <div className="w-full">
       <h2 className="head-text py-5 tablet:py-8">All Categories</h2>
@@ -18,7 +19,17 @@ const ListCatgorires = ({ allCategories }: { allCategories: ICategory[] }) => {
           </div>
         </div>
         <CommandList>
-          <CommandEmpty>No sub-category found.</CommandEmpty>
+          {isLoading ? (
+            <CommandEmpty className="flex flex-col gap-5">
+              <Skeleton className="w-full h-[20px] rounded-full" />
+              <Skeleton className="w-full h-[20px] rounded-full" />
+              <Skeleton className="w-full h-[20px] rounded-full" />
+              <Skeleton className="w-full h-[20px] rounded-full" />
+              <Skeleton className="w-full h-[20px] rounded-full" />
+            </CommandEmpty>
+          ) : (
+            <CommandEmpty>No sub-category found.</CommandEmpty>
+          )}
           <CommandGroup>
             {allCategories?.map((category) => (
               <div key={category._id}>

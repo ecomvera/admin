@@ -1,10 +1,32 @@
+"use client";
+
 import AddProduct from "@/components/forms/AddProduct";
+import { toast } from "@/components/ui/use-toast";
 import { fetchAttributes } from "@/lib/actions/attribute.action";
 import { getAllCategories } from "@/lib/actions/category.action";
+import { IAttribute, ICategory } from "@/types";
+import { useEffect, useState } from "react";
 
-const page = async () => {
-  const categories = await getAllCategories();
-  const attributesData = await fetchAttributes();
+const page = () => {
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [attributesData, setAttributesData] = useState<IAttribute[]>([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [categoriesData, attributesData] = await Promise.all([getAllCategories(), fetchAttributes()]);
+        setCategories(categoriesData);
+        setAttributesData(attributesData);
+      } catch (error) {
+        toast({
+          title: "Error",
+          variant: "destructive",
+          description: "Failed to fetch categories and attributes",
+        });
+      }
+    }
+    fetchData();
+  }, []);
 
   return (
     <div>

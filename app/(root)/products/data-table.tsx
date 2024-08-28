@@ -25,14 +25,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ICategory } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
+  isLoading: boolean;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   categories: ICategory[];
 }
 
-function DataTable<TData, TValue>({ columns, data, categories }: DataTableProps<TData, TValue>) {
+function DataTable<TData, TValue>({ isLoading, columns, data, categories }: DataTableProps<TData, TValue>) {
   const [category, setCategory] = React.useState("");
   const [subCategory, setSubCategory] = React.useState("");
   const [subCategories, setSubCategories] = React.useState<ICategory[]>([]);
@@ -177,23 +179,39 @@ function DataTable<TData, TValue>({ columns, data, categories }: DataTableProps<
               </TableRow>
             ))}
           </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
+          {isLoading ? (
+            <TableBody>
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No results.
+                <TableCell colSpan={columns.length} className="h-24">
+                  <div className="flex flex-col gap-5 h-full w-full items-center justify-center">
+                    <Skeleton className="w-full h-[20px] rounded-full" />
+                    <Skeleton className="w-full h-[20px] rounded-full" />
+                    <Skeleton className="w-full h-[20px] rounded-full" />
+                    <Skeleton className="w-full h-[20px] rounded-full" />
+                    <Skeleton className="w-full h-[20px] rounded-full" />
+                  </div>
                 </TableCell>
               </TableRow>
-            )}
-          </TableBody>
+            </TableBody>
+          ) : (
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          )}
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
