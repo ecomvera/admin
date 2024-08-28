@@ -7,7 +7,7 @@ import { getAllCategories } from "@/lib/actions/category.action";
 import { IAttribute, ICategory } from "@/types";
 import { useEffect, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [attributesData, setAttributesData] = useState<IAttribute[]>([]);
 
@@ -37,4 +37,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

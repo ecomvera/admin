@@ -6,7 +6,7 @@ import { getProductDetails } from "@/lib/actions/product.action";
 import { IProduct } from "@/types";
 import React, { useEffect, useState } from "react";
 
-const page = ({ params }: { params: { id: string } }) => {
+const Page = ({ params }: { params: { id: string } }) => {
   const [data, setData] = useState<IProduct>({} as IProduct);
   const [loading, setLoading] = useState(true);
 
@@ -39,4 +39,4 @@ const page = ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default page;
+export default Page;

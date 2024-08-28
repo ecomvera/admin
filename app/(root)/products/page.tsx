@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { ICategory, IProduct } from "@/types";
 import { toast } from "@/components/ui/use-toast";
 
-const page = () => {
+const Page = () => {
   const [products, setProducts] = useState<IProduct[]>([]);
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,4 +41,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

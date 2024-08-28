@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import { IAttribute, ICategory } from "@/types";
 import { toast } from "@/components/ui/use-toast";
 
-const page = () => {
+const Page = () => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [parentCategories, setParentCategories] = useState<ICategory[]>([]);
   const [attributesData, setAttributesData] = useState<IAttribute[]>([]);
@@ -54,4 +54,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

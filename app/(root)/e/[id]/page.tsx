@@ -8,7 +8,7 @@ import { getProductDetails } from "@/lib/actions/product.action";
 import { IAttribute, ICategory, IProduct } from "@/types";
 import React, { useEffect, useState } from "react";
 
-const page = ({ params, searchParams }: { params: { id: string }; searchParams: any }) => {
+const Page = ({ params, searchParams }: { params: { id: string }; searchParams: any }) => {
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [attributesData, setAttributesData] = useState<IAttribute[]>([]);
   const [data, setData] = useState<IProduct>({} as IProduct);
@@ -50,4 +50,4 @@ const page = ({ params, searchParams }: { params: { id: string }; searchParams: 
   );
 };
 
-export default page;
+export default Page;
