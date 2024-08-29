@@ -15,11 +15,15 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     const data = await Product.findOne({ slug })
       .populate({
         path: "category",
+        model: "Category",
         select: "_id name slug",
+        strictPopulate: false,
       })
       .populate({
         path: "subCategory",
+        model: "Category",
         select: "_id name slug",
+        strictPopulate: false,
       })
       .exec();
 
