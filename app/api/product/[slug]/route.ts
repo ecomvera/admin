@@ -12,7 +12,16 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
   const { slug } = params;
 
   try {
-    const data = await Product.findOne({ slug }).exec();
+    const data = await Product.findOne({ slug })
+      .populate({
+        path: "category",
+        select: "_id name slug",
+      })
+      .populate({
+        path: "subCategory",
+        select: "_id name slug",
+      })
+      .exec();
 
     return NextResponse.json({
       ok: true,

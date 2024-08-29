@@ -16,6 +16,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       .populate({
         path: "products",
         model: "Product",
+        select: { category: 0, subCategory: 0 },
       })
       .populate({
         path: "parentId",
