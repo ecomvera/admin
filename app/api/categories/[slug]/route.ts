@@ -12,6 +12,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
   const { slug } = params;
 
   try {
+    const start = Date.now();
     const data = await Category.findOne({ slug })
       .populate({
         path: "products",
@@ -24,6 +25,8 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         select: "_id name slug",
       })
       .exec();
+    const duration = Date.now() - start;
+    console.log("Category [id]-", "Database query time:", duration, "ms");
 
     return NextResponse.json({
       ok: true,

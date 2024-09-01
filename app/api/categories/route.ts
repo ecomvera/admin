@@ -12,6 +12,7 @@ export async function GET(req: NextApiRequest) {
   try {
     let data;
 
+    const start = Date.now();
     if ("no-children" in searchParams) {
       data = await Category.find({ parentId: null, isOffer: false }, { products: 0, children: 0 }).exec();
     } else {
@@ -19,6 +20,8 @@ export async function GET(req: NextApiRequest) {
         .populate({ path: "children", model: "Category", select: { products: 0 } })
         .exec();
     }
+    const duration = Date.now() - start;
+    console.log("Categories -", "Database query time:", duration, "ms");
 
     const response = NextResponse.json({
       ok: true,

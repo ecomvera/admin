@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 let isConnected = false;
 
 export const connectDB = async () => {
+  const start = Date.now();
   mongoose.set("strictQuery", false);
 
   if (!process.env.MONGODB_URI) {
@@ -28,4 +29,6 @@ export const connectDB = async () => {
     console.log("Error connecting to MongoDB");
     console.log(error);
   }
+  const duration = Date.now() - start;
+  console.log("Database -", "Connection time:", duration, "ms");
 };

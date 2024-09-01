@@ -1,3 +1,5 @@
+"use server";
+
 import Product from "@/lib/models/product.model";
 import { connectDB } from "@/lib/mongoose";
 import type { NextApiRequest } from "next";
@@ -12,13 +14,17 @@ export async function GET(req: NextApiRequest) {
   try {
     let data;
 
+    const start = Date.now();
     if ("table-data" in searchParams) {
       data = await Product.find()
-        .populate({ path: "category", select: "name" })
-        .populate({ path: "subCategory", select: "name" });
+        .populate({ path: "category", select: "name", strictPopulate: false })
+        .populate({ path: "subCategory", select: "name", strictPopulate: false })
+        .exec();
     } else {
-      data = await Product.find();
+      data = await Product.find().exec();
     }
+    const duration = Date.now() - start;
+    console.log("Products -", "Database query time:", duration, "ms");
 
     return NextResponse.json({
       ok: true,
