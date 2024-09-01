@@ -22,7 +22,18 @@ import { useFileStore, useProductStore } from "@/stores/product";
 // @ts-ignore
 import { isEqual } from "lodash";
 
-const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; attributesData: IAttribute[] }) => {
+interface Props {
+  categories: {
+    data: ICategory[];
+    isLoading: boolean;
+  };
+  attributesData: {
+    data: IAttribute[];
+    isLoading: boolean;
+  };
+}
+
+const AddProduct = ({ categories, attributesData }: Props) => {
   const router = useRouter();
   const { toast } = useToast();
   const { files, setFiles } = useFileStore();
@@ -145,7 +156,7 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
 
   useEffect(() => {
     if (category) {
-      setSubCategories(categories.find((item) => item._id === category)?.children || []);
+      setSubCategories(categories.data.find((item) => item._id === category)?.children || []);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
@@ -171,8 +182,20 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
             <InputField control={form.control} name="mrp" label="MRP" type="number" />
           </div>
           <div className="flex gap-3">
-            <SelectField value={category} onChange={setCategory} data={categories} label="Category" />
-            <SelectField value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />
+            <SelectField
+              value={category}
+              onChange={setCategory}
+              isLoading={categories.isLoading}
+              data={categories.data}
+              label="Category"
+            />
+            <SelectField
+              value={subCategory}
+              onChange={setSubCategory}
+              isLoading={categories.isLoading}
+              data={subCategories}
+              label="Sub Category"
+            />
           </div>
           <div className="flex gap-3">
             <InputField control={form.control} name="material" label="Material" />
@@ -183,7 +206,8 @@ const AddProduct = ({ categories, attributesData }: { categories: ICategory[]; a
               label="Attributes"
               attributes={attributes}
               setAttributes={setAttributes}
-              attributesData={attributesData}
+              isLoading={attributesData.isLoading}
+              attributesData={attributesData.data}
             />
             <div className="w-full flex flex-col gap-5 desktop:flex-row">
               <Sizes name="sizes" label="Select Sizes" onChange={setSizes} />

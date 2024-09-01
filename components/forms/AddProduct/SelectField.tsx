@@ -8,18 +8,20 @@ const SelectFields = ({
   onChange,
   data,
   label,
+  isLoading,
 }: {
   value: string;
   onChange: Dispatch<SetStateAction<string>>;
   data: ICategory[];
   label: string;
+  isLoading?: boolean;
 }) => {
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
       <Select onValueChange={onChange} value={value}>
         <SelectTrigger className="text-base">
-          <SelectValue placeholder={`Select`} />
+          <SelectValue placeholder={isLoading ? "Loading..." : "Select"} />
         </SelectTrigger>
         <SelectContent>
           {data?.map((item) => (

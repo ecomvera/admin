@@ -9,7 +9,7 @@ import Product from "../models/product.model";
 import { deleteFile } from "./aws";
 
 export const createCategory = async (name: string, slug: string, isOffer: boolean, path: string) => {
-  connectDB();
+  await connectDB();
 
   try {
     await Category.create({ name, slug, isOffer });
@@ -29,7 +29,7 @@ export const createCategory = async (name: string, slug: string, isOffer: boolea
 };
 
 export const createSubCategory = async (categoryId: string, name: string, slug: string, wearType: string, path: string) => {
-  connectDB();
+  await connectDB();
 
   try {
     const category = await Category.findById(categoryId);
@@ -57,13 +57,13 @@ export const createSubCategory = async (categoryId: string, name: string, slug: 
 };
 
 export const getParentCategories = async () => {
-  connectDB();
+  await connectDB();
   const res = await Category.find({ parentId: null, isOffer: false }, { children: 0, products: 0 });
   return convertToArray(res);
 };
 
 export const getAllCategories = async (): Promise<ICategory[]> => {
-  connectDB();
+  await connectDB();
   const res: ICategory[] = await Category.find({ parentId: null, isOffer: false }, { products: 0 }).populate({
     path: "children",
     select: { products: 0 },
@@ -72,7 +72,7 @@ export const getAllCategories = async (): Promise<ICategory[]> => {
 };
 
 export const deleteCategory = async (id: string) => {
-  connectDB();
+  await connectDB();
   const category = await Category.findById(id);
   if (!category) {
     return { ok: false, error: "Category not found" };

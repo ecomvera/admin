@@ -6,7 +6,7 @@ import { connectDB } from "../mongoose";
 import { convertToArray } from "../utils";
 
 export const createAttribute = async (data: string, path: string) => {
-  connectDB();
+  await connectDB();
 
   try {
     await Attribute.create({
@@ -27,13 +27,13 @@ export const createAttribute = async (data: string, path: string) => {
 };
 
 export const fetchAttributes = async () => {
-  connectDB();
+  await connectDB();
   const res = await Attribute.find({});
   return convertToArray(res);
 };
 
 export const deleteAttribute = async (id: string, path: string) => {
-  connectDB();
+  await connectDB();
   await Attribute.findByIdAndDelete(id);
   revalidatePath(path);
 };

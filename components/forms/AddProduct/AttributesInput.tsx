@@ -20,9 +20,10 @@ interface Props {
     >
   >;
   attributesData: IAttribute[];
+  isLoading?: boolean;
 }
 
-const AttributesInput = ({ label, attributes, setAttributes, attributesData }: Props) => {
+const AttributesInput = ({ label, attributes, setAttributes, attributesData, isLoading }: Props) => {
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
@@ -52,11 +53,11 @@ const AttributesInput = ({ label, attributes, setAttributes, attributesData }: P
 
       <Select onValueChange={(field) => setAttributes([...attributes, { key: field, value: "" }])} value="">
         <SelectTrigger className="text-base">
-          <SelectValue placeholder={`Select the key`} />
+          <SelectValue placeholder={isLoading ? "Loading..." : `Select the key`} />
         </SelectTrigger>
         <SelectContent>
           {attributesData
-            .filter((a) => !attributes.some((k) => k.key === a.title))
+            ?.filter((a) => !attributes.some((k) => k.key === a.title))
             .map((a) => (
               <SelectItem key={a._id} value={a.title}>
                 {a.title}

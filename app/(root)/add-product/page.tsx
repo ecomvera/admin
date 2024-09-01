@@ -1,38 +1,22 @@
 "use client";
 
 import AddProduct from "@/components/forms/AddProduct";
-import { toast } from "@/components/ui/use-toast";
-import { fetchAttributes } from "@/lib/actions/attribute.action";
-import { getAllCategories } from "@/lib/actions/category.action";
-import { IAttribute, ICategory } from "@/types";
-import { useEffect, useState } from "react";
+import useSWR from "swr";
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const Page = () => {
-  const [categories, setCategories] = useState<ICategory[]>([]);
-  const [attributesData, setAttributesData] = useState<IAttribute[]>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [categoriesData, attributesData] = await Promise.all([getAllCategories(), fetchAttributes()]);
-        setCategories(categoriesData);
-        setAttributesData(attributesData);
-      } catch (error) {
-        toast({
-          title: "Error",
-          variant: "destructive",
-          description: "Failed to fetch categories and attributes",
-        });
-      }
-    }
-    fetchData();
-  }, []);
+  const categories = useSWR("/api/categories", fetcher);
+  const attributes = useSWR("/api/attributes", fetcher);
 
   return (
     <div>
       <h2 className="head-text py-8">Add Product</h2>
 
-      <AddProduct categories={categories} attributesData={attributesData} />
+      <AddProduct
+        categories={{ data: categories?.data?.data, isLoading: categories.isLoading }}
+        attributesData={{ data: attributes?.data?.data, isLoading: attributes.isLoading }}
+      />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import Category from "@/lib/models/category.model";
+import Attribute from "@/lib/models/attribute.model";
 import { connectDB } from "@/lib/mongoose";
 import type { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
@@ -10,10 +10,7 @@ export async function GET(req: NextApiRequest) {
   const searchParams = Object.fromEntries(url.searchParams.entries());
 
   try {
-    const data = await Category.find({ parentId: null, isOffer: false }, { products: 0 })
-      .populate({ path: "children", model: "Category", select: { products: 0 } })
-      .exec();
-
+    const data = await Attribute.find({}).exec();
     const response = NextResponse.json({
       ok: true,
       data,
