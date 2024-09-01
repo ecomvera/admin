@@ -1,5 +1,5 @@
 import { Input } from "@/components/ui/input";
-import Image from "next/image";
+import Image from "next/legacy/image";
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { computeSHA256 } from "@/lib/utils";
