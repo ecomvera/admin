@@ -3,8 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { connectDB } from "../mongoose";
 import Category from "../models/category.model";
-import { ICategory } from "@/types";
-import { convertToArray } from "../utils";
 import Product from "../models/product.model";
 import { deleteFile } from "./aws";
 
@@ -54,21 +52,6 @@ export const createSubCategory = async (categoryId: string, name: string, slug: 
     console.error(error);
     return { ok: false, error: error.message };
   }
-};
-
-export const getParentCategories = async () => {
-  await connectDB();
-  const res = await Category.find({ parentId: null, isOffer: false }, { children: 0, products: 0 });
-  return convertToArray(res);
-};
-
-export const getAllCategories = async (): Promise<ICategory[]> => {
-  await connectDB();
-  const res: ICategory[] = await Category.find({ parentId: null, isOffer: false }, { products: 0 }).populate({
-    path: "children",
-    select: { products: 0 },
-  });
-  return convertToArray(res, "category");
 };
 
 export const deleteCategory = async (id: string) => {

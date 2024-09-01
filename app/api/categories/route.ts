@@ -10,9 +10,15 @@ export async function GET(req: NextApiRequest) {
   const searchParams = Object.fromEntries(url.searchParams.entries());
 
   try {
-    const data = await Category.find({ parentId: null, isOffer: false }, { products: 0 })
-      .populate({ path: "children", model: "Category", select: { products: 0 } })
-      .exec();
+    let data;
+
+    if ("no-children" in searchParams) {
+      data = await Category.find({ parentId: null, isOffer: false }, { products: 0, children: 0 }).exec();
+    } else {
+      data = await Category.find({ parentId: null, isOffer: false }, { products: 0 })
+        .populate({ path: "children", model: "Category", select: { products: 0 } })
+        .exec();
+    }
 
     const response = NextResponse.json({
       ok: true,

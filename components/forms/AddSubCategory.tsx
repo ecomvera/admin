@@ -9,7 +9,7 @@ import { toast } from "../ui/use-toast";
 import { ICategory } from "@/types";
 import { Checkbox } from "../ui/checkbox";
 
-const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] }) => {
+const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICategory[]; isLoading: boolean }) => {
   const [name, setName] = useState("");
   const [autoGen, setAutoGen] = useState(true);
   const [slug, setSlug] = useState("");
@@ -77,8 +77,8 @@ const AddSubCategory = ({ parentCategories }: { parentCategories: ICategory[] })
   return (
     <form className="flex flex-col justify-start gap-5 border p-2" onSubmit={onSubmit}>
       <Select onValueChange={(v) => setParentId(v)} value={parentId}>
-        <SelectTrigger className="text-base">
-          <SelectValue placeholder="Select the category" />
+        <SelectTrigger className="text-base" disabled={isLoading}>
+          <SelectValue placeholder={isLoading ? "Loading..." : "Select the category"} />
         </SelectTrigger>
         <SelectContent>
           {parentCategories.map((category) => (

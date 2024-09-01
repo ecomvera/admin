@@ -28,19 +28,25 @@ export const columns: ColumnDef<IProduct>[] = [
     },
     cell: ({ row }) => (
       <div className="lowercase ml-2 tablet:ml-4">
-        <Link href={`/p/${row.original._id}`}>{row.getValue("name")}</Link>
+        <Link href={`/p/${row.original.slug}`}>{row.getValue("name")}</Link>
       </div>
     ),
   },
   {
     accessorKey: "category",
     header: "Category",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("category")}</div>,
+    cell: ({ row }) => {
+      const data: { name: string } = row.getValue("category");
+      return <div className="capitalize">{data.name}</div>;
+    },
   },
   {
     accessorKey: "subCategory",
     header: "Sub Category",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("subCategory")}</div>,
+    cell: ({ row }) => {
+      const data: { name: string } = row.getValue("subCategory");
+      return <div className="capitalize">{data.name}</div>;
+    },
   },
   {
     accessorKey: "quantity",
@@ -105,10 +111,10 @@ export const columns: ColumnDef<IProduct>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link href={`/e/${row.original._id}?path=/products`}>
+            <Link href={`/e/${row.original.slug}?path=/products`}>
               <DropdownMenuItem>Edit</DropdownMenuItem>
             </Link>
-            <Link href={`/p/${row.original._id}`}>
+            <Link href={`/p/${row.original.slug}`}>
               <DropdownMenuItem>View product details</DropdownMenuItem>
             </Link>
             <DropdownMenuItem onClick={() => {}}>

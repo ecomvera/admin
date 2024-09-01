@@ -10,7 +10,15 @@ export async function GET(req: NextApiRequest) {
   const searchParams = Object.fromEntries(url.searchParams.entries());
 
   try {
-    const data = await Product.find();
+    let data;
+
+    if ("table-data" in searchParams) {
+      data = await Product.find()
+        .populate({ path: "category", select: "name" })
+        .populate({ path: "subCategory", select: "name" });
+    } else {
+      data = await Product.find();
+    }
 
     return NextResponse.json({
       ok: true,

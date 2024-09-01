@@ -6,7 +6,7 @@ import AddSubCategory from "../forms/AddSubCategory";
 import AddCategory from "../forms/AddCategory";
 import { ICategory } from "@/types";
 
-const CategoryTabs = ({ parentCategories }: { parentCategories: ICategory[] }) => {
+const CategoryTabs = ({ isLoading, parentCategories }: { isLoading: boolean; parentCategories: ICategory[] }) => {
   const [categoryType, setCategoryType] = useState("sub-category");
 
   return (
@@ -21,7 +21,7 @@ const CategoryTabs = ({ parentCategories }: { parentCategories: ICategory[] }) =
       </TabsList>
 
       <TabsContent value="sub-category">
-        <AddSubCategory parentCategories={parentCategories} />
+        <AddSubCategory parentCategories={parentCategories} isLoading={isLoading} />
       </TabsContent>
       <TabsContent value="parent-category">
         <AddCategory />

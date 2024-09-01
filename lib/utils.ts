@@ -6,6 +6,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+
 export function isBase64Image(imageData: string) {
   const base64Regex = /^data:image\/(png|jpe?g|gif|webp);base64,/;
   return base64Regex.test(imageData);
@@ -20,31 +22,3 @@ export async function computeSHA256(file: File) {
 }
 
 export const generateFileName = (bytes = 32) => c.randomBytes(bytes).toString("hex");
-
-// convert mongoose object to javascript object
-export const convertToArray = (arr: any[], path?: string, singleRow?: boolean) => {
-  const converted = arr.map((item) => {
-    const { _id, __v, ...rest } = item.toObject();
-    // category model
-    if (path === "category" && item.children?.length > 0) {
-      rest.children = convertToArray(item.children);
-    }
-
-    // product model
-    if (path === "product") {
-      rest.images = convertToArray(item.images);
-      rest.attributes = convertToArray(item.attributes);
-      // check if it is a single row
-      const isSingleRow = path === "product" && singleRow;
-      rest.category = isSingleRow ? item.category.toString() : convertToArray([item.category])[0].name;
-      rest.subCategory = isSingleRow ? item.subCategory.toString() : convertToArray([item.subCategory])[0].name;
-    }
-
-    return {
-      _id: _id.toString(),
-      ...rest,
-    };
-  });
-
-  return converted;
-};

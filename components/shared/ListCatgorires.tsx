@@ -15,12 +15,12 @@ const ListCatgorires = ({ isLoading, allCategories }: { isLoading: boolean; allC
       <Command>
         <div className="flex gap-3">
           <div className="w-full flex-1">
-            <CommandInput placeholder="Search sub-category..." />
+            <CommandInput placeholder={isLoading ? "Loading..." : "Search sub-category..."} />
           </div>
         </div>
         <CommandList>
           {isLoading ? (
-            <CommandEmpty className="flex flex-col gap-5">
+            <CommandEmpty className="flex flex-col gap-5 mt-5">
               <Skeleton className="w-full h-[20px] rounded-full" />
               <Skeleton className="w-full h-[20px] rounded-full" />
               <Skeleton className="w-full h-[20px] rounded-full" />

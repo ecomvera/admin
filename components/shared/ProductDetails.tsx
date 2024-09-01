@@ -60,7 +60,11 @@ const ProductDetail = ({ data }: { data: IProduct }) => {
 
   return (
     <div className="w-full px-2 tablet:px-5 laptop:px-10 mt-5 tablet:mt-0">
-      <Link href={`/e/${data._id}?path=/p/${data._id}`}>
+      <div className="text-sm font-semibold text-light-3 mb-5">
+        {data.category?.name} / {data.subCategory?.name}
+      </div>
+
+      <Link href={`/e/${data.slug}?path=/p/${data.slug}`}>
         <Button variant="outline" size="sm" className="mr-2 text-lg border-blue-700">
           Edit
         </Button>

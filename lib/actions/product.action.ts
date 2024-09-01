@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { connectDB } from "../mongoose";
 import { IProduct } from "@/types";
-import { convertToArray } from "../utils";
 import Category from "../models/category.model";
 import Product from "../models/product.model";
 import { deleteFile } from "./aws";
@@ -108,31 +107,6 @@ export const updateProduct = async (id: string | undefined, product: IProduct, p
   } catch (error: any) {
     console.error(error);
     return { ok: false, error: error.message };
-  }
-};
-
-export const getProducts = async () => {
-  await connectDB();
-
-  const res = await Product.find()
-    .populate({ path: "category", select: "name" })
-    .populate({ path: "subCategory", select: "name" });
-  const data: IProduct[] = convertToArray(res, "product");
-
-  return data;
-};
-
-export const getProductDetails = async (id: string) => {
-  await connectDB();
-
-  try {
-    const res = await Product.findById(id);
-
-    const data = convertToArray([res], "product", true);
-
-    return data[0];
-  } catch (error: any) {
-    return null;
   }
 };
 

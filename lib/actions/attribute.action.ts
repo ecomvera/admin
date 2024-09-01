@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import Attribute from "../models/attribute.model";
 import { connectDB } from "../mongoose";
-import { convertToArray } from "../utils";
 
 export const createAttribute = async (data: string, path: string) => {
   await connectDB();
@@ -24,12 +23,6 @@ export const createAttribute = async (data: string, path: string) => {
     console.log(error);
     return { ok: false, error: error.message };
   }
-};
-
-export const fetchAttributes = async () => {
-  await connectDB();
-  const res = await Attribute.find({});
-  return convertToArray(res);
 };
 
 export const deleteAttribute = async (id: string, path: string) => {

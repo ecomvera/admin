@@ -32,8 +32,8 @@ const EditProduct = ({
   const { toast } = useToast();
   const router = useRouter();
   const [sizes, setSizes] = useState<string[]>(product.sizes);
-  const [category, setCategory] = useState(product.category);
-  const [subCategory, setSubCategory] = useState(product.subCategory);
+  const [category, setCategory] = useState(product.category._id);
+  const [subCategory, setSubCategory] = useState(product.subCategory._id);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [attributes, setAttributes] = useState<{ key: string; value: string }[]>(product.attributes);
   const [files, setFiles] = useState<{ key: string; blob?: string; url: string }[]>(product.images);
@@ -69,8 +69,10 @@ const EditProduct = ({
       quantity: Number(values.quantity),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
+      //@ts-ignore
       category: category,
-      subCategory,
+      //@ts-ignore
+      subCategory: subCategory,
       sizes,
       attributes,
     };
