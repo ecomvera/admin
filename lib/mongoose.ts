@@ -4,10 +4,12 @@ let isConnected = false;
 
 export const connectDB = async () => {
   const start = Date.now();
-  mongoose.set("strictQuery", false);
+  mongoose.set("strictQuery", true);
+  mongoose.set("debug", false);
 
   if (!process.env.MONGODB_URI) {
-    throw new Error("Invalid/Missing environment variable: 'MONGODB_URI'");
+    console.log("\x1b[31m", "Missing environment variable: 'MONGODB_URI'", "\n\x1b[0m");
+    process.exit(0);
   }
 
   if (isConnected) {
@@ -26,7 +28,7 @@ export const connectDB = async () => {
     isConnected = true;
     console.log("MongoDB connected!");
   } catch (error: any) {
-    console.log("Error connecting to MongoDB");
+    console.log("\x1b[31m", "Error connecting to MongoDB", "\n\x1b[0m");
     console.log(error);
   }
   const duration = Date.now() - start;

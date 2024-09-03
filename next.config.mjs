@@ -7,8 +7,8 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        // hostname: "saasecomerce.s3.ap-south-1.amazonaws.com",
-        hostname: "trosoft.s3.ap-southeast-2.amazonaws.com",
+        // hostname: "res.cloudinary.com",
+        hostname: "via.placeholder.com",
       },
     ],
   },

@@ -7,7 +7,6 @@ const categorySchema = new mongoose.Schema({
   },
   slug: {
     type: String,
-    unique: true,
     required: true,
   },
   isOffer: { type: Boolean },
@@ -16,6 +15,9 @@ const categorySchema = new mongoose.Schema({
   children: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }],
   products: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 });
+
+// add unique constraint
+categorySchema.index({ slug: 1, parentId: 1 }, { unique: true });
 
 const Category = mongoose.models?.Category || mongoose.model("Category", categorySchema);
 export default Category;

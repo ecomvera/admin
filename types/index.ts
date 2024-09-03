@@ -16,8 +16,8 @@ export interface IProduct {
   price: number;
   mrp: number;
   images: { key: string; url: string }[];
-  category: { _id: string; name: string; slug?: string };
-  subCategory: { _id: string; name: string; slug?: string };
+  category: { _id: string; name: string; slug?: string } | string;
+  subCategory: { _id: string; name: string; slug?: string } | string;
   material: string;
   quantity: number;
   sizes: string[];

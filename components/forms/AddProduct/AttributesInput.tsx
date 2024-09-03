@@ -30,7 +30,7 @@ const AttributesInput = ({ label, attributes, setAttributes, attributesData, isL
 
       {attributes?.map((item, index) => (
         <div className="flex gap-3" key={index}>
-          <Input value={item.key} aria-checked className="text-base font-semibold" />
+          <Input value={item.key} aria-checked className="text-base font-semibold" readOnly />
           <Input
             type="text"
             placeholder="value"
