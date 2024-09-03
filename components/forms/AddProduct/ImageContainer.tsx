@@ -1,129 +1,116 @@
-import { Input } from "@/components/ui/input";
-import Image from "next/legacy/image";
-import { ChangeEvent, useState } from "react";
-import { Label } from "@/components/ui/label";
-import { toast } from "@/components/ui/use-toast";
-import { RxCrossCircled } from "react-icons/rx";
+import React, { Dispatch, SetStateAction, useState } from "react";
+import ImagesGrid from "./ImagesGrid";
+import { Button } from "@/components/ui/button";
+import { BlockPicker } from "react-color";
+import { IImageFile } from "@/types";
 
 interface Props {
-  files: { key: string; blob: string; url: string; publicId: string }[];
-  setFiles: (
-    files: {
-      key: string;
-      blob: string;
-      url: string;
-      publicId: string;
-    }[]
-  ) => void;
+  colors: string[];
+  files: IImageFile[];
+  setFiles: (files: IImageFile[]) => void;
+  setColors: Dispatch<SetStateAction<string[]>>;
 }
 
-const ImageContainer = ({ files, setFiles }: Props) => {
-  const [loading, setLoading] = useState<{ id?: string; action?: string }>({});
+const ImageContainer = ({ files, setFiles, colors, setColors }: Props) => {
+  const [currentColor, setCurrentColor] = useState("#000000");
+  const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
-  const handleImage = async (e: ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault();
-
-    setLoading({ id: e.target.id, action: "uploading" });
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      if (!file.type.includes("image")) return;
-
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const response = await fetch("/api/image", { method: "POST", body: formData });
-      const res = await response.json();
-      if (!res.ok) {
-        toast({
-          title: "Error",
-          description: "File upload failed",
-          variant: "destructive",
-        });
-        setLoading({});
-        return;
-      }
-
-      const fileURL = res.data.url;
-      const public_id = res.data.public_id;
-
-      const blob = URL.createObjectURL(file);
-
-      if (files.some((f) => f.key === e.target.id)) {
-        const i = files.findIndex((f) => f.key === e.target.id);
-        const oldImgPublicId = files[i].publicId;
-        // deleting the old image from cloudinary
-        await fetch(`/api/image?public_ids=${oldImgPublicId}`, { method: "DELETE" });
-
-        const newFiles = files.map((f) =>
-          f.key === e.target.id ? { key: e.target.id, blob: blob, url: fileURL, publicId: public_id } : f
-        );
-        setFiles(newFiles);
-      } else {
-        const newFiles = [...files, { key: e.target.id, blob: blob, url: fileURL, publicId: public_id }];
-        setFiles(newFiles);
-      }
-    }
-
-    setLoading({});
-  };
-
-  const removeImage = async (label: string) => {
-    setLoading({ id: label, action: "deleting" });
-    const publicId = files.find((f) => f.key === label)?.publicId || "";
-    await fetch(`/api/image?public_ids=${publicId}`, { method: "DELETE" });
-    const filterdFiles = files.filter((f) => f.key !== label);
-    setFiles(filterdFiles);
-    setLoading({});
+  const pickedColor = (color: string) => {
+    setDisplayColorPicker(false);
+    setColors([...colors, color]);
   };
 
   return (
-    <div className="flex gap-3 px-2">
-      <ImageBox files={files} handleImage={handleImage} removeImage={removeImage} label="image1" loading={loading} />
-      <ImageBox files={files} handleImage={handleImage} removeImage={removeImage} label="image2" loading={loading} />
-      <ImageBox files={files} handleImage={handleImage} removeImage={removeImage} label="image3" loading={loading} />
-      <ImageBox files={files} handleImage={handleImage} removeImage={removeImage} label="image4" loading={loading} />
-      <ImageBox files={files} handleImage={handleImage} removeImage={removeImage} label="image5" loading={loading} />
+    <div>
+      <div>
+        <Button variant="outline" className="flex items-center" onClick={() => setDisplayColorPicker(!displayColorPicker)}>
+          <span className="mr-2 text-xl mt-[-3px]">+</span> Add Images
+        </Button>
+        {displayColorPicker ? (
+          <div className="absolute z-[2]">
+            <div
+              className="fixed top-0 left-0 right-0 bottom-0"
+              onClick={() => setDisplayColorPicker(!displayColorPicker)}
+            />
+            <BlockPicker
+              colors={["#f44336", "#e91e63", "#9c27b0", "yellow"]}
+              color={currentColor}
+              onChange={(color: any) => {
+                setCurrentColor(color.hex);
+                pickedColor(color.hex);
+              }}
+            />
+          </div>
+        ) : null}
+      </div>
+
+      {colors.map((color) => (
+        <ColorContainer key={color} color={color} files={files} setFiles={setFiles} colors={colors} setColors={setColors} />
+      ))}
     </div>
   );
 };
 
-const ImageBox = ({
-  label,
+const ColorContainer = ({
+  color,
   files,
-  handleImage,
-  removeImage,
-  loading,
+  setFiles,
+  colors,
+  setColors,
 }: {
-  label: string;
-  files: { key: string; blob: string }[];
-  handleImage: (e: ChangeEvent<HTMLInputElement>) => void;
-  removeImage: (label: string) => void;
-  loading: { id?: string; action?: string };
+  color: string;
+  colors: string[];
+  files: IImageFile[];
+  setFiles: (files: IImageFile[]) => void;
+  setColors: Dispatch<SetStateAction<string[]>>;
 }) => {
-  const i = files.findIndex((f) => f.key === label);
-  return (
-    <div className="flex flex-col gap-1 items-center pb-3">
-      <div className="border w-24 h-24">
-        <Label htmlFor={label} className="cursor-pointer h-full flex items-center justify-center overflow-hidden">
-          {files[i]?.blob ? (
-            <Image src={files[i]?.blob} alt="image" width={96} height={96} priority className="object-cover" />
-          ) : (
-            <Image src={"/assets/fallback.jpg"} alt="image" width={96} height={96} priority className="object-cover" />
-          )}
-        </Label>
+  const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
-        <Input type="file" accept="image/*" className="hidden" id={label} onChange={(e) => handleImage(e)} />
-      </div>
-      <div className="flex justify-around w-full items-center">
-        {loading?.id === label ? (
-          <p className="text-sm">{loading?.action === "uploading" ? "Uploading..." : "Deleting..."}</p>
-        ) : (
-          <>
-            <p className="text-sm">{label.slice(0, 1).toUpperCase() + label.slice(1)}</p>
-            {i !== -1 && <RxCrossCircled className="text-red-700 cursor-pointer" onClick={() => removeImage(label)} />}
-          </>
+  const updateColor = (newColor: any) => {
+    setColors(colors.map((c) => (c === color ? newColor.hex : c)));
+    setFiles(
+      files.map((f) =>
+        f.color === color ? { ...f, color: newColor.hex, key: f.key.split("-")[0] + "-" + newColor.hex } : f
+      )
+    );
+  };
+
+  return (
+    <div className="mt-5">
+      <div className="flex gap-3 m-2 items-center relative">
+        <p>{color}</p>
+        <Button
+          size={"icon"}
+          style={{ backgroundColor: color }}
+          className="border border-black rounded"
+          onClick={() => setDisplayColorPicker(!displayColorPicker)}
+        ></Button>
+        {displayColorPicker && (
+          <div className="absolute z-[2]">
+            <div className="fixed top-0 left-0 right-0 bottom-0" onClick={() => setDisplayColorPicker(false)} />
+            <BlockPicker
+              colors={["#f44336", "#e91e63", "#9c27b0", "yellow"]}
+              color={color}
+              onChange={updateColor}
+              className="mt-[230px]"
+            />
+          </div>
+        )}
+
+        {files.filter((f) => f.color === color).length === 0 && (
+          <Button
+            variant="outline"
+            size={"icon"}
+            className="px-2 text-base font-bold text-red-500 rounded hover:border-gray-300"
+            onClick={() => {
+              setColors(colors.filter((c) => c !== color));
+            }}
+          >
+            X
+          </Button>
         )}
       </div>
+      <ImagesGrid files={files} setFiles={setFiles} color={color} />
     </div>
   );
 };
