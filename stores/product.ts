@@ -1,12 +1,10 @@
-import { IProduct } from "@/types";
-import { z } from "zod";
 import { create } from "zustand";
 
-export const files: { key: string; blob: string; url: string }[] = [];
+const files: { key: string; blob: string; url: string; publicId: string }[] = [];
 
 interface IFiles {
-  files: { key: string; blob: string; url: string }[];
-  setFiles: (files: { key: string; blob: string; url: string }[]) => void;
+  files: { key: string; blob: string; url: string; publicId: string }[];
+  setFiles: (files: { key: string; blob: string; url: string; publicId: string }[]) => void;
 }
 
 export const useFileStore = create<IFiles>((set) => ({

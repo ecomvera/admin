@@ -24,10 +24,7 @@ const productSchema = new mongoose.Schema({
   },
   category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
   subCategory: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
-  images: {
-    type: [{ key: String, url: String }],
-    required: true,
-  },
+  images: { type: [{ key: String, url: String, publicId: String }], required: true },
   material: {
     type: String,
     required: true,
@@ -49,10 +46,7 @@ const productSchema = new mongoose.Schema({
   isBestSeller: {
     type: Boolean,
   },
-  attributes: {
-    type: [{ key: String, value: String }],
-    required: true,
-  },
+  attributes: { type: [{ key: String, value: String }], required: true },
 });
 
 const Product = mongoose.models?.Product || mongoose.model("Product", productSchema);

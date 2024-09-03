@@ -1,53 +1,39 @@
 import { Input } from "@/components/ui/input";
 import Image from "next/legacy/image";
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Label } from "@/components/ui/label";
-import { computeSHA256 } from "@/lib/utils";
-import { deleteFile, getSignedURL } from "@/lib/actions/aws";
 import { toast } from "@/components/ui/use-toast";
 import { RxCrossCircled } from "react-icons/rx";
 
 interface Props {
-  files: { key: string; blob: string; url: string }[];
+  files: { key: string; blob: string; url: string; publicId: string }[];
   setFiles: (
     files: {
       key: string;
       blob: string;
       url: string;
+      publicId: string;
     }[]
   ) => void;
 }
 
 const ImageContainer = ({ files, setFiles }: Props) => {
-  const [loading, setLoading] = useState<{ id?: string }>({});
-
-  const uploadImage = async (file: File) => {
-    const checksum = await computeSHA256(file);
-    const res = await getSignedURL(file.type, file.size, checksum);
-    if (!res.success) return;
-
-    const url = res.url || "";
-
-    const result = await fetch(url, {
-      method: "PUT",
-      body: file,
-      headers: {
-        "Content-Type": file.type,
-      },
-    });
-    return result.url.split("?")[0];
-  };
+  const [loading, setLoading] = useState<{ id?: string; action?: string }>({});
 
   const handleImage = async (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
 
-    setLoading({ id: e.target.id });
+    setLoading({ id: e.target.id, action: "uploading" });
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       if (!file.type.includes("image")) return;
 
-      const fileURL = await uploadImage(file);
-      if (!fileURL) {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const response = await fetch("/api/image", { method: "POST", body: formData });
+      const res = await response.json();
+      if (!res.ok) {
         toast({
           title: "Error",
           description: "File upload failed",
@@ -57,16 +43,23 @@ const ImageContainer = ({ files, setFiles }: Props) => {
         return;
       }
 
+      const fileURL = res.data.url;
+      const public_id = res.data.public_id;
+
       const blob = URL.createObjectURL(file);
 
       if (files.some((f) => f.key === e.target.id)) {
         const i = files.findIndex((f) => f.key === e.target.id);
-        const oldURL = files[i].url.split("/")[3];
-        await deleteFile(oldURL, "/add-product"); // delete old image
-        const newFiles = files.map((f) => (f.key === e.target.id ? { key: e.target.id, blob: blob, url: fileURL } : f));
+        const oldImgPublicId = files[i].publicId;
+        // deleting the old image from cloudinary
+        await fetch(`/api/image?public_ids=${oldImgPublicId}`, { method: "DELETE" });
+
+        const newFiles = files.map((f) =>
+          f.key === e.target.id ? { key: e.target.id, blob: blob, url: fileURL, publicId: public_id } : f
+        );
         setFiles(newFiles);
       } else {
-        const newFiles = [...files, { key: e.target.id, blob: blob, url: fileURL }];
+        const newFiles = [...files, { key: e.target.id, blob: blob, url: fileURL, publicId: public_id }];
         setFiles(newFiles);
       }
     }
@@ -75,11 +68,12 @@ const ImageContainer = ({ files, setFiles }: Props) => {
   };
 
   const removeImage = async (label: string) => {
-    const fileURL = files.find((f) => f.key === label)?.url || "";
-    const key = fileURL.split("/")[fileURL.split("/").length - 1];
-    await deleteFile(key, "/add-product");
+    setLoading({ id: label, action: "deleting" });
+    const publicId = files.find((f) => f.key === label)?.publicId || "";
+    await fetch(`/api/image?public_ids=${publicId}`, { method: "DELETE" });
     const filterdFiles = files.filter((f) => f.key !== label);
     setFiles(filterdFiles);
+    setLoading({});
   };
 
   return (
@@ -104,7 +98,7 @@ const ImageBox = ({
   files: { key: string; blob: string }[];
   handleImage: (e: ChangeEvent<HTMLInputElement>) => void;
   removeImage: (label: string) => void;
-  loading: { id?: string };
+  loading: { id?: string; action?: string };
 }) => {
   const i = files.findIndex((f) => f.key === label);
   return (
@@ -122,7 +116,7 @@ const ImageBox = ({
       </div>
       <div className="flex justify-around w-full items-center">
         {loading?.id === label ? (
-          <p className="text-sm">Uploading...</p>
+          <p className="text-sm">{loading?.action === "uploading" ? "Uploading..." : "Deleting..."}</p>
         ) : (
           <>
             <p className="text-sm">{label.slice(0, 1).toUpperCase() + label.slice(1)}</p>
