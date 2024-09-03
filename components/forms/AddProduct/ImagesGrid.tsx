@@ -16,9 +16,6 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
   const existingFiles = files;
   const [loading, setLoading] = useState<{ id?: string; action?: string }>({});
 
-  // console.log(files);
-  // console.log({ color });
-
   const uploadImage = async (file: File, id: string): Promise<{ data: IImageFile[]; exists: boolean }> => {
     if (!file.type.includes("image")) return { data: [], exists: false };
     // setLoading({ id: id, action: "uploading" });
@@ -43,9 +40,8 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
 
     const blob = URL.createObjectURL(file);
 
-    if (files.some((f) => f.key === id)) {
-      console.log("exists");
-      const i = files.findIndex((f) => f.key === id);
+    const existingFileIndex = files.findIndex((f) => f.key === id);
+    if (existingFileIndex !== -1) {
       // const oldImgPublicId = files[i].publicId;
       // deleting the old image from cloudinary
       // await fetch(`/api/image?public_ids=${oldImgPublicId}`, { method: "DELETE" });
@@ -73,6 +69,9 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
     }
 
     try {
+      let newFiles: IImageFile[] = [];
+      const colorHex = id.split("-")[1];
+
       if (files.length === 1) {
         // Single file upload
         const file = files[0];
@@ -81,14 +80,10 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
         else if (data.length) setFiles([...existingFiles, data[0]]);
       } else {
         // Multiple files upload
-        const colorHex = id.split("-")[1];
         const availableFiles = existingFiles.filter((f) => f.color === colorHex).map((f) => f.key.split("-")[0]);
-
         const availableUploads: string[] = ["image1", "image2", "image3", "image4", "image5"].filter(
           (key) => !availableFiles.includes(key)
         );
-
-        console.log(availableUploads);
 
         if (availableUploads.length === 0) {
           toast({
@@ -99,13 +94,16 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
           return;
         }
 
-        let newFiles: IImageFile[] = [];
-        for await (const key of availableUploads) {
-          const file = files[availableUploads.indexOf(key)];
-          if (!file) continue;
-          const { data } = await uploadImage(file, key + "-" + colorHex);
-          newFiles.push(data[0]);
-        }
+        const uploadPromises = availableUploads.map((key, index) => {
+          const file = files[index];
+          if (!file) return;
+          return uploadImage(file, `${key}-${colorHex}`);
+        });
+
+        const uploadResults = await Promise.all(uploadPromises);
+        uploadResults.forEach((result) => {
+          if (result) newFiles.push(result.data[0]);
+        });
 
         setFiles([...existingFiles, ...newFiles]);
       }
