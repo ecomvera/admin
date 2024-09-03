@@ -13,14 +13,14 @@ interface Props {
 }
 
 const ImagesGrid = ({ files, setFiles, color }: Props) => {
-  const uploadedFiles = files;
+  const existingFiles = files;
   const [loading, setLoading] = useState<{ id?: string; action?: string }>({});
 
   // console.log(files);
   // console.log({ color });
 
-  const uploadImage = async (file: File, id: string): Promise<IImageFile[]> => {
-    if (!file.type.includes("image")) return files;
+  const uploadImage = async (file: File, id: string): Promise<{ data: IImageFile[]; exists: boolean }> => {
+    if (!file.type.includes("image")) return { data: [], exists: false };
     // setLoading({ id: id, action: "uploading" });
 
     // const formData = new FormData();
@@ -50,13 +50,11 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
       // deleting the old image from cloudinary
       // await fetch(`/api/image?public_ids=${oldImgPublicId}`, { method: "DELETE" });
 
-      const newFiles = files.map((f) =>
-        f.key === id ? { key: id, color, blob: blob, url: fileURL, publicId: public_id } : f
-      );
-      return newFiles;
+      const data = files.map((f) => (f.key === id ? { key: id, color, blob: blob, url: fileURL, publicId: public_id } : f));
+      return { data, exists: true };
     } else {
-      const newFiles = [...files, { key: id, color, blob: blob, url: fileURL, publicId: public_id }];
-      return newFiles;
+      const data = [{ key: id, color, blob: blob, url: fileURL, publicId: public_id }];
+      return { data, exists: false };
     }
   };
 
@@ -74,10 +72,50 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
       return;
     }
 
-    // Single file upload
-    const file = files[0];
-    const newFiles = await uploadImage(file, id);
-    setFiles(newFiles);
+    try {
+      if (files.length === 1) {
+        // Single file upload
+        const file = files[0];
+        const { data, exists } = await uploadImage(file, id);
+        if (exists) setFiles(data);
+        else if (data.length) setFiles([...existingFiles, data[0]]);
+      } else {
+        // Multiple files upload
+        const colorHex = id.split("-")[1];
+        const availableFiles = existingFiles.filter((f) => f.color === colorHex).map((f) => f.key.split("-")[0]);
+
+        const availableUploads: string[] = ["image1", "image2", "image3", "image4", "image5"].filter(
+          (key) => !availableFiles.includes(key)
+        );
+
+        console.log(availableUploads);
+
+        if (availableUploads.length === 0) {
+          toast({
+            title: "Error",
+            description: "All images already uploaded",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        let newFiles: IImageFile[] = [];
+        for await (const key of availableUploads) {
+          const file = files[availableUploads.indexOf(key)];
+          if (!file) continue;
+          const { data } = await uploadImage(file, key + "-" + colorHex);
+          newFiles.push(data[0]);
+        }
+
+        setFiles([...existingFiles, ...newFiles]);
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred during the upload",
+        variant: "destructive",
+      });
+    }
   };
 
   const removeImage = async (label: string) => {
