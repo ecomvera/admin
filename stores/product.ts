@@ -1,15 +1,20 @@
+import { IImageFile } from "@/types";
 import { create } from "zustand";
 
-const files: { key: string; blob: string; url: string; publicId: string }[] = [];
+const files: IImageFile[] = [];
 
 interface IFiles {
-  files: { key: string; blob: string; url: string; publicId: string }[];
-  setFiles: (files: { key: string; blob: string; url: string; publicId: string }[]) => void;
+  files: IImageFile[];
+  setFiles: (files: IImageFile[]) => void;
+  colors: string[];
+  setColors: (colors: string[]) => void;
 }
 
 export const useFileStore = create<IFiles>((set) => ({
   files: files,
   setFiles: (files) => set({ files: files }),
+  colors: [],
+  setColors: (colors) => set({ colors: colors }),
 }));
 
 export const product = {

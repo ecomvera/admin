@@ -8,7 +8,7 @@ interface Props {
   colors: string[];
   files: IImageFile[];
   setFiles: (files: IImageFile[]) => void;
-  setColors: Dispatch<SetStateAction<string[]>>;
+  setColors: (colors: string[]) => void;
 }
 
 const pickerColors = ["#f44336", "#e91e63", "#9c27b0", "yellow"];
@@ -64,7 +64,7 @@ const ColorContainer = ({
   colors: string[];
   files: IImageFile[];
   setFiles: (files: IImageFile[]) => void;
-  setColors: Dispatch<SetStateAction<string[]>>;
+  setColors: (colors: string[]) => void;
 }) => {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
