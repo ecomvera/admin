@@ -11,6 +11,8 @@ interface Props {
   setColors: Dispatch<SetStateAction<string[]>>;
 }
 
+const pickerColors = ["#f44336", "#e91e63", "#9c27b0", "yellow"];
+
 const ImageContainer = ({ files, setFiles, colors, setColors }: Props) => {
   const [currentColor, setCurrentColor] = useState("#000000");
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
@@ -33,7 +35,7 @@ const ImageContainer = ({ files, setFiles, colors, setColors }: Props) => {
               onClick={() => setDisplayColorPicker(!displayColorPicker)}
             />
             <BlockPicker
-              colors={["#f44336", "#e91e63", "#9c27b0", "yellow"]}
+              colors={pickerColors}
               color={currentColor}
               onChange={(color: any) => {
                 setCurrentColor(color.hex);
@@ -88,12 +90,7 @@ const ColorContainer = ({
         {displayColorPicker && (
           <div className="absolute z-[2]">
             <div className="fixed top-0 left-0 right-0 bottom-0" onClick={() => setDisplayColorPicker(false)} />
-            <BlockPicker
-              colors={["#f44336", "#e91e63", "#9c27b0", "yellow"]}
-              color={color}
-              onChange={updateColor}
-              className="mt-[230px]"
-            />
+            <BlockPicker colors={pickerColors} color={color} onChange={updateColor} className="mt-[230px]" />
           </div>
         )}
 

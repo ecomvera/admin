@@ -18,38 +18,40 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
 
   const uploadImage = async (file: File, id: string): Promise<{ data: IImageFile[]; exists: boolean }> => {
     if (!file.type.includes("image")) return { data: [], exists: false };
-    // setLoading({ id: id, action: "uploading" });
+    setLoading({ id: id, action: "uploading" });
 
-    // const formData = new FormData();
-    // formData.append("file", file);
+    const formData = new FormData();
+    formData.append("file", file);
 
-    // const response = await fetch("/api/image", { method: "POST", body: formData });
-    // const res = await response.json();
-    // if (!res.ok) {
-    //   toast({
-    //     title: "Error",
-    //     description: "File upload failed",
-    //     variant: "destructive",
-    //   });
-    //   setLoading({});
-    //   return;
-    // }
+    const response = await fetch("/api/image", { method: "POST", body: formData });
+    const res = await response.json();
+    if (!res.ok) {
+      toast({
+        title: "Error",
+        description: "File upload failed",
+        variant: "destructive",
+      });
+      setLoading({});
+      return { data: [], exists: false };
+    }
 
-    const fileURL = "res.data.url";
-    const public_id = "res.data.public_id";
+    const fileURL = res.data.url;
+    const public_id = res.data.public_id;
 
     const blob = URL.createObjectURL(file);
 
     const existingFileIndex = files.findIndex((f) => f.key === id);
     if (existingFileIndex !== -1) {
-      // const oldImgPublicId = files[i].publicId;
+      const oldImgPublicId = existingFiles[existingFileIndex].publicId;
       // deleting the old image from cloudinary
-      // await fetch(`/api/image?public_ids=${oldImgPublicId}`, { method: "DELETE" });
+      await fetch(`/api/image?public_ids=${oldImgPublicId}`, { method: "DELETE" });
 
       const data = files.map((f) => (f.key === id ? { key: id, color, blob: blob, url: fileURL, publicId: public_id } : f));
+      setLoading({});
       return { data, exists: true };
     } else {
       const data = [{ key: id, color, blob: blob, url: fileURL, publicId: public_id }];
+      setLoading({});
       return { data, exists: false };
     }
   };
@@ -118,8 +120,8 @@ const ImagesGrid = ({ files, setFiles, color }: Props) => {
 
   const removeImage = async (label: string) => {
     setLoading({ id: label, action: "deleting" });
-    // const publicId = files.find((f) => f.key === label)?.publicId || "";
-    // await fetch(`/api/image?public_ids=${publicId}`, { method: "DELETE" });
+    const publicId = files.find((f) => f.key === label)?.publicId || "";
+    await fetch(`/api/image?public_ids=${publicId}`, { method: "DELETE" });
     const filterdFiles = files.filter((f) => f.key !== label);
     setFiles(filterdFiles);
     setLoading({});
