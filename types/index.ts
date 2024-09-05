@@ -15,13 +15,13 @@ export interface IProduct {
   description: string;
   price: number;
   mrp: number;
-  images: { key: string; url: string }[];
   category: { _id: string; name: string; slug?: string } | string;
   subCategory: { _id: string; name: string; slug?: string } | string;
+  images: { key: String; color: String; url: String; publicId: String }[];
+  sizes: { key: string; value: string }[];
+  attributes: { key: string; value: string }[];
   material: string;
   quantity: number;
-  sizes: string[];
-  attributes: { key: string; value: string }[];
   inStock: boolean;
   isNewArrival: boolean;
 }
@@ -29,4 +29,12 @@ export interface IProduct {
 export interface IAttribute {
   _id: string;
   title: string;
+}
+
+export interface IImageFile {
+  key: string;
+  color: string;
+  blob: string;
+  url: string;
+  publicId: string;
 }

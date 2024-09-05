@@ -29,6 +29,7 @@ const SizeDetails = ({ label, sizes, setSizes }: Props) => {
         <div className="flex gap-3" key={index}>
           <Input value={item.key} aria-checked className="text-base font-semibold w-16" readOnly />
           <Input
+            defaultValue={item.value}
             className="w-full text-base placeholder:text-xs placeholder:font-normal"
             type="text"
             placeholder="Chest (in Inch): 43.0 | Front Length (in Inch): 28.0 | Sleeve Length (in Inch): 9.75"

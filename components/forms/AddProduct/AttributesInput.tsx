@@ -32,6 +32,7 @@ const AttributesInput = ({ label, attributes, setAttributes, attributesData, isL
         <div className="flex gap-3" key={index}>
           <Input value={item.key} aria-checked className="text-base font-semibold" readOnly />
           <Input
+            defaultValue={item.value}
             type="text"
             placeholder="value"
             onChange={(e) => {

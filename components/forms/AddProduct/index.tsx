@@ -7,7 +7,6 @@ import { Form } from "@/components/ui/form";
 import { Button } from "../../ui/button";
 import { productValidation } from "@/lib/validations/product";
 import { useEffect, useRef, useState } from "react";
-import Sizes from "./Sizes";
 import SelectField from "./SelectField";
 import InputField from "./InputField";
 import SwitchField from "./SwitchField";
@@ -15,12 +14,14 @@ import { useToast } from "@/components/ui/use-toast";
 import { IAttribute, ICategory, IProduct } from "@/types";
 import AttributesInput from "./AttributesInput";
 import { createProduct } from "@/lib/actions/product.action";
-import ImageContainer from "./ImageContainer";
+import ImagesGrid from "./ImagesGrid";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useFileStore, useProductStore } from "@/stores/product";
 // @ts-ignore
 import { isEqual } from "lodash";
+import ImageContainer from "./ImageContainer";
+import SizeDetails from "./SizeDetails";
 
 interface Props {
   categories: {
@@ -36,10 +37,9 @@ interface Props {
 const AddProduct = ({ categories, attributesData }: Props) => {
   const router = useRouter();
   const { toast } = useToast();
-  const { files, setFiles } = useFileStore();
+  const { files, setFiles, colors, setColors } = useFileStore();
   const { product, setProduct } = useProductStore();
-
-  const [sizes, setSizes] = useState<string[]>([]);
+  const [sizes, setSizes] = useState<{ key: string; value: string }[]>([]);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
@@ -51,65 +51,99 @@ const AddProduct = ({ categories, attributesData }: Props) => {
     defaultValues: product,
   });
 
+  const images = [
+    {
+      key: "image1",
+      color: "#ffffff",
+      url: "https://via.placeholder.com/300x300",
+      publicId: "image1",
+    },
+    {
+      key: "image2",
+      color: "#ffffff",
+      url: "https://via.placeholder.com/300x300",
+      publicId: "image2",
+    },
+    {
+      key: "image3",
+      color: "#ffffff",
+      url: "https://via.placeholder.com/300x300",
+      publicId: "image3",
+    },
+    {
+      key: "image4",
+      color: "#ffffff",
+      url: "https://via.placeholder.com/300x300",
+      publicId: "image4",
+    },
+    {
+      key: "image5",
+      color: "#ffffff",
+      url: "https://via.placeholder.com/300x300",
+      publicId: "image5",
+    },
+  ];
+
   const formData = form.watch();
   // useRef to store previous formData to avoid infinite loop
   const prevFormData = useRef(formData);
 
   const onSubmit = async (values: z.infer<typeof productValidation>) => {
-    const res = validateData();
-    if (!res?.ok) return;
+    // const res = validateData();
+    // if (!res?.ok) return;
 
-    setLoading(true);
+    // setLoading(true);
     const data: IProduct = {
       name: values.name,
       slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
       description: values.description,
       price: Number(values.price),
       mrp: Number(values.mrp),
+      category: category,
+      subCategory: subCategory,
+      images: images,
+      sizes: sizes,
+      attributes: attributes,
       material: values.material,
-      images: files,
       quantity: Number(values.quantity),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
-      category: category,
-      subCategory,
-      sizes,
-      attributes,
     };
+    // console.log(data);
 
     const response = await createProduct(data);
-    if (!response?.ok) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: response?.error,
-      });
+    // if (!response?.ok) {
+    //   toast({
+    //     title: "Error",
+    //     variant: "destructive",
+    //     description: response?.error,
+    //   });
 
-      setLoading(false);
-      return;
-    }
+    //   setLoading(false);
+    //   return;
+    // }
 
-    toast({
-      title: "Success",
-      // variant: "success",
-      description: "Product created successfully",
-      action: (
-        <Link href={`/products`}>
-          <Button variant="outline" size="sm" className="rounded-xl font-semibold text-black">
-            View
-          </Button>
-        </Link>
-      ),
-    });
+    // toast({
+    //   title: "Success",
+    //   // variant: "success",
+    //   description: "Product created successfully",
+    //   action: (
+    //     <Link href={`/products`}>
+    //       <Button variant="outline" size="sm" className="rounded-xl font-semibold text-black">
+    //         View
+    //       </Button>
+    //     </Link>
+    //   ),
+    // });
 
-    form.reset();
-    setLoading(false);
-    setSizes([]);
-    setCategory("");
-    setSubCategory("");
-    setSubCategories([]);
-    setAttributes([]);
-    setFiles([]);
+    // form.reset();
+    // setLoading(false);
+    // setSizes([]);
+    // setCategory("");
+    // setSubCategory("");
+    // setSubCategories([]);
+    // setAttributes([]);
+    // setFiles([]);
   };
 
   const validateData = () => {
@@ -171,10 +205,10 @@ const AddProduct = ({ categories, attributesData }: Props) => {
 
   return (
     <>
-      <ImageContainer files={files} setFiles={setFiles} />
+      <ImageContainer files={files} setFiles={setFiles} colors={colors} setColors={setColors} />
 
       <Form {...form}>
-        <form className="flex flex-col justify-start gap-3 p-2" onSubmit={form.handleSubmit(onSubmit)}>
+        <form className="flex flex-col justify-start gap-3 p-2 mt-5" onSubmit={form.handleSubmit(onSubmit)}>
           <InputField control={form.control} name="name" label="Product Name" />
           <InputField control={form.control} name="description" label="Product Description" textarea />
           <div className="flex gap-3">
@@ -209,11 +243,11 @@ const AddProduct = ({ categories, attributesData }: Props) => {
               isLoading={attributesData.isLoading}
               attributesData={attributesData.data}
             />
-            <div className="w-full flex flex-col gap-5 desktop:flex-row">
-              <Sizes name="sizes" label="Select Sizes" onChange={setSizes} />
-              <SwitchField control={form.control} name="inStock" label="In Stock" />
-              <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
-            </div>
+            <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} />
+          </div>
+          <div className="w-full flex gap-5">
+            <SwitchField control={form.control} name="inStock" label="In Stock" />
+            <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>
 
           <Button

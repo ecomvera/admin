@@ -5,7 +5,10 @@ import { fetcher } from "@/lib/utils";
 import useSWR from "swr";
 
 const Page = () => {
-  const categories = useSWR("/api/categories", fetcher);
+  const categories = useSWR("/api/categories", fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60000,
+  });
   const attributes = useSWR("/api/attributes", fetcher);
 
   return (
@@ -21,8 +24,3 @@ const Page = () => {
 };
 
 export default Page;
-
-// const categories = useSWR("/api/categories", fetcher, {
-//   revalidateOnFocus: false, // Disable revalidation on focus
-//   dedupingInterval: 60000, // Reuse cache for 60 seconds
-// });

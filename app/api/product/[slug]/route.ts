@@ -28,7 +28,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       })
       .exec();
     const duration = Date.now() - start;
-    console.log("Product [id]-", "Database query time:", duration, "ms");
+    console.log("\x1b[32m%s\x1b[0m", `Product [id] - Database query time: ${duration} ms`);
 
     return NextResponse.json({
       ok: true,

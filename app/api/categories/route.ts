@@ -17,11 +17,11 @@ export async function GET(req: NextApiRequest) {
       data = await Category.find({ parentId: null, isOffer: false }, { products: 0, children: 0 }).exec();
     } else {
       data = await Category.find({ parentId: null, isOffer: false }, { products: 0 })
-        .populate({ path: "children", model: "Category", select: { products: 0 } })
+        .populate({ path: "children", model: "Category", select: { products: 0 }, strictPopulate: false })
         .exec();
     }
     const duration = Date.now() - start;
-    console.log("Categories -", "Database query time:", duration, "ms");
+    console.log("\x1b[32m%s\x1b[0m", `Categories - Database query time: ${duration} ms`);
 
     const response = NextResponse.json({
       ok: true,
