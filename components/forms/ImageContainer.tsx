@@ -1,8 +1,9 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import ImagesGrid from "./ImagesGrid";
 import { Button } from "@/components/ui/button";
 import { BlockPicker } from "react-color";
 import { IImageFile } from "@/types";
+import { pickerColors } from "@/lib/utils";
 
 interface Props {
   colors: string[];
@@ -10,8 +11,6 @@ interface Props {
   setFiles: (files: IImageFile[]) => void;
   setColors: (colors: string[]) => void;
 }
-
-const pickerColors = ["#f44336", "#e91e63", "#9c27b0", "yellow"];
 
 const ImageContainer = ({ files, setFiles, colors, setColors }: Props) => {
   const [currentColor, setCurrentColor] = useState("#000000");

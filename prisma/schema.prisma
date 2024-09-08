@@ -1,0 +1,105 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  slug     String  @unique
+  wearType String?
+
+  parent   Category? @relation("subCategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId String?   @db.ObjectId
+
+  children Category[] @relation("subCategory")
+  products Product[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("categories")
+}
+
+model Product {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  slug         String   @unique
+  description  String
+  price        Float
+  mrp          Float
+  material     String
+  quantity     Int
+  inStock      Boolean
+  isNewArrival Boolean
+  isBestSeller Boolean
+  colors       String[]
+
+  sizes      ProductSizes[]
+  images     ProductImages[]
+  attributes ProductAttributes[]
+
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId String   @db.ObjectId
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("products")
+}
+
+model ProductAttributes {
+  id    String     @id @default(auto()) @map("_id") @db.ObjectId
+  key   Attributes
+  value String
+
+  Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String?  @db.ObjectId
+}
+
+model ProductSizes {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  key   Sizes
+  value String
+
+  Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String?  @db.ObjectId
+}
+
+model ProductImages {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  key      String
+  color    String
+  url      String
+  publicId String
+
+  Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String?  @db.ObjectId
+}
+
+enum Sizes {
+  S
+  M
+  L
+  XL
+  XXL
+  XXXL
+}
+
+enum Attributes {
+  Fit
+  Neck
+  Fabric
+  Sleeve
+  WashCare
+}

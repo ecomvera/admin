@@ -1,147 +1,162 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-import { connectDB } from "../mongoose";
 import { IProduct } from "@/types";
-import Category from "../models/category.model";
-import Product from "../models/product.model";
-import { deleteFile } from "./aws";
+import { prisma } from "../prisma";
+import { Attributes as AttributeTypes, Sizes as SizeTypes } from "@prisma/client";
 
 export const createProduct = async (product: IProduct) => {
-  await connectDB();
-
   try {
-    const category = await Category.findOne({ _id: product.category });
+    const category = await prisma.category.findUnique({ where: { id: product.categoryId } });
     if (!category) {
       return { ok: false, error: "Category not found" };
     }
 
-    const subCategory = await Category.findOne({ _id: product.subCategory });
-    if (!subCategory) {
-      return { ok: false, error: "SubCategory not found" };
-    }
+    const res = await prisma.product.create({
+      data: {
+        name: product.name,
+        slug: product.slug,
+        description: product.description,
+        price: product.price,
+        mrp: product.mrp,
+        material: product.material,
+        quantity: product.quantity,
+        inStock: product.inStock,
+        isNewArrival: product.isNewArrival,
+        isBestSeller: false,
+        categoryId: product.categoryId,
+        colors: product.colors,
+      },
+    });
 
-    const newProduct = new Product(product);
-    const res = await newProduct.save();
+    // create product sizes
+    await prisma.productSizes.createMany({
+      data: product.sizes.map((size) => ({
+        key: size.key as SizeTypes,
+        value: size.value,
+        productId: res.id,
+      })),
+    });
 
-    category.products.push(res._id);
-    subCategory.products.push(res._id);
-    await category.save();
-    await subCategory.save();
+    // create product images
+    await prisma.productImages.createMany({
+      data: product.images.map((image) => ({
+        key: image.key,
+        url: image.url,
+        color: image.color,
+        publicId: image.publicId,
 
-    revalidatePath("/products");
-    return { ok: true };
+        productId: res.id,
+      })),
+    });
+
+    // create product attributes
+    await prisma.productAttributes.createMany({
+      data: product.attributes.map((attribute) => ({
+        key: attribute.key as AttributeTypes,
+        value: attribute.value,
+        productId: res.id,
+      })),
+    });
+
+    return { ok: true, productId: res.id };
   } catch (error: any) {
-    if (error.code === 11000) {
+    if (error.code === "P2002") {
       return { ok: false, error: "Product already exists" };
     }
 
     console.error(error);
-    return { ok: false, error: error.message };
+    return { ok: false, error: "Something went wrong" };
   }
 };
 
-export const updateProduct = async (id: string | undefined, product: IProduct, path: string) => {
-  if (!id) {
-    return { ok: false, error: "Invalid product ID" };
-  }
-
-  await connectDB();
-
+export const updateProductDB = async (id: string, data: IProduct) => {
   try {
-    const data = await Product.findById(id);
-    if (!data) {
+    const product = await prisma.product.findUnique({ where: { id: id } });
+    if (!product) {
       return { ok: false, error: "Product not found" };
     }
 
     // Fetch related categories
-    const category = await Category.findById(data.category);
-    const subCategory = await Category.findById(data.subCategory);
-
-    if (!category || !subCategory) {
-      return { ok: false, error: "Related categories not found" };
+    const subCategory = await prisma.category.findUnique({ where: { id: data.categoryId } });
+    if (!subCategory) {
+      return { ok: false, error: "Sub category not found" };
     }
 
-    if (data.category.toString() !== product.category) {
-      // Remove the product from the old parent and sub categories
-      category.products = category.products.filter((item: Object) => item.toString() !== id);
-      await category.save();
+    await prisma.product.update({
+      where: { id: id },
+      data: {
+        name: data.name,
+        slug: data.slug,
+        description: data.description,
+        price: data.price,
+        mrp: data.mrp,
+        material: data.material,
+        quantity: data.quantity,
+        inStock: data.inStock,
+        isNewArrival: data.isNewArrival,
+        isBestSeller: false,
+        categoryId: data.categoryId,
+        colors: data.colors,
+      },
+    });
 
-      subCategory.products = subCategory.products.filter((item: Object) => item.toString() !== id);
-      await subCategory.save();
+    // update product sizes
+    await prisma.productSizes.deleteMany({ where: { productId: id } });
+    await prisma.productSizes.createMany({
+      data: data.sizes.map((size) => ({
+        key: size.key as SizeTypes,
+        value: size.value,
+        productId: id,
+      })),
+    });
 
-      // Add the product to the new category
-      const newCategory = await Category.findById(product.category);
-      if (!newCategory) {
-        return { ok: false, error: "New category not found" };
-      }
-      newCategory.products.push(data._id);
-      await newCategory.save();
+    // update product images
+    await prisma.productImages.deleteMany({ where: { productId: id } });
+    await prisma.productImages.createMany({
+      data: data.images.map((image) => ({
+        key: image.key,
+        url: image.url,
+        color: image.color,
+        publicId: image.publicId,
 
-      // Add the product to the new sub category
-      const newSubCategory = await Category.findById(product.subCategory);
-      if (!newSubCategory) {
-        return { ok: false, error: "New sub category not found" };
-      }
-      newSubCategory.products.push(data._id);
-      await newSubCategory.save();
-    } else if (data.subCategory.toString() !== product.subCategory) {
-      // Remove the product from the old sub category
-      subCategory.products = subCategory.products.filter((item: Object) => item.toString() !== id);
-      await subCategory.save();
+        productId: id,
+      })),
+    });
 
-      // Add the product to the new sub category
-      const newSubCategory = await Category.findById(product.subCategory);
-      if (!newSubCategory) {
-        return { ok: false, error: "New sub category not found" };
-      }
-      newSubCategory.products.push(data._id);
-      await newSubCategory.save();
-    }
+    // update product attributes
+    await prisma.productAttributes.deleteMany({ where: { productId: id } });
+    await prisma.productAttributes.createMany({
+      data: data.attributes.map((attribute) => ({
+        key: attribute.key as AttributeTypes,
+        value: attribute.value,
+        productId: id,
+      })),
+    });
 
-    // Update the product with new values
-    await Product.findByIdAndUpdate(id, product, { new: true });
-
-    revalidatePath(path);
     return { ok: true };
   } catch (error: any) {
+    if (error.code === "P2002") {
+      return { ok: false, error: "Product already exists" };
+    }
+
     console.error(error);
-    return { ok: false, error: error.message };
+    return { ok: false, error: "Something went wrong" };
   }
 };
 
-export const deleteProduct = async (id: string | undefined, path: string) => {
-  await connectDB();
+export const deleteProductDB = async (id: string) => {
+  try {
+    const product = await prisma.product.findUnique({ where: { id: id }, include: { images: true } });
+    if (!product) {
+      return { ok: false, error: "Product not found" };
+    }
 
-  // delete the connection between the product and the category
-  const product = await Product.findById(id);
-  if (!product) {
-    return;
+    const imagesPublicIds = product.images.map((image) => image.publicId); // to delete images from cloudinary
+
+    await prisma.product.delete({ where: { id: id } });
+    return { ok: true, imagesPublicIds: imagesPublicIds.join() };
+  } catch (error: any) {
+    console.error(error);
+    return { ok: false, error: "Something went wrong" };
   }
-
-  const category = await Category.findById(product.category);
-  if (!category) {
-    return;
-  }
-
-  category.products = category.products.filter((item: Object) => item.toString() !== id);
-  await category.save();
-
-  const subCategory = await Category.findById(product.subCategory);
-  if (!subCategory) {
-    return;
-  }
-
-  subCategory.products = subCategory.products.filter((item: Object) => item.toString() !== id);
-  await subCategory.save();
-
-  // delete the images from s3
-  for (const image of product.images) {
-    const url = image.url.split("/").pop();
-    await deleteFile(url, "/products");
-  }
-
-  // delete the product from the database
-  await Product.findByIdAndDelete(id);
-  revalidatePath(path);
 };

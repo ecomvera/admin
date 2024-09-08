@@ -4,39 +4,32 @@ import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { Button } from "../../ui/button";
+import { Button } from "../ui/button";
 import { productValidation } from "@/lib/validations/product";
 import { useEffect, useState } from "react";
-import Sizes from "./Sizes";
-import SelectField from "./SelectField";
-import InputField from "./InputField";
-import SwitchField from "./SwitchField";
 import { useToast } from "@/components/ui/use-toast";
-import { IAttribute, ICategory, IProduct } from "@/types";
-import AttributesInput from "./AttributesInput";
-import { updateProduct } from "@/lib/actions/product.action";
-import ImageContainer from "./ImageContainer";
+import { ICategory, IImageFile, IKeyValue, IProduct } from "@/types";
+import { updateProductDB } from "@/lib/actions/product.action";
 import { useRouter } from "next/navigation";
+import SizeDetails from "@/components/forms/SizeDetails";
+import AttributesInput from "@/components/forms/AttributesInput";
+import InputField from "@/components/forms/InputField";
+import SelectFields from "@/components/forms/SelectField";
+import SwitchField from "@/components/forms/SwitchField";
+import ImageContainer from "./ImageContainer";
+import { useProductStore } from "@/stores/product";
 
-const EditProduct = ({
-  categories,
-  product,
-  path,
-  attributesData,
-}: {
-  categories: ICategory[];
-  product: IProduct;
-  path: string;
-  attributesData: IAttribute[];
-}) => {
+const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
+  const { updateProduct } = useProductStore();
   const { toast } = useToast();
   const router = useRouter();
-  const [sizes, setSizes] = useState<string[]>(product.sizes);
-  const [category, setCategory] = useState(product.category._id);
-  const [subCategory, setSubCategory] = useState(product.subCategory._id);
+  const [subCategory, setSubCategory] = useState(product.categoryId);
+  const [category, setCategory] = useState(product.category?.parent?.id || "");
+  const [sizes, setSizes] = useState<IKeyValue[]>(product.sizes);
+  const [files, setFiles] = useState<IImageFile[]>(product.images);
+  const [colors, setColors] = useState<string[]>(product.colors);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
-  const [attributes, setAttributes] = useState<{ key: string; value: string }[]>(product.attributes);
-  const [files, setFiles] = useState<{ key: string; blob?: string; url: string }[]>(product.images);
+  const [attributes, setAttributes] = useState<IKeyValue[]>(product.attributes);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
@@ -65,19 +58,17 @@ const EditProduct = ({
       price: Number(values.price),
       mrp: Number(values.mrp),
       material: values.material,
-      images: files,
       quantity: Number(values.quantity),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
-      //@ts-ignore
-      category: category,
-      //@ts-ignore
-      subCategory: subCategory,
+      colors,
       sizes,
       attributes,
+      images: files,
+      categoryId: subCategory,
     };
 
-    const response = await updateProduct(product._id, data, path);
+    const response = await updateProductDB(product.id || "", data);
     if (!response?.ok) {
       toast({
         title: "Error",
@@ -95,7 +86,8 @@ const EditProduct = ({
     });
 
     setLoading(false);
-    router.back();
+    updateProduct(product.id || "", data);
+    router.replace(path);
   };
 
   const validateData = () => {
@@ -128,7 +120,7 @@ const EditProduct = ({
       }
     }
 
-    if (files.length !== 5) {
+    if (colors.length * 5 !== files.length) {
       toast({
         title: "Error",
         variant: "destructive",
@@ -142,14 +134,14 @@ const EditProduct = ({
 
   useEffect(() => {
     if (category) {
-      setSubCategories(categories.find((item) => item._id === category)?.children || []);
+      setSubCategories(categories.find((item) => item.id === category)?.children || []);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   return (
     <>
-      <ImageContainer files={files} setFiles={setFiles} />
+      <ImageContainer files={files} setFiles={setFiles} colors={colors} setColors={setColors} />
 
       <Form {...form}>
         <form className="flex flex-col justify-start gap-3 p-2" onSubmit={form.handleSubmit(onSubmit)}>
@@ -160,25 +152,20 @@ const EditProduct = ({
             <InputField control={form.control} name="mrp" label="MRP" type="number" />
           </div>
           <div className="flex gap-3">
-            <SelectField value={category} onChange={setCategory} data={categories} label="Category" />
-            <SelectField value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />
+            <SelectFields value={category} onChange={setCategory} data={categories} label="Category" />
+            <SelectFields value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />
           </div>
           <div className="flex gap-3">
             <InputField control={form.control} name="material" label="Material" />
             <InputField control={form.control} name="quantity" label="Quantity" type="number" />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <AttributesInput
-              label="Attributes"
-              attributes={attributes}
-              setAttributes={setAttributes}
-              attributesData={attributesData}
-            />
-            <div className="w-full flex flex-col gap-5 desktop:flex-row">
-              <Sizes control={form.control} name="sizes" label="Select Sizes" value={sizes} onChange={setSizes} />
-              <SwitchField control={form.control} name="inStock" label="In Stock" />
-              <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
-            </div>
+            <AttributesInput label="Attributes" attributes={attributes} setAttributes={setAttributes} />
+            <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} />
+          </div>
+          <div className="w-full flex gap-5">
+            <SwitchField control={form.control} name="inStock" label="In Stock" />
+            <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>
 
           <Button

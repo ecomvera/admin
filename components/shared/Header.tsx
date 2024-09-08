@@ -1,6 +1,4 @@
-import { IoStorefront } from "react-icons/io5";
 import { IoLogOutOutline } from "react-icons/io5";
-import Image from "next/legacy/image";
 
 const Header = () => {
   return (

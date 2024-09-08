@@ -1,13 +1,10 @@
 "use server";
 
-import Product from "@/lib/models/product.model";
-import { connectDB } from "@/lib/mongoose";
+import { prisma } from "@/lib/prisma";
 import type { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
 export async function GET(req: NextApiRequest) {
-  await connectDB();
-
   const url = new URL(req.url || "");
   const searchParams = Object.fromEntries(url.searchParams.entries());
 
@@ -16,12 +13,11 @@ export async function GET(req: NextApiRequest) {
 
     const start = Date.now();
     if ("table-data" in searchParams) {
-      data = await Product.find()
-        .populate({ path: "category", select: "name", strictPopulate: false })
-        .populate({ path: "subCategory", select: "name", strictPopulate: false })
-        .exec();
+      data = await prisma.product.findMany({ include: { category: { include: { parent: true } } } });
     } else {
-      data = await Product.find().exec();
+      data = await prisma.product.findMany({
+        include: { category: { include: { parent: true } }, images: true, attributes: true, sizes: true },
+      });
     }
     const duration = Date.now() - start;
     console.log("\x1b[32m%s\x1b[0m", `Products - Database query time: ${duration} ms`);

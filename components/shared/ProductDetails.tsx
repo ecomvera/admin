@@ -1,67 +1,88 @@
 "use client";
 
 import Image from "next/legacy/image";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IProduct } from "@/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
 
 const ProductDetails = ({ data }: { data: IProduct }) => {
+  const [currentColor, setCurrentColor] = useState(data.colors[0]);
+
   return (
     <div className="py-5">
       <div className="flex flex-col tablet:flex-row">
-        <LeftGallaryView images={data.images} />
-        <ProductDetail data={data} />
+        <LeftGallaryView images={data.images} currentColor={currentColor} />
+        <ProductDetail data={data} currentColor={currentColor} setCurrentColor={setCurrentColor} />
       </div>
     </div>
   );
 };
 
-const LeftGallaryView = ({ images }: { images: IProduct["images"] }) => {
-  const [currentSlide, setCurrentSlide] = useState(images[0].url);
+const LeftGallaryView = ({ images, currentColor }: { images: IProduct["images"]; currentColor: string }) => {
+  const [currentSlide, setCurrentSlide] = useState("");
 
   const handleSlideChange = (url: string) => {
     setCurrentSlide(url);
   };
 
+  useEffect(() => {
+    setCurrentSlide(images.filter((image) => image.color === currentColor)[0].url);
+  }, [currentColor]);
+
   return (
     <>
       <div className="flex justify-center h-[330px] mobile:h-[420px]">
         <div className="relative flex flex-col w-[80px] h-full">
-          {images.map((image, index) => (
-            <div key={index} className="relative cursor-pointer border m-[2px] h-[80px] bg-gray-100">
-              <Image
-                layout="fill"
-                key={index}
-                src={image.url}
-                alt="product"
-                objectFit="contain"
-                objectPosition="center"
-                onMouseEnter={() => {
-                  if (currentSlide === image.url) return;
-                  handleSlideChange(image.url);
-                }}
-                // onMouseLeave={() => {}}
-              />
-            </div>
-          ))}
+          {images
+            .filter((image) => image.color === currentColor)
+            .map((image, index) => (
+              <div key={index} className="relative cursor-pointer border m-[2px] h-[80px] bg-gray-100">
+                <Image
+                  layout="fill"
+                  key={index}
+                  src={image.url.split("/upload")[0] + "/upload/w_80/" + image.url.split("/upload")[1]}
+                  alt="product"
+                  objectFit="contain"
+                  objectPosition="center"
+                  onMouseEnter={() => {
+                    if (currentSlide === image.url) return;
+                    handleSlideChange(image.url);
+                  }}
+                  // onMouseLeave={() => {}}
+                />
+              </div>
+            ))}
         </div>
 
         <div className="relative w-[350px] border ">
-          <Image layout="fill" src={currentSlide} quality={100} objectFit="contain" objectPosition="center" alt="product" />
+          <Image
+            layout="fill"
+            src={currentSlide.split("/upload")[0] + "/upload/w_350/" + currentSlide.split("/upload")[1]}
+            quality={100}
+            objectFit="contain"
+            objectPosition="center"
+            alt="product"
+          />
         </div>
       </div>
     </>
   );
 };
 
-const ProductDetail = ({ data }: { data: IProduct }) => {
-  const sizes = data.sizes;
-
+const ProductDetail = ({
+  data,
+  currentColor,
+  setCurrentColor,
+}: {
+  data: IProduct;
+  currentColor: string;
+  setCurrentColor: Dispatch<SetStateAction<string>>;
+}) => {
   return (
     <div className="w-full px-2 tablet:px-5 laptop:px-10 mt-5 tablet:mt-0">
       <div className="text-sm font-semibold text-light-3 mb-5">
-        {data.category?.name} / {data.subCategory?.name}
+        {data.category?.parent?.name} / {data.category?.name}
       </div>
 
       <Link href={`/e/${data.slug}?path=/p/${data.slug}`}>
@@ -79,11 +100,27 @@ const ProductDetail = ({ data }: { data: IProduct }) => {
       <div className="border w-fit border-light-3 px-3 my-5">
         <p className="text-base font-semibold text-light-3">{data.material}</p>
       </div>
+      <p className="text-base mobile:text-lg font-semibold text-dark-3 uppercase mt-5">Colors</p>
+      <div className="flex gap-1 items-center">
+        {data.colors.map((color) => (
+          <div
+            key={color}
+            className="rounded-full cursor-pointer"
+            style={{
+              border: currentColor === color ? `2px solid ${color}` : "none",
+              padding: "2px",
+            }}
+            onClick={() => setCurrentColor(color)}
+          >
+            <div className="h-[30px] w-[30px] rounded-full" style={{ backgroundColor: color }}></div>
+          </div>
+        ))}
+      </div>
       <p className="text-base mobile:text-lg font-semibold text-dark-3 uppercase mt-5">Select Size</p>
       <div className="flex gap-1">
-        {sizes.map((size) => (
-          <div key={size} className="border border-light-3 px-3 py-1 cursor-pointer">
-            <p className="text-base mobile:text-lg font-semibold text-dark-3">{size}</p>
+        {data.sizes.map((size) => (
+          <div key={size.key} className="border border-light-3 px-3 py-1 cursor-pointer">
+            <p className="text-base mobile:text-lg font-semibold text-dark-3">{size.key}</p>
           </div>
         ))}
       </div>

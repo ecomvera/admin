@@ -1,9 +1,9 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormItem, FormLabel } from "@/components/ui/form";
 import { Dispatch, SetStateAction } from "react";
-import { Input } from "../../ui/input";
-import { Button } from "../../ui/button";
-import { IAttribute } from "@/types";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Attributes as AttributeTypes } from "@prisma/client";
 
 interface Props {
   label: string;
@@ -19,10 +19,9 @@ interface Props {
       }[]
     >
   >;
-  attributesData: IAttribute[];
 }
 
-const AttributesInput = ({ label, attributes, setAttributes, attributesData }: Props) => {
+const AttributesInput = ({ label, attributes, setAttributes }: Props) => {
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
@@ -56,11 +55,11 @@ const AttributesInput = ({ label, attributes, setAttributes, attributesData }: P
           <SelectValue placeholder={`Select the key`} />
         </SelectTrigger>
         <SelectContent>
-          {attributesData
-            .filter((a) => !attributes.some((k) => k.key === a.title))
-            .map((a) => (
-              <SelectItem key={a._id} value={a.title}>
-                {a.title}
+          {Object.values(AttributeTypes)
+            ?.filter((key) => !attributes.some((selected) => selected.key === key))
+            .map((key) => (
+              <SelectItem key={key} value={key}>
+                {key}
               </SelectItem>
             ))}
         </SelectContent>

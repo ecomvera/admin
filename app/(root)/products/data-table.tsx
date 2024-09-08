@@ -118,12 +118,12 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="w-full flex gap-5 pb-3">
+      {/* <div className="w-full flex gap-5 pb-3">
         <Select
           value={(table.getColumn("category")?.getFilterValue() as string) ?? ""}
           onValueChange={(value) => {
             setCategory(value);
-            table.getColumn("category")?.setFilterValue(value === "all" ? "" : value);
+            table.getColumn("category")?.parent?.setFilterValue(value === "all" ? "" : value);
           }}
         >
           <SelectTrigger className="w-full">
@@ -133,7 +133,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
             <SelectGroup>
               <SelectItem value="all">All</SelectItem>
               {categories?.map((item) => (
-                <SelectItem key={item._id} value={item.name}>
+                <SelectItem key={item.id} value={item.name}>
                   {item.name}
                 </SelectItem>
               ))}
@@ -155,14 +155,14 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
             <SelectGroup>
               <SelectItem value="all">All</SelectItem>
               {subCategories?.map((item) => (
-                <SelectItem key={item._id} value={item.name}>
+                <SelectItem key={item.id} value={item.name}>
                   {item.name}
                 </SelectItem>
               ))}
             </SelectGroup>
           </SelectContent>
         </Select>
-      </div>
+      </div> */}
       {/* table here */}
       <div className="rounded-md border">
         <Table>

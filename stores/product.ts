@@ -1,4 +1,4 @@
-import { IImageFile } from "@/types";
+import { IImageFile, IProduct } from "@/types";
 import { create } from "zustand";
 
 const files: IImageFile[] = [];
@@ -17,25 +17,27 @@ export const useFileStore = create<IFiles>((set) => ({
   setColors: (colors) => set({ colors: colors }),
 }));
 
-export const product = {
-  name: "",
-  description: "",
-  price: "",
-  mrp: "",
-  material: "",
-  quantity: "",
-  inStock: true,
-  isNewArrival: false,
-};
-
-type IProductSchema = typeof product;
+const products: IProduct[] = [];
 
 interface IProductStore {
-  product: IProductSchema;
-  setProduct: (product: IProductSchema) => void;
+  products: IProduct[];
+  setProducts: (products: IProduct[]) => void;
+  updateProduct: (id: string, data: IProduct) => void;
+  deleteProdct: (id: string) => void;
 }
 
 export const useProductStore = create<IProductStore>((set) => ({
-  product: product,
-  setProduct: (product) => set({ product: product }),
+  products: products,
+  setProducts: (products: IProduct[]) => set({ products }),
+  updateProduct: (id: string, data: IProduct) => {
+    set((state: IProductStore) => {
+      const index = state.products.findIndex((product) => product.id === id);
+      if (index !== -1) {
+        state.products[index] = { ...state.products[index], ...data };
+        return { products: state.products };
+      }
+      return { products: state.products };
+    });
+  },
+  deleteProdct: (id: string) => set((state) => ({ products: state.products.filter((item) => item.id !== id) })),
 }));

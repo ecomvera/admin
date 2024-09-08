@@ -59,7 +59,6 @@ export async function DELETE(req: NextApiRequest) {
 
     if (response.ok) {
       const result = await response.json();
-      console.log({ result });
       return NextResponse.json({
         ok: true,
         data: "file deleted",

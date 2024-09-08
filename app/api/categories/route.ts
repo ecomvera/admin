@@ -1,31 +1,25 @@
-import Category from "@/lib/models/category.model";
-import { connectDB } from "@/lib/mongoose";
+import { prisma } from "@/lib/prisma";
 import type { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
 
 export async function GET(req: NextApiRequest) {
-  await connectDB();
-
   const url = new URL(req.url || "");
   const searchParams = Object.fromEntries(url.searchParams.entries());
 
-  try {
-    let data;
+  console.log("fetchApi called - categories");
 
+  try {
     const start = Date.now();
-    if ("no-children" in searchParams) {
-      data = await Category.find({ parentId: null, isOffer: false }, { products: 0, children: 0 }).exec();
-    } else {
-      data = await Category.find({ parentId: null, isOffer: false }, { products: 0 })
-        .populate({ path: "children", model: "Category", select: { products: 0 }, strictPopulate: false })
-        .exec();
-    }
+    const data = await prisma.category.findMany({
+      where: { parentId: null },
+      include: { children: true },
+    });
     const duration = Date.now() - start;
     console.log("\x1b[32m%s\x1b[0m", `Categories - Database query time: ${duration} ms`);
 
     const response = NextResponse.json({
       ok: true,
-      data,
+      data: data,
     });
 
     if (searchParams.cache === "no-cache") {

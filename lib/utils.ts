@@ -2,11 +2,18 @@ import c from "crypto";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+export const pickerColors = ["#f44336", "#e91e63", "#9c27b0", "yellow"];
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
+export const fetchOpt = {
+  revalidateOnFocus: false,
+  // dedupingInterval: 60000,
+  revalidateOnMount: false,
+};
 
 export function isBase64Image(imageData: string) {
   const base64Regex = /^data:image\/(png|jpe?g|gif|webp);base64,/;

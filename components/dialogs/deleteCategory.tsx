@@ -12,11 +12,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MdDeleteOutline } from "react-icons/md";
 import { useState } from "react";
-import { deleteCategory } from "@/lib/actions/category.action";
+import { deleteCategoryDB } from "@/lib/actions/category.action";
+import { useCategoryStore } from "@/stores/category";
 
 export function DeleteCategory({ id, name, isGroup = false }: { id: string; name: string; isGroup?: boolean }) {
+  const { deleteCategory } = useCategoryStore();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    const res = await deleteCategoryDB(id);
+    // @ts-ignore
+    deleteCategory(res?.data); // delete from store
+    setOpen(false);
+    setIsDeleting(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -40,16 +52,8 @@ export function DeleteCategory({ id, name, isGroup = false }: { id: string; name
         </div>
 
         <DialogFooter className="sm:justify-end">
-          <Button
-            type="button"
-            variant="destructive"
-            disabled={input !== name}
-            onClick={async () => {
-              await deleteCategory(id);
-              setOpen(false);
-            }}
-          >
-            Delete
+          <Button type="button" variant="destructive" disabled={input !== name} onClick={handleDelete}>
+            {isDeleting ? "Deleting..." : "Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

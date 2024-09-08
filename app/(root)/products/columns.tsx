@@ -11,9 +11,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { IProduct } from "@/types";
+import { ICategory, IProduct } from "@/types";
 import Link from "next/link";
-import { deleteProduct } from "@/lib/actions/product.action";
+import { DeleteProduct } from "@/components/dialogs/deleteProduct";
 
 export const columns: ColumnDef<IProduct>[] = [
   {
@@ -36,15 +36,15 @@ export const columns: ColumnDef<IProduct>[] = [
     accessorKey: "category",
     header: "Category",
     cell: ({ row }) => {
-      const data: { name: string } = row.getValue("category");
-      return <div className="capitalize">{data.name}</div>;
+      const data: ICategory = row.getValue("category");
+      return <div className="capitalize">{data?.parent?.name}</div>;
     },
   },
   {
     accessorKey: "subCategory",
     header: "Sub Category",
     cell: ({ row }) => {
-      const data: { name: string } = row.getValue("subCategory");
+      const data: { name: string } = row.getValue("category");
       return <div className="capitalize">{data.name}</div>;
     },
   },
@@ -99,8 +99,6 @@ export const columns: ColumnDef<IProduct>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original;
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -117,18 +115,11 @@ export const columns: ColumnDef<IProduct>[] = [
             <Link href={`/p/${row.original.slug}`}>
               <DropdownMenuItem>View product details</DropdownMenuItem>
             </Link>
-            <DropdownMenuItem onClick={() => {}}>
+            <DropdownMenuItem onClick={() => {}} disabled>
               Mark as <code className="text-red-600 ml-2">outofstock</code>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-red-600"
-              onClick={async () => {
-                await deleteProduct(row.original._id, "/products");
-              }}
-            >
-              Delete
-            </DropdownMenuItem>
+            <DeleteProduct id={row.original.id || ""} />
           </DropdownMenuContent>
         </DropdownMenu>
       );

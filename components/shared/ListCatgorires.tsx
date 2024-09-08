@@ -32,20 +32,20 @@ const ListCatgorires = ({ isLoading, allCategories }: { isLoading: boolean; allC
           )}
           <CommandGroup>
             {allCategories?.map((category) => (
-              <div key={category._id}>
-                <CommandItem key={category._id} className="flex justify-between">
+              <div key={category.id}>
+                <CommandItem key={category.id} className="flex justify-between">
                   <div>
                     {category.name}
                     <Badge variant="outline" className="ml-2 text-light-3">
                       Group
                     </Badge>
                   </div>
-                  <DeleteCategory id={category._id} name={category.name} isGroup />
+                  <DeleteCategory id={category.id} name={category.name} isGroup />
                 </CommandItem>
                 {category?.children?.map((child) => (
-                  <CommandItem key={child._id} className="flex justify-between">
+                  <CommandItem key={child.id} className="flex justify-between">
                     <p>{child.name}</p>
-                    <DeleteCategory id={child._id} name={child.name} />
+                    <DeleteCategory id={child.id} name={child.name} />
                   </CommandItem>
                 ))}
               </div>

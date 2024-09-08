@@ -4,12 +4,14 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ChangeEvent, useState } from "react";
 import { Label } from "../ui/label";
-import { createSubCategory } from "@/lib/actions/category.action";
+import { createSubCategoryDB } from "@/lib/actions/category.action";
 import { toast } from "../ui/use-toast";
 import { ICategory } from "@/types";
 import { Checkbox } from "../ui/checkbox";
+import { useCategoryStore } from "@/stores/category";
 
 const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICategory[]; isLoading: boolean }) => {
+  const { addCategory } = useCategoryStore();
   const [name, setName] = useState("");
   const [autoGen, setAutoGen] = useState(true);
   const [slug, setSlug] = useState("");
@@ -53,7 +55,7 @@ const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICa
     }
 
     setLoading(true);
-    const res = await createSubCategory(parentId, name.trim(), slug, wearType, "/categories");
+    const res = await createSubCategoryDB(parentId, name.trim(), slug, wearType);
     setLoading(false);
     if (!res?.ok) {
       toast({
@@ -71,6 +73,8 @@ const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICa
         // variant: "success",
         description: "Category created successfully",
       });
+      // @ts-ignore
+      addCategory(res?.data); // Add the new category to the store
     }
   };
 
@@ -82,7 +86,7 @@ const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICa
         </SelectTrigger>
         <SelectContent>
           {parentCategories.map((category) => (
-            <SelectItem key={category._id} value={category._id}>
+            <SelectItem key={category.id} value={category.id}>
               {category.name}
             </SelectItem>
           ))}

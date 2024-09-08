@@ -1,16 +1,15 @@
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { createCategory } from "@/lib/actions/category.action";
+import { createCategoryDB } from "@/lib/actions/category.action";
 import { ChangeEvent, useState } from "react";
 import { Label } from "../ui/label";
 import { toast } from "../ui/use-toast";
-import { Checkbox } from "../ui/checkbox";
-import { CheckedState } from "@radix-ui/react-checkbox";
+import { useCategoryStore } from "@/stores/category";
 
 const AddCategory = () => {
+  const { addCategory } = useCategoryStore();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [isOffer, setIsOffer] = useState<CheckedState>(false);
   const [loading, setLoading] = useState(false);
 
   const handleInput = (e: any) => {
@@ -31,7 +30,7 @@ const AddCategory = () => {
     }
 
     setLoading(true);
-    const res = await createCategory(name.trim(), slug, Boolean(isOffer), "/categories");
+    const res = await createCategoryDB(name.trim(), slug);
     setLoading(false);
 
     if (!res?.ok) {
@@ -43,12 +42,13 @@ const AddCategory = () => {
     } else {
       setName("");
       setSlug("");
-      setIsOffer(false);
       toast({
         title: "Success",
         // variant: "success",
         description: "Category created successfully",
       });
+      // @ts-ignore
+      addCategory(res?.data); // add the new category to the store
     }
   };
 
@@ -64,13 +64,6 @@ const AddCategory = () => {
           onChange={handleInput}
         />
         <Label className="account-form_label text-sm text-dark-3">{slug}</Label>
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <Checkbox id="offer" checked={isOffer} onCheckedChange={setIsOffer} />
-        <label htmlFor="offer" className="font-medium select-none">
-          Check this box if this is an offer
-        </label>
       </div>
 
       <Button type={loading ? "button" : "submit"} className="bg-dark-3 w-[100px] rounded-xl">

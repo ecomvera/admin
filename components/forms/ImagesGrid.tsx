@@ -166,8 +166,15 @@ const ImageBox = ({
       <button onClick={() => console.log(color)}>click</button>
       <div className="border w-24 h-24">
         <Label htmlFor={labelWithColor} className="cursor-pointer h-full flex items-center justify-center overflow-hidden">
-          {files[i]?.blob ? (
-            <Image src={files[i]?.blob} alt="image" width={96} height={96} priority className="object-cover" />
+          {files[i]?.blob || files[i]?.url ? (
+            <Image
+              src={files[i]?.blob || files[i]?.url}
+              alt="image"
+              width={96}
+              height={96}
+              priority
+              className="object-cover"
+            />
           ) : (
             <Image src={"/assets/fallback.jpg"} alt="image" width={96} height={96} priority className="object-cover" />
           )}

@@ -1,40 +1,51 @@
 export interface ICategory {
-  _id: string;
+  id: string;
   name: string;
   slug: string;
   wearType?: string;
-  parentId: string | null;
+  parentId?: string | null;
   children?: ICategory[];
   products?: IProduct[];
+  parent?: ICategory;
 }
 
 export interface IProduct {
-  _id?: string;
+  id?: string;
   name: string;
   slug: string;
   description: string;
   price: number;
   mrp: number;
-  category: { _id: string; name: string; slug?: string } | string;
-  subCategory: { _id: string; name: string; slug?: string } | string;
-  images: { key: String; color: String; url: String; publicId: String }[];
-  sizes: { key: string; value: string }[];
-  attributes: { key: string; value: string }[];
   material: string;
   quantity: number;
   inStock: boolean;
   isNewArrival: boolean;
-}
+  isBestSeller?: boolean;
+  colors: string[];
 
-export interface IAttribute {
-  _id: string;
-  title: string;
+  sizes: IKeyValue[];
+  images: IImageFile[];
+  attributes: IKeyValue[];
+
+  category?: ICategory;
+  categoryId: string;
+
+  subCategory?: { id: string; name: string; slug?: string } | string;
 }
 
 export interface IImageFile {
+  id?: string;
   key: string;
   color: string;
-  blob: string;
+  blob?: string;
   url: string;
   publicId: string;
+  productId?: string;
+}
+
+export interface IKeyValue {
+  id?: string;
+  key: string;
+  value: string;
+  productId?: string;
 }

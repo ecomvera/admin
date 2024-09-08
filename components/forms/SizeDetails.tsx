@@ -1,9 +1,9 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormItem, FormLabel } from "@/components/ui/form";
 import { Dispatch, SetStateAction } from "react";
-import { Input } from "../../ui/input";
-import { Button } from "../../ui/button";
-import { IAttribute } from "@/types";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Sizes as defaultSizes } from "@prisma/client";
 
 interface Props {
   label: string;
@@ -17,8 +17,6 @@ interface Props {
     >
   >;
 }
-
-const defaultSizes = ["S", "M", "L", "XL", "2XL"];
 
 const SizeDetails = ({ label, sizes, setSizes }: Props) => {
   return (
@@ -34,7 +32,7 @@ const SizeDetails = ({ label, sizes, setSizes }: Props) => {
             type="text"
             placeholder="Chest (in Inch): 43.0 | Front Length (in Inch): 28.0 | Sleeve Length (in Inch): 9.75"
             onChange={(e) => {
-              const obj = { key: defaultSizes[index], value: e.target.value };
+              const obj = { key: sizes[index].key, value: e.target.value };
               setSizes([...sizes.slice(0, index), obj, ...sizes.slice(index + 1)]);
             }}
           />
@@ -55,11 +53,11 @@ const SizeDetails = ({ label, sizes, setSizes }: Props) => {
           <SelectValue placeholder={`Select the Size`} />
         </SelectTrigger>
         <SelectContent>
-          {defaultSizes
-            ?.filter((a) => !sizes.some((k) => k.key === a))
-            .map((a) => (
-              <SelectItem key={a} value={a}>
-                {a}
+          {Object.values(defaultSizes)
+            ?.filter((item) => !sizes.some((selected) => selected.key === item))
+            .map((key) => (
+              <SelectItem key={key} value={key}>
+                {key}
               </SelectItem>
             ))}
         </SelectContent>
