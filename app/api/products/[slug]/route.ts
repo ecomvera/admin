@@ -12,7 +12,12 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     const start = Date.now();
     const data = await prisma.product.findUnique({
       where: { slug },
-      include: { category: { include: { parent: true } }, images: true, attributes: true, sizes: true },
+      include: {
+        category: { select: { name: true, slug: true, parent: { select: { name: true, slug: true } } } },
+        images: true,
+        attributes: true,
+        sizes: true,
+      },
     });
     const duration = Date.now() - start;
     console.log("\x1b[32m%s\x1b[0m", `Product [id] - Database query time: ${duration} ms`);

@@ -8,12 +8,26 @@ export async function GET(req: NextApiRequest) {
   const url = new URL(req.url || "");
   const searchParams = Object.fromEntries(url.searchParams.entries());
 
+  const obj = {
+    id: true,
+    name: true,
+    slug: true,
+    price: true,
+    mrp: true,
+    images: { take: 2, select: { url: true } },
+    category: { select: { name: true, slug: true, parent: { select: { name: true, slug: true } } } },
+  };
+
   try {
     let data;
 
     const start = Date.now();
     if ("table-data" in searchParams) {
       data = await prisma.product.findMany({ include: { category: { include: { parent: true } } } });
+    } else if ("new-arrivals" in searchParams) {
+      data = await prisma.product.findMany({ where: { isNewArrival: true }, select: obj });
+    } else if ("best-sellers" in searchParams) {
+      data = await prisma.product.findMany({ where: { isBestSeller: true }, select: obj });
     } else {
       data = await prisma.product.findMany({
         include: { category: { include: { parent: true } }, images: true, attributes: true, sizes: true },
