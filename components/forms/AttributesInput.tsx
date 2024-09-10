@@ -3,7 +3,7 @@ import { FormItem, FormLabel } from "@/components/ui/form";
 import { Dispatch, SetStateAction } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Attributes as AttributeTypes } from "@prisma/client";
+import { attributes as AttributesEnum } from "../../constants/enum";
 
 interface Props {
   label: string;
@@ -55,13 +55,13 @@ const AttributesInput = ({ label, attributes, setAttributes }: Props) => {
           <SelectValue placeholder={`Select the key`} />
         </SelectTrigger>
         <SelectContent>
-          {Object.values(AttributeTypes)
-            ?.filter((key) => !attributes.some((selected) => selected.key === key))
-            .map((key) => (
-              <SelectItem key={key} value={key}>
-                {key}
+          {AttributesEnum?.filter((attribute) => !attributes.some((selected) => selected.key === attribute.key)).map(
+            (item) => (
+              <SelectItem key={item.key} value={item.key}>
+                {item.key}
               </SelectItem>
-            ))}
+            )
+          )}
         </SelectContent>
       </Select>
     </FormItem>

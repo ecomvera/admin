@@ -3,7 +3,7 @@ import { FormItem, FormLabel } from "@/components/ui/form";
 import { Dispatch, SetStateAction } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Sizes as defaultSizes } from "@prisma/client";
+import { sizes as defaultSizes } from "../../constants/enum";
 
 interface Props {
   label: string;
