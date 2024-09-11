@@ -63,6 +63,8 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  CartItem ShoppingItem[]
+
   @@map("products")
 }
 
@@ -93,4 +95,104 @@ model ProductImages {
 
   Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String?  @db.ObjectId
+}
+
+// user
+model User {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  name      String?
+  email     String? @unique
+  phone     String  @unique
+  gender    String?
+  onBoarded Boolean @default(false)
+
+  addresses Address[]
+  orders    Order[]
+  cart      Cart[]
+  wishlist  WishList[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model otp {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  phone    String   @unique
+  otp      String
+  expireAt DateTime
+
+  @@map("otps")
+}
+
+model Address {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  line1    String
+  line2    String
+  landmark String
+  city     String
+  state    String
+  country  String
+  pincode  String
+  phone    String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @db.ObjectId
+
+  orders Order[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("addresses")
+}
+
+model Order {
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String @db.ObjectId
+  paymentId String @db.ObjectId
+  addressId String @db.ObjectId
+  status    String
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address Address @relation(fields: [addressId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("orders")
+}
+
+model Cart {
+  id     String         @id @default(auto()) @map("_id") @db.ObjectId
+  items  ShoppingItem[]
+  User   User           @relation(fields: [userId], references: [id])
+  userId String         @db.ObjectId
+
+  @@map("carts")
+}
+
+model WishList {
+  id     String         @id @default(auto()) @map("_id") @db.ObjectId
+  items  ShoppingItem[]
+  User   User           @relation(fields: [userId], references: [id])
+  userId String         @db.ObjectId
+
+  @@map("wishlists")
+}
+
+model ShoppingItem {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  itemId   String  @db.ObjectId
+  quantity Int
+  size     String
+  color    String
+  product  Product @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  Cart       Cart?     @relation(fields: [cartId], references: [id])
+  cartId     String?   @db.ObjectId
+  WishList   WishList? @relation(fields: [wishListId], references: [id])
+  wishListId String?   @db.ObjectId
 }
