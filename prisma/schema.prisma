@@ -182,7 +182,7 @@ model Cart {
 model WishList {
   id        String   @id @map("_id")
   quantity  Int
-  size      String
+  size      String?
   color     String
   productId String   @db.ObjectId
   product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)

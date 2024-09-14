@@ -1,5 +1,6 @@
 "use server";
 
+import { colors } from "@/constants/enum";
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
@@ -15,6 +16,8 @@ export async function GET(req: NextApiRequest) {
     price: true,
     mrp: true,
     images: { take: 2, select: { url: true } },
+    colors: true,
+    sizes: true,
     category: { select: { name: true, slug: true, parent: { select: { name: true, slug: true } } } },
   };
 
