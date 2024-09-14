@@ -26,9 +26,24 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  const productObj = {
+    id: true,
+    name: true,
+    slug: true,
+    price: true,
+    mrp: true,
+    images: { take: 1, select: { url: true } },
+    sizes: true,
+  };
+
   const user = await prisma.user.findUnique({
     where: { phone },
-    include: { addresses: true, orders: true, cart: true, wishlist: true },
+    include: {
+      addresses: true,
+      orders: true,
+      cart: { include: { product: { select: productObj } } },
+      wishlist: { include: { product: { select: productObj } } },
+    },
   });
   if (!user) {
     return NextResponse.json({

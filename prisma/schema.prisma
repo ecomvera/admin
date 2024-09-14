@@ -63,7 +63,8 @@ model Product {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  CartItem ShoppingItem[]
+  CartItem Cart[]
+  WishList WishList[]
 
   @@map("products")
 }
@@ -166,33 +167,27 @@ model Order {
 }
 
 model Cart {
-  id     String         @id @default(auto()) @map("_id") @db.ObjectId
-  items  ShoppingItem[]
-  User   User           @relation(fields: [userId], references: [id])
-  userId String         @db.ObjectId
+  id        String   @id @map("_id")
+  quantity  Int
+  size      String
+  color     String
+  productId String   @db.ObjectId
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("carts")
 }
 
 model WishList {
-  id     String         @id @default(auto()) @map("_id") @db.ObjectId
-  items  ShoppingItem[]
-  User   User           @relation(fields: [userId], references: [id])
-  userId String         @db.ObjectId
+  id        String   @id @map("_id")
+  quantity  Int
+  size      String
+  color     String
+  productId String   @db.ObjectId
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String   @db.ObjectId
+  User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("wishlists")
-}
-
-model ShoppingItem {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  itemId   String  @db.ObjectId
-  quantity Int
-  size     String
-  color    String
-  product  Product @relation(fields: [itemId], references: [id], onDelete: Cascade)
-
-  Cart       Cart?     @relation(fields: [cartId], references: [id])
-  cartId     String?   @db.ObjectId
-  WishList   WishList? @relation(fields: [wishListId], references: [id])
-  wishListId String?   @db.ObjectId
 }
