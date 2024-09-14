@@ -70,3 +70,21 @@ export async function PATCH(req: NextRequest) {
 
   return NextResponse.json({ ok: true, data: item });
 }
+
+export async function DELETE(req: NextRequest) {
+  const authCheck = await authenticate(req);
+  if (!authCheck.ok) {
+    return NextResponse.json({ ok: false, error: authCheck.message });
+  }
+  if (!authCheck.user?.userId) {
+    return NextResponse.json({ ok: false, error: "Authentication error" });
+  }
+
+  const body = await req.json();
+  if (!body || !body.id) {
+    return NextResponse.json({ ok: false, error: "Missing body" });
+  }
+
+  await prisma.cart.delete({ where: { id: body.id } });
+  return NextResponse.json({ ok: true });
+}
