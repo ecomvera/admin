@@ -6,6 +6,7 @@ const convertObject = (obj: Record<string, string>) => {
   const result: Record<string, string[]> = {};
 
   Object.keys(obj).forEach((key) => {
+    if (key === "category") return (result[key] = obj[key].split("_"));
     let value = obj[key].replace("-", " ");
     result[key] = value.split("_");
   });
@@ -43,25 +44,42 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     conditionsArr.push({ attributes: { some: { value: { in: output.neck } } } });
   }
 
+  // filter by category
+  const categoryArr: any[] = [];
+  if (output.category && output.category.length) {
+    categoryArr.push({ slug: { in: output.category } });
+  }
+
+  const includeObj = {
+    parent: { select: { name: true, slug: true } },
+    products: {
+      where: {
+        AND: conditionsArr,
+      },
+      include: { images: true, sizes: true, attributes: true },
+    },
+  };
+
   try {
     const start = Date.now();
+
+    const allCategories = output.parent
+      ? await prisma.category.findMany({
+          where: { slug: slug },
+          include: { children: { select: { name: true, slug: true } } },
+        })
+      : [];
+
     const data = await prisma.category.findUnique({
       where: { slug: slug },
-      include: {
-        parent: { select: { name: true, slug: true } },
-        products: {
-          where: {
-            AND: conditionsArr,
-          },
-          include: { images: true, sizes: true, attributes: true },
-        },
-      },
+      include: output.parent ? { children: { where: { AND: categoryArr }, include: includeObj } } : includeObj,
     });
     const duration = Date.now() - start;
     console.log("\x1b[32m%s\x1b[0m", `Categories [id] - Database query time: ${duration} ms`);
 
     return NextResponse.json({
       ok: true,
+      subCategories: allCategories[0]?.children || [],
       category: data,
     });
   } catch (error: any) {
