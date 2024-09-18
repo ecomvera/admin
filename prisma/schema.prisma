@@ -128,16 +128,17 @@ model otp {
 }
 
 model Address {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  line1    String
-  line2    String
-  landmark String
-  city     String
-  state    String
-  country  String
-  pincode  String
-  phone    String
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  line1         String
+  line2         String
+  landmark      String
+  city          String
+  state         String
+  country       String
+  pincode       String
+  phone         String
+  residenceType String
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @db.ObjectId
