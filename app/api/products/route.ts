@@ -31,6 +31,8 @@ export async function GET(req: NextApiRequest) {
       data = await prisma.product.findMany({ where: { isNewArrival: true }, select: obj });
     } else if ("best-sellers" in searchParams) {
       data = await prisma.product.findMany({ where: { isBestSeller: true }, select: obj });
+    } else if ("group-data" in searchParams) {
+      data = await prisma.product.findMany({ select: { id: true, name: true, slug: true } });
     } else {
       data = await prisma.product.findMany({
         include: { category: { include: { parent: true } }, images: true, attributes: true, sizes: true },

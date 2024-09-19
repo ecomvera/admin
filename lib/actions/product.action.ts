@@ -2,7 +2,6 @@
 
 import { IProduct } from "@/types";
 import { prisma } from "../prisma";
-import { Attributes as AttributeTypes, Sizes as SizeTypes } from "@prisma/client";
 
 export const createProduct = async (product: IProduct) => {
   try {
@@ -31,7 +30,7 @@ export const createProduct = async (product: IProduct) => {
     // create product sizes
     await prisma.productSizes.createMany({
       data: product.sizes.map((size) => ({
-        key: size.key as SizeTypes,
+        key: size.key,
         value: size.value,
         productId: res.id,
       })),
@@ -52,7 +51,7 @@ export const createProduct = async (product: IProduct) => {
     // create product attributes
     await prisma.productAttributes.createMany({
       data: product.attributes.map((attribute) => ({
-        key: attribute.key as AttributeTypes,
+        key: attribute.key,
         value: attribute.value,
         productId: res.id,
       })),
@@ -104,7 +103,7 @@ export const updateProductDB = async (id: string, data: IProduct) => {
     await prisma.productSizes.deleteMany({ where: { productId: id } });
     await prisma.productSizes.createMany({
       data: data.sizes.map((size) => ({
-        key: size.key as SizeTypes,
+        key: size.key,
         value: size.value,
         productId: id,
       })),
@@ -127,7 +126,7 @@ export const updateProductDB = async (id: string, data: IProduct) => {
     await prisma.productAttributes.deleteMany({ where: { productId: id } });
     await prisma.productAttributes.createMany({
       data: data.attributes.map((attribute) => ({
-        key: attribute.key as AttributeTypes,
+        key: attribute.key,
         value: attribute.value,
         productId: id,
       })),
@@ -150,6 +149,10 @@ export const deleteProductDB = async (id: string) => {
     if (!product) {
       return { ok: false, error: "Product not found" };
     }
+
+    await prisma.groupCategoryProducts.deleteMany({
+      where: { productId: id },
+    });
 
     const imagesPublicIds = product.images.map((image) => image.publicId); // to delete images from cloudinary
 

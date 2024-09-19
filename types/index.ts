@@ -9,6 +9,18 @@ export interface ICategory {
   parent?: ICategory;
 }
 
+export interface IGroupCategory {
+  id: string;
+  name: string;
+  slug: string;
+  image: string;
+  banner: string;
+  isActive: boolean;
+  parentId?: string | null;
+  parent?: ICategory;
+  products: IProduct[];
+}
+
 export interface IProduct {
   id?: string;
   name: string;

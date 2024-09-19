@@ -6,12 +6,20 @@ import { fetcher, fetchOpt } from "@/lib/utils";
 import useSWR from "swr";
 import { useEffect } from "react";
 import { useCategoryStore } from "@/stores/category";
+import GroupCategory from "@/components/shared/GroupCategory";
+import { useGroupCategoryStore } from "@/stores/groupCategory";
 // import Attributes from "@/components/shared/Attributes";
 // import { useAttributeStore } from "@/stores/attribute";
 
 const Page = () => {
   const { categories, setCategories } = useCategoryStore();
   const { mutate: fetchCategories, isLoading: fetchCategoriesLoading } = useSWR("/api/categories", fetcher, fetchOpt);
+  const { groupCategories, setGroupCategories } = useGroupCategoryStore();
+  const { mutate: fetchGroupCategories, isLoading: fetchGroupCategoriesLoading } = useSWR(
+    "/api/categories/group",
+    fetcher,
+    fetchOpt
+  );
   // const { attributes, setAttributes } = useAttributeStore();
   // const { mutate: fetchAttributes, isLoading: fetchAttriburesLoading } = useSWR("/api/attributes", fetcher, fetchOpt);
 
@@ -20,6 +28,10 @@ const Page = () => {
       if (!categories.length) {
         const res = await fetchCategories();
         setCategories(res?.data || []);
+      }
+      if (!groupCategories.length) {
+        const res = await fetchGroupCategories();
+        setGroupCategories(res?.data || []);
       }
       // if (!attributes.length) {
       //   const res = await fetchAttributes();
@@ -35,6 +47,7 @@ const Page = () => {
         <h2 className="head-text py-8">Add Category</h2>
         <CategoryTabs parentCategories={categories || []} isLoading={fetchCategoriesLoading} />
         {/* <Attributes attributes={attributes || []} /> */}
+        <GroupCategory categories={groupCategories || []} />
       </div>
       <ListCatgorires isLoading={fetchCategoriesLoading} allCategories={categories || []} />
     </div>

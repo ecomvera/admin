@@ -27,6 +27,7 @@ const ImageContainer = ({ files, setFiles, colors, setColors }: Props) => {
         <Button variant="outline" className="flex items-center" onClick={() => setDisplayColorPicker(!displayColorPicker)}>
           <span className="mr-2 text-xl mt-[-3px]">+</span> Add Images
         </Button>
+        <p className="text-sm">[640px / 800px]</p>
         {displayColorPicker ? (
           <div className="absolute z-[2]">
             <div

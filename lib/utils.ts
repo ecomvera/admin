@@ -29,3 +29,10 @@ export async function computeSHA256(file: File) {
 }
 
 export const generateFileName = (bytes = 32) => c.randomBytes(bytes).toString("hex");
+
+export const createSlug = (name: string) => name.trim().replace(/\s+/g, "-").toLowerCase();
+
+export const getPublicId = (url: string) => {
+  const splitUrl = url.split("/upload/")[1].split("/").slice(1).join("/");
+  return splitUrl.substring(0, splitUrl.lastIndexOf("."));
+};

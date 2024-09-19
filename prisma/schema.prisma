@@ -21,6 +21,37 @@ datasource db {
 //   @@map("attributes")
 // }
 
+model GroupCategory {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  slug   String @unique
+  image  String
+  banner String
+
+  parentId String?   @db.ObjectId
+  parent   Category? @relation(fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  products GroupCategoryProducts[]
+
+  isActive  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("groupCategories")
+}
+
+model GroupCategoryProducts {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  groupCategoryId String        @db.ObjectId
+  groupCategory   GroupCategory @relation(fields: [groupCategoryId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, groupCategoryId])
+  @@map("groupCategoryProducts")
+}
+
 model Category {
   id       String  @id @default(auto()) @map("_id") @db.ObjectId
   name     String
@@ -30,8 +61,9 @@ model Category {
   parent   Category? @relation("subCategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   parentId String?   @db.ObjectId
 
-  children Category[] @relation("subCategory")
-  products Product[]
+  children      Category[]      @relation("subCategory")
+  products      Product[]
+  GroupCategory GroupCategory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -65,6 +97,8 @@ model Product {
 
   CartItem Cart[]
   WishList WishList[]
+
+  GroupCategories GroupCategoryProducts[]
 
   @@map("products")
 }

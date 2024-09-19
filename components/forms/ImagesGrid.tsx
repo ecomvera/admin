@@ -163,7 +163,6 @@ const ImageBox = ({
   const i = files.findIndex((f) => f.key === labelWithColor);
   return (
     <div className="flex flex-col gap-1 items-center pb-3">
-      <button onClick={() => console.log(color)}>click</button>
       <div className="border w-24 h-24">
         <Label htmlFor={labelWithColor} className="cursor-pointer h-full flex items-center justify-center overflow-hidden">
           {files[i]?.blob || files[i]?.url ? (
