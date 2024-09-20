@@ -7,7 +7,7 @@ interface IGroupCategoryStore {
   groupCategories: IGroupCategory[];
   setGroupCategories: (groupCategory: IGroupCategory[]) => void;
   addGroupCategory: (groupCategory: IGroupCategory) => void;
-  updateGroupCategory: (id: string, name: string) => void;
+  updateGroupCategory: (id: string, data: any) => void;
   deleteGroupCategory: (id: string) => void;
 }
 
@@ -20,11 +20,11 @@ export const useGroupCategoryStore = create<IGroupCategoryStore>((set) => ({
       return { groupCategories: state.groupCategories };
     });
   },
-  updateGroupCategory: (id: string, name: string) => {
+  updateGroupCategory: (id: string, data: any) => {
     set((state) => {
       const index = state.groupCategories.findIndex((item) => item.id === id);
       if (index !== -1) {
-        state.groupCategories[index].name = name;
+        state.groupCategories[index] = { ...state.groupCategories[index], ...data };
         return { groupCategories: state.groupCategories };
       }
       return { groupCategories: state.groupCategories };

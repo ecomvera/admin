@@ -2,7 +2,7 @@
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Switch } from "@/components/ui/switch";
-import { fetcher, fetchOpt, getPublicId } from "@/lib/utils";
+import { createSlug, fetcher, fetchOpt, getPublicId } from "@/lib/utils";
 import { IGroupCategory, IProduct } from "@/types";
 import Image from "next/image";
 import React, { ChangeEvent, useEffect } from "react";
@@ -17,9 +17,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useGroupCategoryStore } from "@/stores/groupCategory";
 
-const Page = ({ params }: { params: { slug: string } }) => {
-  const category = useSWR(`/api/categories/group/${params.slug}`, fetcher, {
+const Page = ({ params }: { params: { id: string } }) => {
+  const { updateGroupCategory } = useGroupCategoryStore();
+  const category = useSWR(`/api/categories/group/${params.id}`, fetcher, {
     ...fetchOpt,
     revalidateOnMount: true,
   });
@@ -53,10 +56,11 @@ const Page = ({ params }: { params: { slug: string } }) => {
 
   const handleUpdateCategory = async () => {
     setLoading(true);
-    const res = await fetch(`/api/categories/group/${params.slug}`, {
+    const data = { ...values, slug: createSlug(values?.name || "") };
+    const res = await fetch(`/api/categories/group/${params.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...values }),
+      body: JSON.stringify(data),
     });
     toast({
       variant: "success",
@@ -65,6 +69,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
     });
     setEdit(false);
     setLoading(false);
+    updateGroupCategory(params.id, data);
   };
 
   const uploadFile = async (file: globalThis.File) => {
@@ -108,12 +113,11 @@ const Page = ({ params }: { params: { slug: string } }) => {
 
   const handleUpdateProducts = async () => {
     setLoading(true);
-    const res = await fetch(`/api/categories/group/${params.slug}`, {
+    await fetch(`/api/categories/group/${params.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ productIds: addedProducts.map((product) => product.id), groupCategoryId: data?.id }),
     }).then((res) => res.json());
-    console.log(res);
     toast({
       variant: "success",
       title: "Updated",
@@ -121,6 +125,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
     });
     setEdit(false);
     setLoading(false);
+    data.products = addedProducts;
   };
 
   useEffect(() => {
@@ -219,7 +224,7 @@ const Page = ({ params }: { params: { slug: string } }) => {
                 onChange={(e) => setValues({ ...values, name: e.target.value })}
               />
             ) : (
-              <h1 className="font-bold text-xl md:text-2xl font-sans">{category.data.data.name}</h1>
+              <h1 className="font-bold text-xl md:text-2xl font-sans">{values?.name}</h1>
             )}
             <div className="flex items-center gap-2">
               <p className="font-semibold">Active:</p>

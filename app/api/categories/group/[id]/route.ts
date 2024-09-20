@@ -2,18 +2,22 @@ import { prisma } from "@/lib/prisma";
 import type { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextApiRequest, { params }: { params: { slug: string } }) {
-  const url = new URL(req.url || "");
-  const searchParams = Object.fromEntries(url.searchParams.entries());
+export async function GET(req: NextApiRequest, { params }: { params: { id: string } }) {
   console.log("fetchApi called - group category");
 
-  const { slug } = params;
+  const { id } = params;
   try {
     const start = Date.now();
     const data = await prisma.groupCategory.findUnique({
-      where: { slug },
-      include: { products: true },
+      where: { id },
     });
+
+    if (!data) {
+      return NextResponse.json({
+        ok: false,
+        error: "no category found!",
+      });
+    }
 
     const res = await prisma.groupCategoryProducts.findMany({
       where: { groupCategoryId: data?.id },
@@ -40,13 +44,13 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
   }
 }
 
-export async function PATCH(req: NextRequest, { params }: { params: { slug: string } }) {
-  const { slug } = params;
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
 
   try {
     const body = await req.json();
     const res = await prisma.groupCategory.update({
-      where: { slug },
+      where: { id },
       data: body,
     });
 
@@ -65,7 +69,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { slug: stri
   }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: { slug: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const body = await req.json();
     const productIds = body.productIds;
@@ -94,18 +98,12 @@ export async function PUT(req: NextRequest, { params }: { params: { slug: string
   }
 }
 
-export async function DELETE(req: NextApiRequest, { params }: { params: { id: string; slug: string } }) {
-  const url = new URL(req.url || "");
-  const searchParams = Object.fromEntries(url.searchParams.entries());
-
-  const id = searchParams.id;
-  const slug = params.slug;
-
-  console.log(id, slug);
+export async function DELETE(req: NextApiRequest, { params }: { params: { id: string } }) {
+  const id = params.id;
 
   try {
     await prisma.groupCategory.delete({
-      where: { slug },
+      where: { id },
     });
 
     await prisma.groupCategoryProducts.deleteMany({

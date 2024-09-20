@@ -204,7 +204,7 @@ const GroupCategory = ({ categories }: { categories: IGroupCategory[] }) => {
 
           {categories?.map((category: IGroupCategory) => (
             <CommandItem key={category.id}>
-              <Link href={`/gc/${category.slug}`} className="text-[15px] w-full">
+              <Link href={`/gc/${category.id}`} className="text-[15px] w-full">
                 {category.name}
               </Link>
               <DeleteGroupCategory category={category} />
