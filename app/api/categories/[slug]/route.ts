@@ -66,31 +66,33 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     let products;
     let subcategories;
 
-    const res = await prisma.category.findUnique({
+    // fetch category with subcategories without filters
+    const categoryData = await prisma.category.findUnique({
       where: { slug: slug },
+      include: { children: { select: { name: true, slug: true } } },
     });
 
-    if (!res?.parentId) {
+    // if parent category then fetch products from its subcategories with filters
+    if (!categoryData?.parentId) {
       category = await prisma.category.findUnique({
         where: { slug: slug },
         include: { children: { where: { AND: categoryArr }, include: childrenObj } },
       });
-      const res = await prisma.category.findUnique({
-        where: { slug: slug },
-        include: { children: { select: { name: true, slug: true } } },
-      });
-      subcategories = res?.children;
+      subcategories = categoryData?.children;
     } else {
+      // if sub category then fetch products with filters
       category = await prisma.category.findUnique({
         where: { slug: slug },
         include: childrenObj,
       });
     }
 
-    if (!res) {
+    // If no category, check for groupCategory
+    if (!categoryData) {
       category = await prisma.groupCategory.findUnique({
         where: { slug: slug },
       });
+      // fetch products with filters
       const productsData = await prisma.groupCategoryProducts.findMany({
         where: { groupCategoryId: category?.id, product: { category: { AND: categoryArr }, AND: conditionsArr } },
         select: {
@@ -99,6 +101,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
           },
         },
       });
+      // fetch sub categories of all products in group category
       const subcategoriesData = await prisma.groupCategoryProducts.findMany({
         where: { groupCategoryId: category?.id },
         select: {
