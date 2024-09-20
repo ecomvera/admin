@@ -50,7 +50,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     categoryArr.push({ slug: { in: output.category } });
   }
 
-  const includeObj = {
+  const childrenObj = {
     parent: { select: { name: true, slug: true } },
     products: {
       where: {
@@ -62,25 +62,63 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
 
   try {
     const start = Date.now();
+    let category;
+    let products;
+    let subcategories;
 
-    const allCategories = output.parent
-      ? await prisma.category.findMany({
-          where: { slug: slug },
-          include: { children: { select: { name: true, slug: true } } },
-        })
-      : [];
-
-    const data = await prisma.category.findUnique({
+    const res = await prisma.category.findUnique({
       where: { slug: slug },
-      include: output.parent ? { children: { where: { AND: categoryArr }, include: includeObj } } : includeObj,
     });
+
+    if (!res?.parentId) {
+      category = await prisma.category.findUnique({
+        where: { slug: slug },
+        include: { children: { where: { AND: categoryArr }, include: childrenObj } },
+      });
+      const res = await prisma.category.findUnique({
+        where: { slug: slug },
+        include: { children: { select: { name: true, slug: true } } },
+      });
+      subcategories = res?.children;
+    } else {
+      category = await prisma.category.findUnique({
+        where: { slug: slug },
+        include: childrenObj,
+      });
+    }
+
+    if (!res) {
+      category = await prisma.groupCategory.findUnique({
+        where: { slug: slug },
+      });
+      const productsData = await prisma.groupCategoryProducts.findMany({
+        where: { groupCategoryId: category?.id, product: { category: { AND: categoryArr }, AND: conditionsArr } },
+        select: {
+          product: {
+            include: { images: true, sizes: true, attributes: true, category: { select: { name: true, slug: true } } },
+          },
+        },
+      });
+      const subcategoriesData = await prisma.groupCategoryProducts.findMany({
+        where: { groupCategoryId: category?.id },
+        select: {
+          product: {
+            include: { category: { select: { name: true, slug: true } } },
+          },
+        },
+      });
+      products = productsData.map((item) => item.product);
+      subcategories = subcategoriesData.map((item) => item.product.category);
+    }
+
     const duration = Date.now() - start;
     console.log("\x1b[32m%s\x1b[0m", `Categories [id] - Database query time: ${duration} ms`);
 
     return NextResponse.json({
       ok: true,
-      subCategories: allCategories[0]?.children || [],
-      category: data,
+      category: category,
+      products: products,
+      subcategories: subcategories,
     });
   } catch (error: any) {
     console.error(error);
