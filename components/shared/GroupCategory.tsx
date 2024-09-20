@@ -204,8 +204,11 @@ const GroupCategory = ({ categories }: { categories: IGroupCategory[] }) => {
 
           {categories?.map((category: IGroupCategory) => (
             <CommandItem key={category.id}>
-              <Link href={`/gc/${category.id}`} className="text-[15px] w-full">
-                {category.name}
+              <Link href={`/gc/${category.id}`} className="text-[15px] w-full flex items-center gap-3">
+                <p>{category.name}</p>
+                {!category.isActive && (
+                  <span className="text-xs font-semibold text-red-600 bg-red-50 rounded-2xl px-2">inactive</span>
+                )}
               </Link>
               <DeleteGroupCategory category={category} />
             </CommandItem>
