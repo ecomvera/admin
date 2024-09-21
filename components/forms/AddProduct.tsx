@@ -18,6 +18,7 @@ import Link from "next/link";
 import { useFileStore } from "@/stores/product";
 import ImageContainer from "./ImageContainer";
 import SizeDetails from "./SizeDetails";
+import { useEnums } from "@/hook/useEnums";
 
 interface Props {
   categories: {
@@ -28,6 +29,7 @@ interface Props {
 
 const AddProduct = ({ categories }: Props) => {
   const { toast } = useToast();
+  const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
   const { files, setFiles, colors, setColors } = useFileStore();
 
   const [sizes, setSizes] = useState<{ key: string; value: string }[]>([]);
@@ -205,8 +207,13 @@ const AddProduct = ({ categories }: Props) => {
             <InputField control={form.control} name="quantity" label="Quantity" type="number" />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <AttributesInput label="Attributes" attributes={attributes} setAttributes={setAttributes} />
-            <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} />
+            <AttributesInput
+              label="Attributes"
+              attributes={attributes}
+              setAttributes={setAttributes}
+              defaultAttributes={defaultAttributes}
+            />
+            <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} defaultSizes={defaultSizes} />
           </div>
           <div className="w-full flex gap-5">
             <SwitchField control={form.control} name="inStock" label="In Stock" />

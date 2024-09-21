@@ -13,10 +13,11 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import ListCollections from "@/components/shared/ListCollections";
 import ListAttributes from "@/components/shared/ListAttributes";
 import Sizes from "@/components/shared/Sizes";
-import { useEnumsStore } from "@/stores/enums";
 import Colors from "@/components/shared/Colors";
+import { useEnums } from "@/hook/useEnums";
 
 const Page = () => {
+  const { sizes, colors, attributes } = useEnums();
   const { categories, setCategories } = useCategoryStore();
   const { mutate: fetchCategories, isLoading: fetchCategoriesLoading } = useSWR("/api/categories", fetcher, fetchOpt);
   const { groupCategories, setGroupCategories } = useGroupCategoryStore();
@@ -25,8 +26,6 @@ const Page = () => {
     fetcher,
     fetchOpt
   );
-  const { attributes, setAttributes, setsizes, sizes, colors, setColors } = useEnumsStore();
-  const { mutate: fetchEnums, isLoading: fetchAttriburesLoading } = useSWR("/api/enum", fetcher, fetchOpt);
 
   useEffect(() => {
     const fetch = async () => {
@@ -37,12 +36,6 @@ const Page = () => {
       if (!groupCategories.length) {
         const res = await fetchGroupCategories();
         setGroupCategories(res?.data || []);
-      }
-      if (!sizes.length) {
-        const res = await fetchEnums();
-        setAttributes(res?.data?.attributes || []);
-        setsizes(res?.data?.sizes || []);
-        setColors(res?.data?.colors || []);
       }
     };
     fetch();

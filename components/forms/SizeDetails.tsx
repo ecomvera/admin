@@ -3,7 +3,7 @@ import { FormItem, FormLabel } from "@/components/ui/form";
 import { Dispatch, SetStateAction } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { sizes as defaultSizes } from "../../constants/enum";
+import { ISize } from "@/types";
 
 interface Props {
   label: string;
@@ -16,9 +16,10 @@ interface Props {
       }[]
     >
   >;
+  defaultSizes: ISize[];
 }
 
-const SizeDetails = ({ label, sizes, setSizes }: Props) => {
+const SizeDetails = ({ label, sizes, setSizes, defaultSizes }: Props) => {
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
@@ -53,11 +54,11 @@ const SizeDetails = ({ label, sizes, setSizes }: Props) => {
           <SelectValue placeholder={`Select the Size`} />
         </SelectTrigger>
         <SelectContent>
-          {Object.values(defaultSizes)
-            ?.filter((item) => !sizes.some((selected) => selected.key === item))
-            .map((key) => (
-              <SelectItem key={key} value={key}>
-                {key}
+          {defaultSizes
+            ?.filter((item) => !sizes.some((selected) => selected.key === item.value))
+            .map((size) => (
+              <SelectItem key={size.value} value={size.value}>
+                {size.value}
               </SelectItem>
             ))}
         </SelectContent>
