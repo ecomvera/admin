@@ -9,6 +9,7 @@ interface ICategoryStore {
   addCategory: (category: ICategory) => void;
   deleteCategory: (category: ICategory) => void;
   updateCategory: (category: ICategory) => void;
+  updateCategoryName: (categoryId: string, name: string, slug: string, isParent: boolean) => void;
 }
 
 export const useCategoryStore = create<ICategoryStore>((set) => ({
@@ -82,6 +83,26 @@ export const useCategoryStore = create<ICategoryStore>((set) => ({
         });
         return { categories: updatedCategories };
       }
+    });
+  },
+  updateCategoryName: (categoryId: string, name: string, slug: string, isParent: boolean) => {
+    set((state: ICategoryStore) => {
+      const updatedCategories = state.categories.map((item: ICategory) => {
+        if (!isParent) {
+          const updatedChildren = item.children?.map((child: ICategory) => {
+            if (child.id === categoryId) {
+              return { ...child, name, slug };
+            }
+            return child;
+          });
+          return { ...item, children: updatedChildren };
+        }
+        if (item.id === categoryId) {
+          return { ...item, name, slug };
+        }
+        return item;
+      });
+      return { categories: updatedCategories };
     });
   },
 }));

@@ -16,6 +16,19 @@ export const createCategoryDB = async (name: string, slug: string) => {
   }
 };
 
+export const updateCategoryNameDB = async (id: string, name: string, slug: string) => {
+  try {
+    await prisma.category.update({ where: { id }, data: { name, slug } });
+    return { ok: true };
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      return { ok: false, error: "Category already exists" };
+    }
+    console.error(error);
+    return { ok: false, error: "Something went wrong" };
+  }
+};
+
 export const createSubCategoryDB = async (categoryId: string, name: string, slug: string, wearType: string) => {
   try {
     const rootCategory = await prisma.category.findUnique({ where: { id: categoryId } });
