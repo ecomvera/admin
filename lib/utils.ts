@@ -1,6 +1,7 @@
 import c from "crypto";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { toast } from "@/components/ui/use-toast";
 
 export const pickerColors = ["#f44336", "#e91e63", "#9c27b0", "yellow"];
 
@@ -36,3 +37,7 @@ export const getPublicId = (url: string) => {
   const splitUrl = url.split("/upload/")[1].split("/").slice(1).join("/");
   return splitUrl.substring(0, splitUrl.lastIndexOf("."));
 };
+
+export const error = (msg: string) => toast({ title: "Error", description: msg, variant: "destructive" });
+export const success = (msg: string, type?: "success" | "default") =>
+  toast({ title: "Success", description: msg, variant: type || "default" });

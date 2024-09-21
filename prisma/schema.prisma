@@ -13,13 +13,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model Attribute {
-//   id    String   @id @default(auto()) @map("_id") @db.ObjectId
-//   key   String
-//   value String[]
+model Attribute {
+  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  key   String   @unique
+  value String[]
 
-//   @@map("attributes")
-// }
+  @@map("attributes")
+}
+
+model Color {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  key   String
+  value String
+
+  @@map("colors")
+}
+
+model Size {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  key   String
+  value String
+
+  @@map("sizes")
+}
 
 model GroupCategory {
   id     String @id @default(auto()) @map("_id") @db.ObjectId

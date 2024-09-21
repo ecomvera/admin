@@ -1,3 +1,9 @@
+export interface IAttribute {
+  id?: string;
+  key: string;
+  value: string[];
+}
+
 export interface ICategory {
   id: string;
   name: string;

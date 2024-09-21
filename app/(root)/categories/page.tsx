@@ -8,10 +8,11 @@ import { useEffect } from "react";
 import { useCategoryStore } from "@/stores/category";
 import GroupCategory from "@/components/shared/GroupCategory";
 import { useGroupCategoryStore } from "@/stores/groupCategory";
-// import Attributes from "@/components/shared/Attributes";
-// import { useAttributeStore } from "@/stores/attribute";
+import Attributes from "@/components/shared/Attributes";
+import { useAttributeStore } from "@/stores/attribute";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ListCollections from "@/components/shared/ListCollections";
+import ListAttributes from "@/components/shared/ListAttributes";
 
 const Page = () => {
   const { categories, setCategories } = useCategoryStore();
@@ -22,8 +23,8 @@ const Page = () => {
     fetcher,
     fetchOpt
   );
-  // const { attributes, setAttributes } = useAttributeStore();
-  // const { mutate: fetchAttributes, isLoading: fetchAttriburesLoading } = useSWR("/api/attributes", fetcher, fetchOpt);
+  const { attributes, setAttributes } = useAttributeStore();
+  const { mutate: fetchAttributes, isLoading: fetchAttriburesLoading } = useSWR("/api/enum", fetcher, fetchOpt);
 
   useEffect(() => {
     const fetch = async () => {
@@ -35,10 +36,10 @@ const Page = () => {
         const res = await fetchGroupCategories();
         setGroupCategories(res?.data || []);
       }
-      // if (!attributes.length) {
-      //   const res = await fetchAttributes();
-      //   setAttributes(res?.data || []);
-      // }
+      if (!attributes.length) {
+        const res = await fetchAttributes();
+        setAttributes(res?.data?.attributes || []);
+      }
     };
     fetch();
   }, []);
@@ -46,8 +47,6 @@ const Page = () => {
   return (
     <div className="flex py-3 flex-col gap-5 tablet:flex-row">
       <div className="w-full">
-        {/* <Attributes attributes={attributes || []} /> */}
-
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
             <AccordionTrigger className="hover:no-underline">
@@ -65,19 +64,43 @@ const Page = () => {
               <GroupCategory />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-2">
+          <AccordionItem value="item-3">
             <AccordionTrigger className="hover:no-underline">
               <h2 className="text-lg font-semibold text-dark-3">Create an attribute</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <GroupCategory />
+              <Attributes />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
-      <div className="w-full flex flex-col gap-5">
-        <ListCatgorires isLoading={fetchCategoriesLoading} allCategories={categories || []} />
-        <ListCollections categories={groupCategories || []} />
+      <div className="w-full">
+        <Accordion type="multiple">
+          <AccordionItem value="item-1">
+            <AccordionTrigger className="hover:no-underline">
+              <h2 className="text-lg font-semibold text-dark-3">Categories</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <ListCatgorires isLoading={fetchCategoriesLoading} allCategories={categories || []} />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger className="hover:no-underline">
+              <h2 className="text-lg font-semibold text-dark-3">Collections</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <ListCollections categories={groupCategories || []} />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-3">
+            <AccordionTrigger className="hover:no-underline">
+              <h2 className="text-lg font-semibold text-dark-3">Attributes</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <ListAttributes attributes={attributes || []} />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   );

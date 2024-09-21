@@ -9,51 +9,47 @@ import { Skeleton } from "../ui/skeleton";
 
 const ListCatgorires = ({ isLoading, allCategories }: { isLoading: boolean; allCategories: ICategory[] }) => {
   return (
-    <div>
-      <h2 className="text-2xl font-semibold text-dark-3 mt-2">All Categories</h2>
-
-      <Command className="h-full max-h-[400px]">
-        <div className="flex gap-3">
-          <div className="w-full flex-1">
-            <CommandInput placeholder={isLoading ? "Loading..." : "Search sub-category..."} />
-          </div>
+    <Command className="h-full max-h-[400px]">
+      <div className="flex gap-3">
+        <div className="w-full flex-1">
+          <CommandInput placeholder={isLoading ? "Loading..." : "Search sub-category..."} />
         </div>
-        <CommandList>
-          {isLoading ? (
-            <CommandEmpty className="flex flex-col gap-5 mt-5">
-              <Skeleton className="w-full h-[20px] rounded-full" />
-              <Skeleton className="w-full h-[20px] rounded-full" />
-              <Skeleton className="w-full h-[20px] rounded-full" />
-              <Skeleton className="w-full h-[20px] rounded-full" />
-              <Skeleton className="w-full h-[20px] rounded-full" />
-            </CommandEmpty>
-          ) : (
-            <CommandEmpty>No sub-category found.</CommandEmpty>
-          )}
-          <CommandGroup>
-            {allCategories?.map((category) => (
-              <div key={category.id}>
-                <CommandItem key={category.id} className="flex justify-between">
-                  <div>
-                    {category.name}
-                    <Badge variant="outline" className="ml-2 text-light-3">
-                      Group
-                    </Badge>
-                  </div>
-                  <DeleteCategory id={category.id} name={category.name} isGroup />
+      </div>
+      <CommandList>
+        {isLoading ? (
+          <CommandEmpty className="flex flex-col gap-5 mt-5">
+            <Skeleton className="w-full h-[20px] rounded-full" />
+            <Skeleton className="w-full h-[20px] rounded-full" />
+            <Skeleton className="w-full h-[20px] rounded-full" />
+            <Skeleton className="w-full h-[20px] rounded-full" />
+            <Skeleton className="w-full h-[20px] rounded-full" />
+          </CommandEmpty>
+        ) : (
+          <CommandEmpty>No sub-category found.</CommandEmpty>
+        )}
+        <CommandGroup>
+          {allCategories?.map((category) => (
+            <div key={category.id}>
+              <CommandItem key={category.id} className="flex justify-between">
+                <div>
+                  {category.name}
+                  <Badge variant="outline" className="ml-2 text-light-3">
+                    Group
+                  </Badge>
+                </div>
+                <DeleteCategory id={category.id} name={category.name} isGroup />
+              </CommandItem>
+              {category?.children?.map((child) => (
+                <CommandItem key={child.id} className="flex justify-between">
+                  <p>{child.name}</p>
+                  <DeleteCategory id={child.id} name={child.name} />
                 </CommandItem>
-                {category?.children?.map((child) => (
-                  <CommandItem key={child.id} className="flex justify-between">
-                    <p>{child.name}</p>
-                    <DeleteCategory id={child.id} name={child.name} />
-                  </CommandItem>
-                ))}
-              </div>
-            ))}
-          </CommandGroup>
-        </CommandList>
-      </Command>
-    </div>
+              ))}
+            </div>
+          ))}
+        </CommandGroup>
+      </CommandList>
+    </Command>
   );
 };
 
