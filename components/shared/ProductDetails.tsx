@@ -2,7 +2,7 @@
 
 import Image from "next/legacy/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { IKeyValue, IProduct, ISize } from "@/types";
+import { IKeyValue, IProduct } from "@/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { AspectRatio } from "../ui/aspect-ratio";
@@ -75,6 +75,13 @@ const LeftGallaryView = ({ images, currentColor }: { images: IProduct["images"];
   );
 };
 
+// make text bold with brackets <>
+const formatText = (text: string) => {
+  const regex = /<([^>]+)>/g;
+  const parts = text.split(regex);
+  return parts.map((part, index) => (index % 2 === 1 ? <strong key={index}>{part}</strong> : part));
+};
+
 const ProductDetail = ({
   data,
   currentColor,
@@ -129,17 +136,24 @@ const ProductDetail = ({
           <div key={size.key} className={`cursor-pointer`} onClick={() => setSelectedSize(size)}>
             <div
               key={size.key}
-              className={`border-2 ${size.key === selectedSize?.key ? "border-2 border-blue-700" : ""} px-3 py-1`}
+              className={`border-2 ${
+                size.key === selectedSize?.key ? "border-2 border-yellow-400 bg-yellow-400" : ""
+              } px-3 py-1`}
             >
               <p className="text-base mobile:text-lg font-semibold text-dark-3">{size.key}</p>
             </div>
             {size.quantity && size.quantity < 10 && (
-              <p className="text-sm font-semibold text-red-500">{size.quantity} left</p>
+              <p className="text-sm font-semibold text-red-500">{size.quantity} Left</p>
             )}
           </div>
         ))}
       </div>
-      <p className="text-sm font-normal text-dark-3">{selectedSize?.value}</p>
+      {selectedSize && (
+        <p className="text-sm font-normal text-dark-3">
+          Size: <b>{selectedSize?.key}</b> <span className="ml-2">{formatText(selectedSize?.value)}</span>
+        </p>
+      )}
+
       <p className="text-xl font-semibold text-dark-3 mt-5">Key Highlights</p>
       <div className="grid grid-cols-2 gap-5 mt-3">
         {data.attributes.map((item, index) => (
