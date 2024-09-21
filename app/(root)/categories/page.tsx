@@ -14,6 +14,7 @@ import ListCollections from "@/components/shared/ListCollections";
 import ListAttributes from "@/components/shared/ListAttributes";
 import Sizes from "@/components/shared/Sizes";
 import { useEnumsStore } from "@/stores/enums";
+import Colors from "@/components/shared/Colors";
 
 const Page = () => {
   const { categories, setCategories } = useCategoryStore();
@@ -24,7 +25,7 @@ const Page = () => {
     fetcher,
     fetchOpt
   );
-  const { attributes, setAttributes, setsizes, sizes } = useEnumsStore();
+  const { attributes, setAttributes, setsizes, sizes, colors, setColors } = useEnumsStore();
   const { mutate: fetchEnums, isLoading: fetchAttriburesLoading } = useSWR("/api/enum", fetcher, fetchOpt);
 
   useEffect(() => {
@@ -37,10 +38,11 @@ const Page = () => {
         const res = await fetchGroupCategories();
         setGroupCategories(res?.data || []);
       }
-      if (!attributes.length || !sizes.length) {
+      if (!sizes.length) {
         const res = await fetchEnums();
         setAttributes(res?.data?.attributes || []);
         setsizes(res?.data?.sizes || []);
+        setColors(res?.data?.colors || []);
       }
     };
     fetch();
@@ -108,6 +110,14 @@ const Page = () => {
             </AccordionTrigger>
             <AccordionContent>
               <ListAttributes attributes={attributes || []} />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-4">
+            <AccordionTrigger className="hover:no-underline">
+              <h2 className="text-lg font-semibold text-dark-3">Colors</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <Colors colors={colors} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

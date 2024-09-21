@@ -9,6 +9,12 @@ export interface ISize {
   value: string;
 }
 
+export interface IColor {
+  id: string;
+  name: string;
+  hex: string;
+}
+
 export interface ICategory {
   id: string;
   name: string;

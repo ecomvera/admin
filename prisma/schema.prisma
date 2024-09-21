@@ -22,9 +22,9 @@ model Attribute {
 }
 
 model Color {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  key   String @unique
-  value String
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
+  hex  String
 
   @@map("colors")
 }

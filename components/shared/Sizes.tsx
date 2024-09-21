@@ -36,7 +36,7 @@ const Sizes = ({ sizes }: { sizes: ISize[] }) => {
         value={name}
         onChange={(e) => setName(e.target.value.toUpperCase())}
       />
-      <Button disabled={loading} className="bg-dark-3 w-[100px] rounded-xl" onClick={onSubmit}>
+      <Button disabled={loading || name === ""} className="bg-dark-3 w-[100px] rounded-xl" onClick={onSubmit}>
         {loading ? "Adding..." : "Add"}
       </Button>
 
