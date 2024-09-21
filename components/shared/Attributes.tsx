@@ -27,9 +27,9 @@ const Attributes = () => {
   };
 
   return (
-    <div className="px-2 flex flex-col gap-2">
-      <Input type="text" className="" placeholder="Attribute name" value={name} onChange={(e) => setName(e.target.value)} />
-      <Button disabled={loading} className="bg-dark-3 w-[100px] rounded-xl" onClick={onSubmit}>
+    <div className="px-2 flex flex-col gap-2 pt-[1px]">
+      <Input placeholder="Attribute name" value={name} onChange={(e) => setName(e.target.value)} />
+      <Button disabled={loading || name === ""} className="bg-dark-3 w-[100px] rounded-xl" onClick={onSubmit}>
         {loading ? "Adding..." : "Add"}
       </Button>
     </div>

@@ -30,7 +30,7 @@ const Colors = ({ colors }: { colors: IColor[] }) => {
   };
 
   return (
-    <div className="px-2 flex flex-col gap-2">
+    <div className="px-2 flex flex-col gap-2 pt-[1px]">
       <div className="flex gap-2">
         <Input type="text" placeholder="Color Name" value={name} onChange={(e) => setName(e.target.value)} />
         <Input type="text" placeholder="Color Hex - #fafafa" value={hex} onChange={(e) => setHex(e.target.value)} />

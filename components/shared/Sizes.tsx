@@ -28,7 +28,7 @@ const Sizes = ({ sizes }: { sizes: ISize[] }) => {
   };
 
   return (
-    <div className="px-2 flex flex-col gap-2">
+    <div className="px-2 flex flex-col gap-2 pt-[1px]">
       <Input
         type="text"
         className=""
