@@ -64,14 +64,14 @@ const Item = ({ attribute }: { attribute: IAttribute }) => {
   };
 
   return (
-    <CommandItem className="flex flex-col items-start gap-2 border-b data-[selected=true]:bg-transparent">
+    <CommandItem className="flex flex-col items-start gap-2 border-b data-[selected=true]:bg-transparent group">
       <div className="flex justify-between w-full items-center gap-2">
         {edit ? (
           <Input value={key} onChange={(e) => setKey(e.target.value)} className="w-full" />
         ) : (
           <div className="flex gap-2 items-center">
             <p className="font-semibold">{attribute.key}</p>
-            <Pencil2Icon className="w-5 cursor-pointer" onClick={() => setEdit(true)} />
+            <Pencil2Icon className="hidden group-hover:inline w-5 cursor-pointer" onClick={() => setEdit(true)} />
           </div>
         )}
         {edit ? (

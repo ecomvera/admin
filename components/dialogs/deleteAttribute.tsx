@@ -37,7 +37,7 @@ export function DeleteAttribute({ id, type, values }: { id: string; type: "key" 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="">
+      <DialogTrigger className={`${type === "key" && "hidden group-hover:inline"}`}>
         {type === "value" ? (
           <Cross2Icon className="cursor-pointer" onClick={() => setOpen(true)} />
         ) : (
