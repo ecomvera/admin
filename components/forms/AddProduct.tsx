@@ -11,7 +11,7 @@ import SelectField from "./SelectField";
 import InputField from "./InputField";
 import SwitchField from "./SwitchField";
 import { useToast } from "@/components/ui/use-toast";
-import { ICategory, IProduct } from "@/types";
+import { ICategory, IKeyValue, IProduct } from "@/types";
 import AttributesInput from "./AttributesInput";
 import { createProduct } from "@/lib/actions/product.action";
 import Link from "next/link";
@@ -19,6 +19,7 @@ import { useFileStore } from "@/stores/product";
 import ImageContainer from "./ImageContainer";
 import SizeDetails from "./SizeDetails";
 import { useEnums } from "@/hook/useEnums";
+import { error } from "@/lib/utils";
 
 interface Props {
   categories: {
@@ -32,7 +33,7 @@ const AddProduct = ({ categories }: Props) => {
   const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
   const { files, setFiles, colors, setColors } = useFileStore();
 
-  const [sizes, setSizes] = useState<{ key: string; value: string }[]>([]);
+  const [sizes, setSizes] = useState<IKeyValue[]>([]);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
@@ -46,7 +47,6 @@ const AddProduct = ({ categories }: Props) => {
       description: "",
       price: "",
       mrp: "",
-      quantity: "",
       material: "",
       inStock: false,
       isNewArrival: false,
@@ -59,6 +59,7 @@ const AddProduct = ({ categories }: Props) => {
 
   const onSubmit = async (values: z.infer<typeof productValidation>) => {
     const res = validateData();
+    // @ts-ignore
     if (!res?.ok) return;
 
     setLoading(true);
@@ -69,7 +70,6 @@ const AddProduct = ({ categories }: Props) => {
       price: Number(values.price),
       mrp: Number(values.mrp),
       material: values.material,
-      quantity: Number(values.quantity),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
       colors: colors,
@@ -81,17 +81,12 @@ const AddProduct = ({ categories }: Props) => {
 
     const response = await createProduct(data);
     if (!response?.ok) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: response?.error,
-      });
-
+      error(response?.error || "Something went wrong");
       setLoading(false);
       return;
     }
 
-    console.log({ id: response.productId, ...data });
+    // console.log({ id: response.productId, ...data });
 
     toast({
       title: "Success",
@@ -118,44 +113,15 @@ const AddProduct = ({ categories }: Props) => {
   };
 
   const validateData = () => {
-    if (!sizes.length) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: "Please select the product sizes",
-      });
-      return;
+    if (!files.length) return error("Please add some images");
+    if (colors.length * 5 !== files.length) return error("Please add all the images");
+    if (!category) return error("Please select the product category");
+    if (!subCategory) return error("Please select the product sub category");
+    if (!sizes.length) return error("Please select the product sizes");
+    for (const item of sizes) {
+      if (!item.key || !item.value || !item.quantity) return error("Please fill all fields in size.");
     }
-
-    if (!attributes.length) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: "Please add some attributes",
-      });
-      return;
-    }
-
-    for (const item of attributes) {
-      if (!item.key || !item.value) {
-        toast({
-          title: "Error",
-          variant: "destructive",
-          description: "Please fill all the attributes",
-        });
-        return;
-      }
-    }
-
-    if (colors.length * 5 !== files.length) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: "Please upload all the images",
-      });
-      return;
-    }
-
+    if (!attributes.length) return error("Please add some attributes");
     return { ok: true };
   };
 
@@ -163,7 +129,6 @@ const AddProduct = ({ categories }: Props) => {
     if (category) {
       setSubCategories(categories.data.find((item) => item.id === category)?.children || []);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
   // useEffect(() => {
@@ -171,12 +136,17 @@ const AddProduct = ({ categories }: Props) => {
   //     setProduct(formData);
   //     prevFormData.current = formData;
   //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
   // }, [formData]);
 
   return (
     <>
-      <ImageContainer files={files} setFiles={setFiles} colors={colors} setColors={setColors} />
+      <ImageContainer
+        files={files}
+        setFiles={setFiles}
+        colors={colors}
+        setColors={setColors}
+        defaultColors={defaultColors}
+      />
 
       <Form {...form}>
         <form className="flex flex-col justify-start gap-3 p-2 mt-5" onSubmit={form.handleSubmit(onSubmit)}>
@@ -203,17 +173,17 @@ const AddProduct = ({ categories }: Props) => {
             />
           </div>
           <div className="flex gap-3">
-            <InputField control={form.control} name="material" label="Material" />
-            <InputField control={form.control} name="quantity" label="Quantity" type="number" />
+            {/* <InputField control={form.control} name="quantity" label="Quantity" type="number" /> */}
+            <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} defaultSizes={defaultSizes} />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
+            <InputField control={form.control} name="material" label="Material" />
             <AttributesInput
               label="Attributes"
               attributes={attributes}
               setAttributes={setAttributes}
               defaultAttributes={defaultAttributes}
             />
-            <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} defaultSizes={defaultSizes} />
           </div>
           <div className="w-full flex gap-5">
             <SwitchField control={form.control} name="inStock" label="In Stock" />

@@ -7,6 +7,10 @@
     @apply flex flex-1 flex-col pt-16 p-2 py-4 items-center pb-10 max-md:pb-32;
   }
 
+  .picker input {
+    display: none;
+  }
+
   .head-text {
     @apply text-2xl font-semibold text-dark-3;
   }

@@ -7,7 +7,6 @@ export const productValidation = z
     price: z.string().nonempty({ message: "Please enter the price." }),
     mrp: z.string().nonempty({ message: "Please enter the MRP." }),
     material: z.string().nonempty({ message: "Please enter the material." }),
-    quantity: z.string().nonempty({ message: "Please enter the quantity." }),
     inStock: z.boolean(),
     isNewArrival: z.boolean(),
   })

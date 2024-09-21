@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import ImagesGrid from "./ImagesGrid";
 import { Button } from "@/components/ui/button";
-import { BlockPicker } from "react-color";
-import { IImageFile } from "@/types";
-import { pickerColors } from "@/lib/utils";
+import { TwitterPicker } from "react-color";
+import { IColor, IImageFile } from "@/types";
 
 interface Props {
   colors: string[];
   files: IImageFile[];
   setFiles: (files: IImageFile[]) => void;
   setColors: (colors: string[]) => void;
+  defaultColors: IColor[];
 }
 
-const ImageContainer = ({ files, setFiles, colors, setColors }: Props) => {
-  const [currentColor, setCurrentColor] = useState("#000000");
+const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: Props) => {
+  const [currentColor, setCurrentColor] = useState();
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const pickedColor = (color: string) => {
@@ -34,9 +34,12 @@ const ImageContainer = ({ files, setFiles, colors, setColors }: Props) => {
               className="fixed top-0 left-0 right-0 bottom-0"
               onClick={() => setDisplayColorPicker(!displayColorPicker)}
             />
-            <BlockPicker
-              colors={pickerColors}
-              color={currentColor}
+            <TwitterPicker
+              width="fit"
+              className="picker top-[-20px] max-w-[278px]"
+              triangle="hide"
+              colors={defaultColors.map((c) => c.hex)}
+              color={currentColor || defaultColors[0]?.hex}
               onChange={(color: any) => {
                 setCurrentColor(color.hex);
                 pickedColor(color.hex);
@@ -47,7 +50,15 @@ const ImageContainer = ({ files, setFiles, colors, setColors }: Props) => {
       </div>
 
       {colors.map((color) => (
-        <ColorContainer key={color} color={color} files={files} setFiles={setFiles} colors={colors} setColors={setColors} />
+        <ColorContainer
+          key={color}
+          color={color}
+          files={files}
+          setFiles={setFiles}
+          colors={colors}
+          setColors={setColors}
+          defaultColors={defaultColors}
+        />
       ))}
     </div>
   );
@@ -59,12 +70,14 @@ const ColorContainer = ({
   setFiles,
   colors,
   setColors,
+  defaultColors,
 }: {
   color: string;
   colors: string[];
   files: IImageFile[];
   setFiles: (files: IImageFile[]) => void;
   setColors: (colors: string[]) => void;
+  defaultColors: IColor[];
 }) => {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
@@ -90,7 +103,14 @@ const ColorContainer = ({
         {displayColorPicker && (
           <div className="absolute z-[2]">
             <div className="fixed top-0 left-0 right-0 bottom-0" onClick={() => setDisplayColorPicker(false)} />
-            <BlockPicker colors={pickerColors} color={color} onChange={updateColor} className="mt-[230px]" />
+            <TwitterPicker
+              width="fit"
+              className="picker max-w-[278px] top-[50px]"
+              triangle="hide"
+              colors={defaultColors.map((c) => c.hex)}
+              color={color}
+              onChange={updateColor}
+            />
           </div>
         )}
 

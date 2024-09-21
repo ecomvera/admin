@@ -94,7 +94,6 @@ model Product {
   price        Float
   mrp          Float
   material     String
-  quantity     Int
   inStock      Boolean
   isNewArrival Boolean
   isBestSeller Boolean
@@ -128,9 +127,10 @@ model ProductAttributes {
 }
 
 model ProductSizes {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  key   String
-  value String
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  key      String
+  value    String
+  quantity Int
 
   Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String?  @db.ObjectId

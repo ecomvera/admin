@@ -2,9 +2,10 @@
 
 import Image from "next/legacy/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { IProduct } from "@/types";
+import { IKeyValue, IProduct, ISize } from "@/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
+import { AspectRatio } from "../ui/aspect-ratio";
 
 const ProductDetails = ({ data }: { data: IProduct }) => {
   const [currentColor, setCurrentColor] = useState(data.colors[0]);
@@ -32,38 +33,42 @@ const LeftGallaryView = ({ images, currentColor }: { images: IProduct["images"];
 
   return (
     <>
-      <div className="flex justify-center h-[330px] mobile:h-[420px]">
-        <div className="relative flex flex-col w-[80px] h-full">
+      <div className="flex gap-2 justify-center">
+        <div className="relative flex flex-col gap-1 w-[80px] h-full">
           {images
             .filter((image) => image.color === currentColor)
             .map((image, index) => (
-              <div key={index} className="relative cursor-pointer border m-[2px] h-[80px] bg-gray-100">
-                <Image
-                  layout="fill"
-                  key={index}
-                  src={image.url.split("/upload")[0] + "/upload/w_80/" + image.url.split("/upload")[1]}
-                  alt="product"
-                  objectFit="contain"
-                  objectPosition="center"
-                  onMouseEnter={() => {
-                    if (currentSlide === image.url) return;
-                    handleSlideChange(image.url);
-                  }}
-                  // onMouseLeave={() => {}}
-                />
+              <div key={index} className="relative cursor-pointer">
+                <AspectRatio ratio={0.8 / 1} className="border rounded-md relative">
+                  <Image
+                    layout="fill"
+                    key={index}
+                    src={image.url.split("/upload")[0] + "/upload/w_80/" + image.url.split("/upload")[1]}
+                    alt="product"
+                    objectFit="contain"
+                    objectPosition="center"
+                    onMouseEnter={() => {
+                      if (currentSlide === image.url) return;
+                      handleSlideChange(image.url);
+                    }}
+                    // onMouseLeave={() => {}}
+                  />
+                </AspectRatio>
               </div>
             ))}
         </div>
 
-        <div className="relative w-[350px] border ">
-          <Image
-            layout="fill"
-            src={currentSlide.split("/upload")[0] + "/upload/w_350/" + currentSlide.split("/upload")[1]}
-            quality={100}
-            objectFit="contain"
-            objectPosition="center"
-            alt="product"
-          />
+        <div className="relative w-[300px] laptop:w-[400px]">
+          <AspectRatio ratio={0.8 / 1} className="border rounded-md relative">
+            <Image
+              layout="fill"
+              src={currentSlide.split("/upload")[0] + "/upload/w_350/" + currentSlide.split("/upload")[1]}
+              quality={100}
+              objectFit="contain"
+              objectPosition="center"
+              alt="product"
+            />
+          </AspectRatio>
         </div>
       </div>
     </>
@@ -79,6 +84,8 @@ const ProductDetail = ({
   currentColor: string;
   setCurrentColor: Dispatch<SetStateAction<string>>;
 }) => {
+  const [selectedSize, setSelectedSize] = useState<IKeyValue>();
+
   return (
     <div className="w-full px-2 tablet:px-5 laptop:px-10 mt-5 tablet:mt-0">
       <div className="text-sm font-semibold text-light-3 mb-5">
@@ -117,14 +124,23 @@ const ProductDetail = ({
         ))}
       </div>
       <p className="text-base mobile:text-lg font-semibold text-dark-3 uppercase mt-5">Select Size</p>
-      <div className="flex gap-1">
+      <div className="flex gap-2">
         {data.sizes.map((size) => (
-          <div key={size.key} className="border border-light-3 px-3 py-1 cursor-pointer">
-            <p className="text-base mobile:text-lg font-semibold text-dark-3">{size.key}</p>
+          <div key={size.key} className={`cursor-pointer`} onClick={() => setSelectedSize(size)}>
+            <div
+              key={size.key}
+              className={`border-2 ${size.key === selectedSize?.key ? "border-2 border-blue-700" : ""} px-3 py-1`}
+            >
+              <p className="text-base mobile:text-lg font-semibold text-dark-3">{size.key}</p>
+            </div>
+            {size.quantity && size.quantity < 10 && (
+              <p className="text-sm font-semibold text-red-500">{size.quantity} left</p>
+            )}
           </div>
         ))}
       </div>
-      <p className="text-xl font-semibold text-dark-3 mt-10">Key Highlights</p>
+      <p className="text-sm font-normal text-dark-3">{selectedSize?.value}</p>
+      <p className="text-xl font-semibold text-dark-3 mt-5">Key Highlights</p>
       <div className="grid grid-cols-2 gap-5 mt-3">
         {data.attributes.map((item, index) => (
           <div key={index} className="text-lg text-dark-3">

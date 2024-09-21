@@ -13,7 +13,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     const data = await prisma.product.findUnique({
       where: { slug },
       include: {
-        category: { select: { name: true, slug: true, parent: { select: { name: true, slug: true } } } },
+        category: { select: { id: true, name: true, slug: true, parent: { select: { id: true, name: true, slug: true } } } },
         images: true,
         attributes: true,
         sizes: true,

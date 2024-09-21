@@ -23,7 +23,7 @@ interface Props {
 }
 
 const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }: Props) => {
-  const [selectedSize, setSelectedSize] = useState<string[]>([]);
+  const [selectedSize, setSelectedSize] = useState<string[]>([...attributes.map((i) => i.key)]);
 
   return (
     <FormItem className="flex w-full flex-col">
@@ -33,6 +33,7 @@ const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }
         <div className="flex gap-3" key={index}>
           <Input value={item} aria-checked className="text-base font-semibold" readOnly />
           <Select
+            value={attributes[index]?.value}
             onValueChange={(field) => {
               const obj = { key: selectedSize[index], value: field };
               setAttributes([...attributes.slice(0, index), obj, ...attributes.slice(index + 1)]);
@@ -43,8 +44,8 @@ const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }
             </SelectTrigger>
             <SelectContent>
               {defaultAttributes
-                .filter((attribute) => attribute.key === item)[0]
-                .value.map((item) => (
+                ?.filter((attribute) => attribute.key === item)[0]
+                ?.value?.map((item) => (
                   <SelectItem key={item} value={item}>
                     {item}
                   </SelectItem>

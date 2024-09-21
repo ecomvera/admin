@@ -3,8 +3,6 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast } from "@/components/ui/use-toast";
 
-export const pickerColors = ["#f44336", "#e91e63", "#9c27b0", "yellow"];
-
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }

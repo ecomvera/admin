@@ -46,7 +46,6 @@ export interface IProduct {
   price: number;
   mrp: number;
   material: string;
-  quantity: number;
   inStock: boolean;
   isNewArrival: boolean;
   isBestSeller?: boolean;
@@ -76,5 +75,6 @@ export interface IKeyValue {
   id?: string;
   key: string;
   value: string;
+  quantity?: number;
   productId?: string;
 }
