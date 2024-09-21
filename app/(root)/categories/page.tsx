@@ -10,6 +10,8 @@ import GroupCategory from "@/components/shared/GroupCategory";
 import { useGroupCategoryStore } from "@/stores/groupCategory";
 // import Attributes from "@/components/shared/Attributes";
 // import { useAttributeStore } from "@/stores/attribute";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import ListCollections from "@/components/shared/ListCollections";
 
 const Page = () => {
   const { categories, setCategories } = useCategoryStore();
@@ -42,14 +44,41 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="flex flex-col gap-5 tablet:flex-row">
+    <div className="flex py-3 flex-col gap-5 tablet:flex-row">
       <div className="w-full">
-        <h2 className="head-text py-8">Add Category</h2>
-        <CategoryTabs parentCategories={categories || []} isLoading={fetchCategoriesLoading} />
         {/* <Attributes attributes={attributes || []} /> */}
-        <GroupCategory categories={groupCategories || []} />
+
+        <Accordion type="single" collapsible>
+          <AccordionItem value="item-1">
+            <AccordionTrigger className="hover:no-underline">
+              <h2 className="text-lg font-semibold text-dark-3">Add Category</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <CategoryTabs parentCategories={categories || []} isLoading={fetchCategoriesLoading} />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger className="hover:no-underline">
+              <h2 className="text-lg font-semibold text-dark-3">Create a collection</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <GroupCategory />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger className="hover:no-underline">
+              <h2 className="text-lg font-semibold text-dark-3">Create an attribute</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <GroupCategory />
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
       </div>
-      <ListCatgorires isLoading={fetchCategoriesLoading} allCategories={categories || []} />
+      <div className="w-full flex flex-col gap-5">
+        <ListCatgorires isLoading={fetchCategoriesLoading} allCategories={categories || []} />
+        <ListCollections categories={groupCategories || []} />
+      </div>
     </div>
   );
 };

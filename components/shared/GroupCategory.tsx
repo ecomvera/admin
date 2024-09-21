@@ -4,26 +4,13 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { EyeOpenIcon, ReloadIcon } from "@radix-ui/react-icons";
+import { ReloadIcon } from "@radix-ui/react-icons";
 import { createGroupCategoryDB, isExistGroupCategoryDB } from "@/lib/actions/category.action";
 import { createSlug } from "@/lib/utils";
 import { toast } from "../ui/use-toast";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { FaEye, FaSortDown, FaSortUp } from "react-icons/fa6";
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { MdDeleteOutline } from "react-icons/md";
-import { IGroupCategory } from "@/types";
-import { IoEyeOutline } from "react-icons/io5";
-import { useRouter } from "next/navigation";
 import { useGroupCategoryStore } from "@/stores/groupCategory";
-import { FaRegEye } from "react-icons/fa";
-import { LuEye } from "react-icons/lu";
-import { DeleteGroupCategory } from "../dialogs/deleteGroupCategory";
-import Link from "next/link";
 
-const GroupCategory = ({ categories }: { categories: IGroupCategory[] }) => {
-  const router = useRouter();
-  const [open, setOpen] = useState(false);
+const GroupCategory = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState<{ blob?: string; file?: globalThis.File; type?: string; status?: string }>();
   const [banner, setBanner] = useState<{ blob?: string; file?: globalThis.File; type?: string; status?: string }>();
@@ -120,11 +107,9 @@ const GroupCategory = ({ categories }: { categories: IGroupCategory[] }) => {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold text-dark-3 py-8">Create Group Category</h2>
-
       <div className="flex flex-col gap-3">
         <div className="flex">
-          <Input placeholder="Group Category Name" value={name} onChange={(e) => setName(e.target.value)} />
+          <Input placeholder="Collection name" value={name} onChange={(e) => setName(e.target.value)} />
           <Button className="ml-3 rounded" disabled={!name || !image || !banner || loading !== ""} onClick={handleCreate}>
             {loading ? (
               <>
@@ -194,27 +179,6 @@ const GroupCategory = ({ categories }: { categories: IGroupCategory[] }) => {
           onChange={(e) => handleImage(e, "banner")}
         />
       </div>
-
-      <hr className="mt-8" />
-      <h1 className="text-xl font-semibold text-dark-3 mt-2">All Group Categories</h1>
-      <Command>
-        <CommandInput placeholder="Type a category or search..." />
-        <CommandList>
-          <CommandEmpty>No results found.</CommandEmpty>
-
-          {categories?.map((category: IGroupCategory) => (
-            <CommandItem key={category.id}>
-              <Link href={`/gc/${category.id}`} className="text-[15px] w-full flex items-center gap-3">
-                <p>{category.name}</p>
-                {!category.isActive && (
-                  <span className="text-xs font-semibold text-red-600 bg-red-50 rounded-2xl px-2">inactive</span>
-                )}
-              </Link>
-              <DeleteGroupCategory category={category} />
-            </CommandItem>
-          ))}
-        </CommandList>
-      </Command>
     </div>
   );
 };

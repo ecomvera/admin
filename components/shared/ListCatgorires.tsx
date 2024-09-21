@@ -9,10 +9,10 @@ import { Skeleton } from "../ui/skeleton";
 
 const ListCatgorires = ({ isLoading, allCategories }: { isLoading: boolean; allCategories: ICategory[] }) => {
   return (
-    <div className="w-full">
-      <h2 className="head-text py-5 tablet:py-8">All Categories</h2>
+    <div>
+      <h2 className="text-2xl font-semibold text-dark-3 mt-2">All Categories</h2>
 
-      <Command>
+      <Command className="h-full max-h-[400px]">
         <div className="flex gap-3">
           <div className="w-full flex-1">
             <CommandInput placeholder={isLoading ? "Loading..." : "Search sub-category..."} />

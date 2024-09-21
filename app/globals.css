@@ -8,7 +8,7 @@
   }
 
   .head-text {
-    @apply text-2xl font-semibold uppercase text-dark-3;
+    @apply text-2xl font-semibold text-dark-3;
   }
 
   .leftsidebar {
