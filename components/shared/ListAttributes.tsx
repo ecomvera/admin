@@ -6,9 +6,9 @@ import { CheckIcon, CircleIcon, Cross1Icon, Cross2Icon, Pencil2Icon, PlusIcon } 
 import { Button } from "../ui/button";
 import { addAttributeValueDB, updateAttributeDB } from "@/lib/actions/attribute.action";
 import { error, success } from "@/lib/utils";
-import { useAttributeStore } from "@/stores/attribute";
 import { DeleteAttribute } from "../dialogs/deleteAttribute";
 import { IoCheckmark } from "react-icons/io5";
+import { useEnumsStore } from "@/stores/enums";
 
 const ListAttributes = ({ attributes }: { attributes: IAttribute[] }) => {
   return (
@@ -26,7 +26,7 @@ const ListAttributes = ({ attributes }: { attributes: IAttribute[] }) => {
 };
 
 const Item = ({ attribute }: { attribute: IAttribute }) => {
-  const { addAttributeValue, updateAttributeKey } = useAttributeStore();
+  const { addAttributeValue, updateAttributeKey } = useEnumsStore();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [value, setValue] = React.useState<string>("");
   const [loading, setLoading] = React.useState(false);

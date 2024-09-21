@@ -1,9 +1,10 @@
-import { IAttribute, IKeyValue } from "@/types";
+import { IAttribute, ISize } from "@/types";
 import { create } from "zustand";
 
 const attributes: IAttribute[] = [];
+const sizes: ISize[] = [];
 
-interface IAttributeStore {
+interface IEnumsStore {
   attributes: IAttribute[];
   setAttributes: (attributes: IAttribute[]) => void;
   addAttributeKey: (attribute: IAttribute) => void;
@@ -11,9 +12,15 @@ interface IAttributeStore {
   removeAttributeKey: (id: string) => void;
   removeAttributeValue: (id: string, values: string[]) => void;
   updateAttributeKey: (id: string, key: string) => void;
+
+  // sizes
+  sizes: ISize[];
+  setsizes: (value: ISize[]) => void;
+  addSize: (size: ISize) => void;
+  removeSize: (value: string) => void;
 }
 
-export const useAttributeStore = create<IAttributeStore>((set) => ({
+export const useEnumsStore = create<IEnumsStore>((set) => ({
   attributes: attributes,
   setAttributes: (attributes: IAttribute[]) => set({ attributes }),
   addAttributeKey: (attribute: IAttribute) => set((state) => ({ attributes: [...state.attributes, attribute] })),
@@ -35,4 +42,10 @@ export const useAttributeStore = create<IAttributeStore>((set) => ({
     }),
   updateAttributeKey: (id: string, key: string) =>
     set((state) => ({ attributes: state.attributes.map((item) => (item.id === id ? { ...item, key } : item)) })),
+
+  // sizes
+  sizes: sizes,
+  setsizes: (sizes: ISize[]) => set({ sizes }),
+  addSize: (data: ISize) => set((state) => ({ sizes: [...state.sizes, data] })),
+  removeSize: (value: string) => set((state) => ({ sizes: state.sizes.filter((s) => s.value !== value) })),
 }));

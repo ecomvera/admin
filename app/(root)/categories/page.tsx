@@ -9,10 +9,11 @@ import { useCategoryStore } from "@/stores/category";
 import GroupCategory from "@/components/shared/GroupCategory";
 import { useGroupCategoryStore } from "@/stores/groupCategory";
 import Attributes from "@/components/shared/Attributes";
-import { useAttributeStore } from "@/stores/attribute";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ListCollections from "@/components/shared/ListCollections";
 import ListAttributes from "@/components/shared/ListAttributes";
+import Sizes from "@/components/shared/Sizes";
+import { useEnumsStore } from "@/stores/enums";
 
 const Page = () => {
   const { categories, setCategories } = useCategoryStore();
@@ -23,8 +24,8 @@ const Page = () => {
     fetcher,
     fetchOpt
   );
-  const { attributes, setAttributes } = useAttributeStore();
-  const { mutate: fetchAttributes, isLoading: fetchAttriburesLoading } = useSWR("/api/enum", fetcher, fetchOpt);
+  const { attributes, setAttributes, setsizes, sizes } = useEnumsStore();
+  const { mutate: fetchEnums, isLoading: fetchAttriburesLoading } = useSWR("/api/enum", fetcher, fetchOpt);
 
   useEffect(() => {
     const fetch = async () => {
@@ -36,9 +37,10 @@ const Page = () => {
         const res = await fetchGroupCategories();
         setGroupCategories(res?.data || []);
       }
-      if (!attributes.length) {
-        const res = await fetchAttributes();
+      if (!attributes.length || !sizes.length) {
+        const res = await fetchEnums();
         setAttributes(res?.data?.attributes || []);
+        setsizes(res?.data?.sizes || []);
       }
     };
     fetch();
@@ -58,7 +60,7 @@ const Page = () => {
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger className="hover:no-underline">
-              <h2 className="text-lg font-semibold text-dark-3">Create a collection</h2>
+              <h2 className="text-lg font-semibold text-dark-3">Add Collection</h2>
             </AccordionTrigger>
             <AccordionContent>
               <GroupCategory />
@@ -66,10 +68,18 @@ const Page = () => {
           </AccordionItem>
           <AccordionItem value="item-3">
             <AccordionTrigger className="hover:no-underline">
-              <h2 className="text-lg font-semibold text-dark-3">Create an attribute</h2>
+              <h2 className="text-lg font-semibold text-dark-3">Add Attribute</h2>
             </AccordionTrigger>
             <AccordionContent>
               <Attributes />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-4">
+            <AccordionTrigger className="hover:no-underline">
+              <h2 className="text-lg font-semibold text-dark-3">Sizes</h2>
+            </AccordionTrigger>
+            <AccordionContent>
+              <Sizes sizes={sizes} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

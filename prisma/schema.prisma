@@ -23,7 +23,7 @@ model Attribute {
 
 model Color {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
-  key   String
+  key   String @unique
   value String
 
   @@map("colors")
@@ -31,8 +31,7 @@ model Color {
 
 model Size {
   id    String @id @default(auto()) @map("_id") @db.ObjectId
-  key   String
-  value String
+  value String @unique
 
   @@map("sizes")
 }

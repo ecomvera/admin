@@ -5,11 +5,11 @@ import { Input } from "../ui/input";
 import { useState } from "react";
 import { createAttribute } from "@/lib/actions/attribute.action";
 import { error, success } from "@/lib/utils";
-import { useAttributeStore } from "@/stores/attribute";
 import { IAttribute } from "@/types";
+import { useEnumsStore } from "@/stores/enums";
 
 const Attributes = () => {
-  const { addAttributeKey } = useAttributeStore();
+  const { addAttributeKey } = useEnumsStore();
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 

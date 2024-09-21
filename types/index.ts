@@ -4,6 +4,11 @@ export interface IAttribute {
   value: string[];
 }
 
+export interface ISize {
+  id: string;
+  value: string;
+}
+
 export interface ICategory {
   id: string;
   name: string;
