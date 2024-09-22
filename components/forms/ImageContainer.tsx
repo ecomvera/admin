@@ -3,12 +3,13 @@ import ImagesGrid from "./ImagesGrid";
 import { Button } from "@/components/ui/button";
 import { TwitterPicker } from "react-color";
 import { IColor, IImageFile } from "@/types";
+import { error } from "@/lib/utils";
 
 interface Props {
-  colors: string[];
+  colors: IColor[];
   files: IImageFile[];
   setFiles: (files: IImageFile[]) => void;
-  setColors: (colors: string[]) => void;
+  setColors: (colors: IColor[]) => void;
   defaultColors: IColor[];
 }
 
@@ -17,8 +18,11 @@ const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: P
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const pickedColor = (color: string) => {
+    const isExist = colors.findIndex((c) => c.hex === color);
+    if (isExist !== -1) return error("Color already selected!");
+
+    setColors([...colors, defaultColors.filter((c) => c.hex === color)[0]]);
     setDisplayColorPicker(false);
-    setColors([...colors, color]);
   };
 
   return (
@@ -42,7 +46,7 @@ const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: P
               color={currentColor || defaultColors[0]?.hex}
               onChange={(color: any) => {
                 setCurrentColor(color.hex);
-                pickedColor(color.hex);
+                pickedColor(color.hex.toUpperCase());
               }}
             />
           </div>
@@ -51,8 +55,8 @@ const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: P
 
       {colors.map((color) => (
         <ColorContainer
-          key={color}
-          color={color}
+          key={color.id}
+          color={color.hex}
           files={files}
           setFiles={setFiles}
           colors={colors}
@@ -73,20 +77,21 @@ const ColorContainer = ({
   defaultColors,
 }: {
   color: string;
-  colors: string[];
+  colors: IColor[];
   files: IImageFile[];
   setFiles: (files: IImageFile[]) => void;
-  setColors: (colors: string[]) => void;
+  setColors: (colors: IColor[]) => void;
   defaultColors: IColor[];
 }) => {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const updateColor = (newColor: any) => {
-    setColors(colors.map((c) => (c === color ? newColor.hex : c)));
+    const isExist = colors.findIndex((c) => c.hex === newColor);
+    if (isExist !== -1) return error("Color already selected!");
+
+    setColors(colors.map((c) => (c.hex === color ? defaultColors.filter((c) => c.hex === newColor)[0] : c)));
     setFiles(
-      files.map((f) =>
-        f.color === color ? { ...f, color: newColor.hex, key: f.key.split("-")[0] + "-" + newColor.hex } : f
-      )
+      files.map((f) => (f.color === color ? { ...f, color: newColor, key: f.key.split("-")[0] + "-" + newColor } : f))
     );
   };
 
@@ -109,7 +114,7 @@ const ColorContainer = ({
               triangle="hide"
               colors={defaultColors.map((c) => c.hex)}
               color={color}
-              onChange={updateColor}
+              onChange={(newColor: any) => updateColor(newColor.hex.toUpperCase())}
             />
           </div>
         )}
@@ -120,7 +125,7 @@ const ColorContainer = ({
             size={"icon"}
             className="px-2 text-base font-bold text-red-500 rounded hover:border-gray-300"
             onClick={() => {
-              setColors(colors.filter((c) => c !== color));
+              setColors(colors.filter((c) => c.hex !== color));
             }}
           >
             X

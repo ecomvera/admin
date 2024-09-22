@@ -1,4 +1,4 @@
-import { IImageFile, IProduct } from "@/types";
+import { IColor, IImageFile, IProduct } from "@/types";
 import { create } from "zustand";
 
 const files: IImageFile[] = [];
@@ -6,8 +6,8 @@ const files: IImageFile[] = [];
 interface IFiles {
   files: IImageFile[];
   setFiles: (files: IImageFile[]) => void;
-  colors: string[];
-  setColors: (colors: string[]) => void;
+  colors: IColor[];
+  setColors: (colors: IColor[]) => void;
 }
 
 export const useFileStore = create<IFiles>((set) => ({

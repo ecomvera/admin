@@ -23,8 +23,16 @@ export const createProduct = async (product: IProduct) => {
         isBestSeller: false,
         isUnisex: product.isUnisex,
         categoryId: product.categoryId,
-        colors: product.colors,
       },
+    });
+
+    // create product colors
+    await prisma.productColors.createMany({
+      data: product.colors.map((color) => ({
+        name: color.name,
+        hex: color.hex,
+        productId: res.id,
+      })),
     });
 
     // create product sizes
@@ -96,8 +104,17 @@ export const updateProductDB = async (id: string, data: IProduct) => {
         isUnisex: data.isUnisex,
         isBestSeller: false,
         categoryId: data.categoryId,
-        colors: data.colors,
       },
+    });
+
+    // update product colors
+    await prisma.productColors.deleteMany({ where: { productId: id } });
+    await prisma.productColors.createMany({
+      data: data.colors.map((color) => ({
+        name: color.name,
+        hex: color.hex,
+        productId: id,
+      })),
     });
 
     // update product sizes

@@ -49,7 +49,7 @@ export interface IProduct {
   inStock: boolean;
   isNewArrival: boolean;
   isBestSeller?: boolean;
-  colors: string[];
+  colors: IColor[];
   isUnisex: boolean;
 
   sizes: IKeyValue[];

@@ -7,7 +7,7 @@ import { Form } from "@/components/ui/form";
 import { Button } from "../ui/button";
 import { productValidation } from "@/lib/validations/product";
 import { useEffect, useState } from "react";
-import { ICategory, IImageFile, IKeyValue, IProduct } from "@/types";
+import { ICategory, IColor, IImageFile, IKeyValue, IProduct } from "@/types";
 import { updateProductDB } from "@/lib/actions/product.action";
 import { useRouter } from "next/navigation";
 import SizeDetails from "@/components/forms/SizeDetails";
@@ -28,7 +28,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
   const [category, setCategory] = useState(product.category?.parent?.id || "");
   const [sizes, setSizes] = useState<IKeyValue[]>(product.sizes);
   const [files, setFiles] = useState<IImageFile[]>(product.images);
-  const [colors, setColors] = useState<string[]>(product.colors);
+  const [colors, setColors] = useState<IColor[]>(product.colors);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [attributes, setAttributes] = useState<IKeyValue[]>(product.attributes);
   const [loading, setLoading] = useState(false);

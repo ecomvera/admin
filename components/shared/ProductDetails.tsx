@@ -8,7 +8,7 @@ import Link from "next/link";
 import { AspectRatio } from "../ui/aspect-ratio";
 
 const ProductDetails = ({ data }: { data: IProduct }) => {
-  const [currentColor, setCurrentColor] = useState(data.colors[0]);
+  const [currentColor, setCurrentColor] = useState(data.colors[0].hex);
 
   return (
     <div className="py-5">
@@ -118,15 +118,15 @@ const ProductDetail = ({
       <div className="flex gap-1 items-center">
         {data.colors.map((color) => (
           <div
-            key={color}
+            key={color.id}
             className="rounded-full cursor-pointer"
             style={{
-              border: currentColor === color ? `2px solid ${color}` : "none",
+              border: currentColor === color.hex ? `2px solid ${color.hex}` : "2px solid transparent",
               padding: "2px",
             }}
-            onClick={() => setCurrentColor(color)}
+            onClick={() => setCurrentColor(color.hex)}
           >
-            <div className="h-[30px] w-[30px] rounded-full" style={{ backgroundColor: color }}></div>
+            <div className="h-[30px] w-[30px] rounded-full" style={{ backgroundColor: color.hex }}></div>
           </div>
         ))}
       </div>
