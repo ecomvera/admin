@@ -71,17 +71,15 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
         setSubCategory("all");
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [category]);
 
-  React.useEffect(() => {
-    table.getAllColumns().forEach((column) => {
-      if (column.id === "category" || column.id === "subCategory") {
-        column.toggleVisibility(false);
-      }
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // React.useEffect(() => {
+  //   table.getAllColumns().forEach((column) => {
+  //     if (column.id === "category" || column.id === "subCategory") {
+  //       column.toggleVisibility(false);
+  //     }
+  //   });
+  // }, []);
 
   return (
     <div className="w-full">

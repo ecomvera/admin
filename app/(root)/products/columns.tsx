@@ -45,19 +45,8 @@ export const columns: ColumnDef<IProduct>[] = [
     header: "Sub Category",
     cell: ({ row }) => {
       const data: { name: string } = row.getValue("category");
-      return <div className="capitalize">{data.name}</div>;
+      return <div className="capitalize">{data?.name}</div>;
     },
-  },
-  {
-    accessorKey: "quantity",
-    header: ({ column }) => {
-      return (
-        <div className="flex justify-end" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Quantity <LuArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
-      );
-    },
-    cell: ({ row }) => <div className="text-right font-medium">{row.getValue("quantity")}</div>,
   },
   {
     accessorKey: "price",
