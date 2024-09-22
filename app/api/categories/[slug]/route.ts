@@ -1,3 +1,4 @@
+import { defaultGenders } from "@/constants";
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
@@ -24,6 +25,10 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
   const conditionsArr: any[] = [];
 
   // Add filters by priority
+  if (output.gender && output.gender.length) {
+    conditionsArr.push({ genders: { hasSome: output.gender } });
+  }
+
   if (output.colors && output.colors.length) {
     conditionsArr.push({ colors: { some: { name: { in: output.colors } } } });
   }
@@ -65,6 +70,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     let category;
     let products;
     let subcategories;
+    let genders;
 
     // fetch category with subcategories without filters
     const categoryData = await prisma.category.findUnique({
@@ -79,12 +85,24 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         include: { children: { where: { AND: categoryArr }, include: childrenObj } },
       });
       subcategories = categoryData?.children;
+
+      const isUniSexExist = category?.children.some((child) =>
+        child.products.some((product) => product.genders.includes("Unisex"))
+      );
+      if (isUniSexExist) {
+        genders = ["Unisex"];
+      }
     } else {
       // if sub category then fetch products with filters
       category = await prisma.category.findUnique({
         where: { slug: slug },
         include: childrenObj,
       });
+
+      const isUniSexExist = category?.products.some((child) => child.genders.includes("Unisex"));
+      if (isUniSexExist) {
+        genders = ["Unisex"];
+      }
     }
 
     // If no category, check for groupCategory
@@ -118,12 +136,12 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       });
       products = productsData.map((item) => item.product);
       // set unique sub categories
-      subcategories = subcategoriesData.reduce((acc: { name: string; slug: string }[], item) => {
-        if (acc.findIndex((sub) => sub.slug === item.product.category.slug) === -1) {
-          acc.push(item.product.category);
-        }
-        return acc;
-      }, []);
+      subcategories = [
+        ...new Map(subcategoriesData.map((item) => [item.product.category.slug, item.product.category])).values(),
+      ];
+
+      // genders = [...new Set(productsData.map((item) => item.product.genders).flat())];
+      genders = defaultGenders;
     }
 
     const duration = Date.now() - start;
@@ -134,6 +152,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       category: category,
       products: products,
       subcategories: subcategories,
+      genders: genders,
     });
   } catch (error: any) {
     console.error(error);
