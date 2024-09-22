@@ -31,7 +31,12 @@ const GenderInput = ({
         </SelectTrigger>
         <SelectContent>
           {defaultGenders
-            .filter((item) => !genders.includes(item))
+            .filter((item) => {
+              if ((genders.includes("Male") && item === "Female") || (genders.includes("Female") && item === "Male")) {
+                return false;
+              }
+              return !genders.includes(item);
+            })
             .map((item) => (
               <SelectItem key={item} value={item} onClick={() => console.log(item)}>
                 {item}
