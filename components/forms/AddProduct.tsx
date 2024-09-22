@@ -21,6 +21,7 @@ import SizeDetails from "./SizeDetails";
 import { useEnums } from "@/hook/useEnums";
 import { error, success } from "@/lib/utils";
 import GenderInput from "./GenderInput";
+import { capitalize } from "lodash";
 
 interface Props {
   categories: {
@@ -30,7 +31,6 @@ interface Props {
 }
 
 const AddProduct = ({ categories }: Props) => {
-  const { toast } = useToast();
   const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
   const { files, setFiles, colors, setColors } = useFileStore();
   const { addProduct } = useProductStore();
@@ -67,12 +67,12 @@ const AddProduct = ({ categories }: Props) => {
 
     setLoading(true);
     const data: IProduct = {
-      name: values.name,
+      name: capitalize(values.name),
       slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
       description: values.description,
       price: Number(values.price),
       mrp: Number(values.mrp),
-      material: values.material,
+      material: capitalize(values.material),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
       genders: genders,

@@ -20,6 +20,7 @@ import { useProductStore } from "@/stores/product";
 import { error, success } from "@/lib/utils";
 import { useEnums } from "@/hook/useEnums";
 import GenderInput from "./GenderInput";
+import { capitalize } from "lodash";
 
 const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
   const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
@@ -55,12 +56,12 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
 
     setLoading(true);
     const data: IProduct = {
-      name: values.name,
+      name: capitalize(values.name.trim()),
       slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
       description: values.description,
       price: Number(values.price),
       mrp: Number(values.mrp),
-      material: values.material,
+      material: capitalize(values.material),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
       genders,
