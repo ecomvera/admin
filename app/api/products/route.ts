@@ -1,6 +1,5 @@
 "use server";
 
-import { colors } from "@/constants/enum";
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
@@ -35,7 +34,7 @@ export async function GET(req: NextApiRequest) {
       data = await prisma.product.findMany({ select: { id: true, name: true, slug: true } });
     } else {
       data = await prisma.product.findMany({
-        include: { category: { include: { parent: true } }, images: true, attributes: true, sizes: true },
+        include: { category: { include: { parent: true } }, colors: true, images: true, attributes: true, sizes: true },
       });
     }
     const duration = Date.now() - start;

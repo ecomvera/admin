@@ -14,6 +14,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       where: { slug },
       include: {
         category: { select: { id: true, name: true, slug: true, parent: { select: { id: true, name: true, slug: true } } } },
+        colors: true,
         images: true,
         attributes: true,
         sizes: true,

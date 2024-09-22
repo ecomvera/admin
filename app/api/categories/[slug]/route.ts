@@ -24,8 +24,8 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
   const conditionsArr: any[] = [];
 
   // Add filters by priority
-  if (output.color && output.color.length) {
-    conditionsArr.push({ colors: { hasSome: output.color } });
+  if (output.colors && output.colors.length) {
+    conditionsArr.push({ colors: { some: { name: { in: output.colors } } } });
   }
 
   if (output.sizes && output.sizes.length) {
@@ -56,7 +56,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       where: {
         AND: conditionsArr,
       },
-      include: { images: true, sizes: true, attributes: true },
+      include: { images: true, sizes: true, attributes: true, colors: true },
     },
   };
 
@@ -97,7 +97,13 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         where: { groupCategoryId: category?.id, product: { category: { AND: categoryArr }, AND: conditionsArr } },
         select: {
           product: {
-            include: { images: true, sizes: true, attributes: true, category: { select: { name: true, slug: true } } },
+            include: {
+              images: true,
+              sizes: true,
+              attributes: true,
+              colors: true,
+              category: { select: { name: true, slug: true } },
+            },
           },
         },
       });
