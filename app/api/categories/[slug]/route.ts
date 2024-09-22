@@ -117,7 +117,13 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         },
       });
       products = productsData.map((item) => item.product);
-      subcategories = subcategoriesData.map((item) => item.product.category);
+      // set unique sub categories
+      subcategories = subcategoriesData.reduce((acc: { name: string; slug: string }[], item) => {
+        if (acc.findIndex((sub) => sub.slug === item.product.category.slug) === -1) {
+          acc.push(item.product.category);
+        }
+        return acc;
+      }, []);
     }
 
     const duration = Date.now() - start;
