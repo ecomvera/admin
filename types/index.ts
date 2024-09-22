@@ -50,7 +50,7 @@ export interface IProduct {
   isNewArrival: boolean;
   isBestSeller?: boolean;
   colors: IColor[];
-  isUnisex: boolean;
+  genders: string[];
 
   sizes: IKeyValue[];
   images: IImageFile[];

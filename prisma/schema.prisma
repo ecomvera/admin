@@ -87,9 +87,9 @@ model Category {
 }
 
 model Product {
-  id           String  @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
   name         String
-  slug         String  @unique
+  slug         String   @unique
   description  String
   price        Float
   mrp          Float
@@ -97,7 +97,7 @@ model Product {
   inStock      Boolean
   isNewArrival Boolean
   isBestSeller Boolean
-  isUnisex     Boolean @default(false)
+  genders      String[]
 
   colors     ProductColors[]
   sizes      ProductSizes[]

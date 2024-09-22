@@ -20,6 +20,7 @@ import ImageContainer from "./ImageContainer";
 import SizeDetails from "./SizeDetails";
 import { useEnums } from "@/hook/useEnums";
 import { error, success } from "@/lib/utils";
+import GenderInput from "./GenderInput";
 
 interface Props {
   categories: {
@@ -34,6 +35,7 @@ const AddProduct = ({ categories }: Props) => {
   const { files, setFiles, colors, setColors } = useFileStore();
   const { addProduct } = useProductStore();
 
+  const [genders, setGenders] = useState<string[]>([]);
   const [sizes, setSizes] = useState<IKeyValue[]>([]);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
@@ -51,7 +53,6 @@ const AddProduct = ({ categories }: Props) => {
       material: "",
       inStock: false,
       isNewArrival: false,
-      isUnisex: false,
     },
   });
 
@@ -74,7 +75,7 @@ const AddProduct = ({ categories }: Props) => {
       material: values.material,
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
-      isUnisex: values.isUnisex,
+      genders: genders,
       colors: colors,
       sizes: sizes,
       images: files,
@@ -120,6 +121,7 @@ const AddProduct = ({ categories }: Props) => {
     for (const item of sizes) {
       if (!item.key || !item.value || !item.quantity) return error("Please fill all fields in size.");
     }
+    if (!genders.length) return error("Please select at least one gender");
     if (!attributes.length) return error("Please add some attributes");
     return { ok: true };
   };
@@ -176,7 +178,10 @@ const AddProduct = ({ categories }: Props) => {
             <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} defaultSizes={defaultSizes} />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <InputField control={form.control} name="material" label="Material" />
+            <div className="flex gap-3 w-full">
+              <InputField control={form.control} name="material" label="Material" />
+              <GenderInput genders={genders} setGenders={setGenders} />
+            </div>
             <AttributesInput
               label="Attributes"
               attributes={attributes}
@@ -185,7 +190,6 @@ const AddProduct = ({ categories }: Props) => {
             />
           </div>
           <div className="w-full flex gap-5">
-            <SwitchField control={form.control} name="isUnisex" label="Is Unisex" />
             <SwitchField control={form.control} name="inStock" label="In Stock" />
             <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>

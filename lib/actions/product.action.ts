@@ -21,7 +21,7 @@ export const createProduct = async (product: IProduct) => {
         inStock: product.inStock,
         isNewArrival: product.isNewArrival,
         isBestSeller: false,
-        isUnisex: product.isUnisex,
+        genders: product.genders,
         categoryId: product.categoryId,
       },
     });
@@ -101,7 +101,7 @@ export const updateProductDB = async (id: string, data: IProduct) => {
         material: data.material,
         inStock: data.inStock,
         isNewArrival: data.isNewArrival,
-        isUnisex: data.isUnisex,
+        genders: data.genders,
         isBestSeller: false,
         categoryId: data.categoryId,
       },

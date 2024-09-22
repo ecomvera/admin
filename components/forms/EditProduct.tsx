@@ -19,6 +19,7 @@ import ImageContainer from "./ImageContainer";
 import { useProductStore } from "@/stores/product";
 import { error, success } from "@/lib/utils";
 import { useEnums } from "@/hook/useEnums";
+import GenderInput from "./GenderInput";
 
 const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
   const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
@@ -26,6 +27,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
   const router = useRouter();
   const [subCategory, setSubCategory] = useState(product.categoryId);
   const [category, setCategory] = useState(product.category?.parent?.id || "");
+  const [genders, setGenders] = useState<string[]>(product.genders);
   const [sizes, setSizes] = useState<IKeyValue[]>(product.sizes);
   const [files, setFiles] = useState<IImageFile[]>(product.images);
   const [colors, setColors] = useState<IColor[]>(product.colors);
@@ -43,7 +45,6 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       material: product.material,
       inStock: product.inStock,
       isNewArrival: product.isNewArrival,
-      isUnisex: product.isUnisex,
     },
   });
 
@@ -62,7 +63,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       material: values.material,
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
-      isUnisex: values.isUnisex,
+      genders,
       colors,
       sizes,
       attributes,
@@ -129,7 +130,10 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} defaultSizes={defaultSizes} />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <InputField control={form.control} name="material" label="Material" />
+            <div className="flex gap-3 w-full">
+              <InputField control={form.control} name="material" label="Material" />
+              <GenderInput genders={genders} setGenders={setGenders} />
+            </div>
             <AttributesInput
               label="Attributes"
               attributes={attributes}
@@ -138,7 +142,6 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             />
           </div>
           <div className="w-full flex gap-5">
-            <SwitchField control={form.control} name="isUnisex" label="Is Unisex" />
             <SwitchField control={form.control} name="inStock" label="In Stock" />
             <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>

@@ -9,7 +9,6 @@ export const productValidation = z
     material: z.string().nonempty({ message: "Please enter the material." }),
     inStock: z.boolean(),
     isNewArrival: z.boolean(),
-    isUnisex: z.boolean(),
   })
   .refine((data) => Number(data.mrp) > Number(data.price), {
     message: "MRP should be greater than price.",

@@ -25,3 +25,5 @@ export const sidebarLinks = [
     label: "Orders",
   },
 ];
+
+export const defaultGenders = ["Male", "Female", "Unisex"];
