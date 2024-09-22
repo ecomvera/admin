@@ -2,6 +2,7 @@ import c from "crypto";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast } from "@/components/ui/use-toast";
+import { ReactElement } from "react";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -37,5 +38,5 @@ export const getPublicId = (url: string) => {
 };
 
 export const error = (msg: string) => toast({ title: "Error", description: msg, variant: "destructive" });
-export const success = (msg: string, type?: "success" | "default") =>
-  toast({ title: "Success", description: msg, variant: type || "default" });
+export const success = (msg: string, type?: "success" | "default", action?: ReactElement) =>
+  toast({ title: "Success", description: msg, variant: type || "default", action });

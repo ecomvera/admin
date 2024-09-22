@@ -15,11 +15,11 @@ import { ICategory, IKeyValue, IProduct } from "@/types";
 import AttributesInput from "./AttributesInput";
 import { createProduct } from "@/lib/actions/product.action";
 import Link from "next/link";
-import { useFileStore } from "@/stores/product";
+import { useFileStore, useProductStore } from "@/stores/product";
 import ImageContainer from "./ImageContainer";
 import SizeDetails from "./SizeDetails";
 import { useEnums } from "@/hook/useEnums";
-import { error } from "@/lib/utils";
+import { error, success } from "@/lib/utils";
 
 interface Props {
   categories: {
@@ -32,6 +32,7 @@ const AddProduct = ({ categories }: Props) => {
   const { toast } = useToast();
   const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
   const { files, setFiles, colors, setColors } = useFileStore();
+  const { addProduct } = useProductStore();
 
   const [sizes, setSizes] = useState<IKeyValue[]>([]);
   const [category, setCategory] = useState("");
@@ -50,6 +51,7 @@ const AddProduct = ({ categories }: Props) => {
       material: "",
       inStock: false,
       isNewArrival: false,
+      isUnisex: false,
     },
   });
 
@@ -72,6 +74,7 @@ const AddProduct = ({ categories }: Props) => {
       material: values.material,
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
+      isUnisex: values.isUnisex,
       colors: colors,
       sizes: sizes,
       images: files,
@@ -86,20 +89,16 @@ const AddProduct = ({ categories }: Props) => {
       return;
     }
 
-    // console.log({ id: response.productId, ...data });
-
-    toast({
-      title: "Success",
-      // variant: "success",
-      description: "Product created successfully",
-      action: (
-        <Link href={`/products`}>
-          <Button variant="outline" size="sm" className="rounded-xl font-semibold text-black">
-            View
-          </Button>
-        </Link>
-      ),
-    });
+    addProduct({ id: response.productId, ...data });
+    success(
+      "Product created successfully",
+      "default",
+      <Link href={`/p/${data?.slug}`}>
+        <Button variant="outline" size="sm" className="rounded-xl font-semibold text-black">
+          View
+        </Button>
+      </Link>
+    );
 
     setLoading(false);
     form.reset();
@@ -186,6 +185,7 @@ const AddProduct = ({ categories }: Props) => {
             />
           </div>
           <div className="w-full flex gap-5">
+            <SwitchField control={form.control} name="isUnisex" label="Is Unisex" />
             <SwitchField control={form.control} name="inStock" label="In Stock" />
             <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>

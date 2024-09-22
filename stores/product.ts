@@ -22,6 +22,7 @@ const products: IProduct[] = [];
 interface IProductStore {
   products: IProduct[];
   setProducts: (products: IProduct[]) => void;
+  addProduct: (product: IProduct) => void;
   updateProduct: (id: string, data: IProduct) => void;
   deleteProdct: (id: string) => void;
 }
@@ -29,6 +30,7 @@ interface IProductStore {
 export const useProductStore = create<IProductStore>((set) => ({
   products: products,
   setProducts: (products: IProduct[]) => set({ products }),
+  addProduct: (product: IProduct) => set((state) => ({ products: [...state.products, product] })),
   updateProduct: (id: string, data: IProduct) => {
     set((state: IProductStore) => {
       const index = state.products.findIndex((product) => product.id === id);

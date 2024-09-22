@@ -43,6 +43,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       material: product.material,
       inStock: product.inStock,
       isNewArrival: product.isNewArrival,
+      isUnisex: product.isUnisex,
     },
   });
 
@@ -61,6 +62,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       material: values.material,
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
+      isUnisex: values.isUnisex,
       colors,
       sizes,
       attributes,
@@ -136,6 +138,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             />
           </div>
           <div className="w-full flex gap-5">
+            <SwitchField control={form.control} name="isUnisex" label="Is Unisex" />
             <SwitchField control={form.control} name="inStock" label="In Stock" />
             <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>
