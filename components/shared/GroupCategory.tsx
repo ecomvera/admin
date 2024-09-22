@@ -7,8 +7,9 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { createGroupCategoryDB, isExistGroupCategoryDB } from "@/lib/actions/category.action";
 import { createSlug } from "@/lib/utils";
-import { toast } from "../ui/use-toast";
 import { useGroupCategoryStore } from "@/stores/groupCategory";
+import { capitalize } from "lodash";
+import { error, success } from "@/lib/utils";
 
 const GroupCategory = () => {
   const [name, setName] = useState("");
@@ -46,11 +47,7 @@ const GroupCategory = () => {
 
     const isExist = await isExistGroupCategoryDB(createSlug(name));
     if (isExist) {
-      toast({
-        title: "Error",
-        description: "Category already exists",
-        variant: "destructive",
-      });
+      error("Category already exists");
       setLoading("");
       return;
     }
@@ -64,14 +61,7 @@ const GroupCategory = () => {
     });
     const uploadResults = await Promise.all(uploadPromises);
     uploadResults.forEach((res) => {
-      if (!res.ok) {
-        toast({
-          title: "Error",
-          description: "File upload failed",
-          variant: "destructive",
-        });
-        return;
-      }
+      if (!res.ok) return error("File upload failed");
       if (res?.type === "image") {
         imageURL = res.data.secure_url;
       }
@@ -81,22 +71,14 @@ const GroupCategory = () => {
     });
 
     setLoading("creating");
-    const res = await createGroupCategoryDB(name, createSlug(name), imageURL, bannerURL);
+    const res = await createGroupCategoryDB(capitalize(name.trim()), createSlug(name), imageURL, bannerURL);
     if (!res?.ok) {
-      toast({
-        title: "Error",
-        description: res?.error || "Something went wrong",
-        variant: "destructive",
-      });
+      error(res?.error || "Something went wrong");
       setLoading("");
       return;
     }
 
-    toast({
-      title: "Success",
-      description: "Group Category created successfully",
-      variant: "success",
-    });
+    success("Collection created successfully");
     // @ts-ignore
     addGroupCategory(res.data);
     setName("");

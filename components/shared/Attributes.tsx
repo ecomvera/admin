@@ -7,6 +7,7 @@ import { createAttribute } from "@/lib/actions/attribute.action";
 import { error, success } from "@/lib/utils";
 import { IAttribute } from "@/types";
 import { useEnumsStore } from "@/stores/enums";
+import { capitalize } from "lodash";
 
 const Attributes = () => {
   const { addAttributeKey } = useEnumsStore();
@@ -17,7 +18,7 @@ const Attributes = () => {
     if (name.length < 3) return error("Attribute name must be at least 3 characters long");
 
     setLoading(true);
-    const res = await createAttribute(name.trim());
+    const res = await createAttribute(capitalize(name.trim()));
     setLoading(false);
     if (!res?.ok) return error(res?.error);
 

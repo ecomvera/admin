@@ -8,6 +8,9 @@ import { useEnumsStore } from "@/stores/enums";
 import { DeleteColor } from "../dialogs/deleteColor";
 import { createColorDB } from "@/lib/actions/color.action";
 import { Input } from "../ui/input";
+import tinyColor from "tinycolor2";
+import { SliderPicker } from "react-color";
+import { capitalize } from "lodash";
 
 const Colors = ({ colors }: { colors: IColor[] }) => {
   const { addColor } = useEnumsStore();
@@ -19,7 +22,7 @@ const Colors = ({ colors }: { colors: IColor[] }) => {
     if (name === "" || hex === "") return error("Color is required");
 
     setLoading(true);
-    const res = await createColorDB(name.trim(), hex);
+    const res = await createColorDB(capitalize(name.trim()), hex);
     setLoading(false);
     if (!res?.ok) return error(res?.error);
 
@@ -29,13 +32,36 @@ const Colors = ({ colors }: { colors: IColor[] }) => {
     setHex("");
   };
 
+  const handleName = (e: any) => {
+    setName(e.target.value);
+    const color = tinyColor(e.target.value);
+    setHex(color.toHexString());
+  };
+
   return (
     <div className="px-2 flex flex-col gap-2 pt-[1px]">
       <div className="flex gap-2">
-        <Input type="text" placeholder="Color Name" value={name} onChange={(e) => setName(e.target.value)} />
-        <Input type="text" placeholder="Color Hex - #fafafa" value={hex} onChange={(e) => setHex(e.target.value)} />
+        <Input type="text" placeholder="Color Name" value={name} onChange={handleName} />
+        <Input
+          type="text"
+          accept="hex"
+          placeholder="Color Hex - #fafafa"
+          value={hex}
+          onChange={(e) => setHex(e.target.value)}
+        />
       </div>
-      <Button disabled={loading || name === "" || hex === ""} className="bg-dark-3 w-[100px] rounded-xl" onClick={onSubmit}>
+      {hex && (
+        <>
+          <div className={`border h-20`} style={{ backgroundColor: hex }}></div>
+          <SliderPicker color={hex} onChange={(color) => setHex(color.hex)} />
+        </>
+      )}
+
+      <Button
+        disabled={loading || name === "" || hex === ""}
+        className="bg-dark-3 w-[100px] rounded-xl mt-2"
+        onClick={onSubmit}
+      >
         {loading ? "Adding..." : "Add"}
       </Button>
 

@@ -5,10 +5,11 @@ import { Input } from "../ui/input";
 import { ChangeEvent, useState } from "react";
 import { Label } from "../ui/label";
 import { createSubCategoryDB } from "@/lib/actions/category.action";
-import { toast } from "../ui/use-toast";
 import { ICategory } from "@/types";
 import { Checkbox } from "../ui/checkbox";
 import { useCategoryStore } from "@/stores/category";
+import { capitalize } from "lodash";
+import { error, success } from "@/lib/utils";
 
 const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICategory[]; isLoading: boolean }) => {
   const { addCategory } = useCategoryStore();
@@ -26,53 +27,21 @@ const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICa
 
   const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!parentId) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: "Please select a category",
-      });
-      return;
-    }
-
-    if (!name) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: "Please enter a category name",
-      });
-      return;
-    }
-
-    if (!wearType) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: "Please select the wear type",
-      });
-      return;
-    }
+    if (!parentId) return error("Please select a parent category");
+    if (!name) return error("Name is required");
+    if (!wearType) return error("Wear type is required");
 
     setLoading(true);
-    const res = await createSubCategoryDB(parentId, name.trim(), slug, wearType);
+    const res = await createSubCategoryDB(parentId, capitalize(name.trim()), slug, wearType);
     setLoading(false);
     if (!res?.ok) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: res?.error,
-      });
+      error(res?.error || "Something went wrong");
     } else {
       setName("");
       setSlug("");
       setWearType("");
       setParentId("");
-      toast({
-        title: "Success",
-        // variant: "success",
-        description: "Category created successfully",
-      });
+      success("Sub category created successfully");
       // @ts-ignore
       addCategory(res?.data); // Add the new category to the store
     }

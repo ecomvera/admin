@@ -3,8 +3,9 @@ import { Input } from "../ui/input";
 import { createCategoryDB } from "@/lib/actions/category.action";
 import { ChangeEvent, useState } from "react";
 import { Label } from "../ui/label";
-import { toast } from "../ui/use-toast";
 import { useCategoryStore } from "@/stores/category";
+import { capitalize } from "lodash";
+import { error, success } from "@/lib/utils";
 
 const AddCategory = () => {
   const { addCategory } = useCategoryStore();
@@ -19,34 +20,18 @@ const AddCategory = () => {
 
   const onSubmit = async (e: ChangeEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!name) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: "Please enter a category name",
-      });
-      return;
-    }
+    if (!name) return error("Name is required");
 
     setLoading(true);
-    const res = await createCategoryDB(name.trim(), slug);
+    const res = await createCategoryDB(capitalize(name.trim()), slug);
     setLoading(false);
 
     if (!res?.ok) {
-      toast({
-        title: "Error",
-        variant: "destructive",
-        description: res?.error,
-      });
+      error(res?.error || "Something went wrong");
     } else {
       setName("");
       setSlug("");
-      toast({
-        title: "Success",
-        // variant: "success",
-        description: "Category created successfully",
-      });
+      success("Category created successfully");
       // @ts-ignore
       addCategory(res?.data); // add the new category to the store
     }

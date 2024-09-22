@@ -9,6 +9,7 @@ import { error, success } from "@/lib/utils";
 import { DeleteAttribute } from "../dialogs/deleteAttribute";
 import { IoCheckmark } from "react-icons/io5";
 import { useEnumsStore } from "@/stores/enums";
+import { capitalize } from "lodash";
 
 const ListAttributes = ({ attributes }: { attributes: IAttribute[] }) => {
   return (
@@ -41,11 +42,11 @@ const Item = ({ attribute }: { attribute: IAttribute }) => {
     if (attribute.value.includes(value)) return error("Value already exists");
 
     setLoading(true);
-    const res = await addAttributeValueDB(attribute.key, value);
+    const res = await addAttributeValueDB(attribute.key, capitalize(value.trim()));
     setLoading(false);
     if (!res?.ok) return error(res?.error || "Something went wrong");
 
-    addAttributeValue(attribute.key, value);
+    addAttributeValue(attribute.key, capitalize(value.trim()));
     setValue("");
     success("Value added successfully");
   };
@@ -54,11 +55,11 @@ const Item = ({ attribute }: { attribute: IAttribute }) => {
     if (key.length < 3) return error("Key must be at least 3 characters long");
 
     setLoading(true);
-    const res = await updateAttributeDB(attribute.id || "", key);
+    const res = await updateAttributeDB(attribute.id || "", capitalize(key.trim()));
     setLoading(false);
     if (!res?.ok) return error(res?.error || "Something went wrong");
 
-    updateAttributeKey(attribute.id || "", key);
+    updateAttributeKey(attribute.id || "", capitalize(key.trim()));
     setEdit(false);
     success("Key updated successfully");
   };
