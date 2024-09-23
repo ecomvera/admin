@@ -22,8 +22,8 @@ export function DeleteProduct({ id }: { id: string }) {
     const res = await deleteProductDB(id);
     if (res.ok) await fetch(`/api/image?public_ids=${res.imagesPublicIds}`, { method: "DELETE" });
     deleteProdct(id); // delete from store
-    setOpen(false);
     setIsDeleting(false);
+    setOpen(false);
   };
 
   return (

@@ -11,7 +11,7 @@ const ProductDetails = ({ data }: { data: IProduct }) => {
   const [currentColor, setCurrentColor] = useState(data.colors[0].hex);
 
   return (
-    <div className="py-5">
+    <div className="mobile:py-5">
       <div className="flex flex-col tablet:flex-row">
         <LeftGallaryView images={data.images} currentColor={currentColor} />
         <ProductDetail data={data} currentColor={currentColor} setCurrentColor={setCurrentColor} />
@@ -21,7 +21,7 @@ const ProductDetails = ({ data }: { data: IProduct }) => {
 };
 
 const LeftGallaryView = ({ images, currentColor }: { images: IProduct["images"]; currentColor: string }) => {
-  const [currentSlide, setCurrentSlide] = useState("");
+  const [currentSlide, setCurrentSlide] = useState(images.filter((image) => image.color === currentColor)[0].url);
 
   const handleSlideChange = (url: string) => {
     setCurrentSlide(url);
@@ -32,46 +32,47 @@ const LeftGallaryView = ({ images, currentColor }: { images: IProduct["images"];
   }, [currentColor]);
 
   return (
-    <>
-      <div className="flex gap-2 justify-center">
-        <div className="relative flex flex-col gap-1 w-[80px] h-full">
-          {images
-            .filter((image) => image.color === currentColor)
-            .map((image, index) => (
-              <div key={index} className="relative cursor-pointer">
-                <AspectRatio ratio={0.8 / 1} className="border rounded-md relative">
-                  <Image
-                    layout="fill"
-                    key={index}
-                    src={image.url.split("/upload")[0] + "/upload/w_80/" + image.url.split("/upload")[1]}
-                    alt="product"
-                    objectFit="contain"
-                    objectPosition="center"
-                    onMouseEnter={() => {
-                      if (currentSlide === image.url) return;
-                      handleSlideChange(image.url);
-                    }}
-                    // onMouseLeave={() => {}}
-                  />
-                </AspectRatio>
-              </div>
-            ))}
-        </div>
-
-        <div className="relative w-[300px] laptop:w-[400px]">
-          <AspectRatio ratio={0.8 / 1} className="border rounded-md relative">
-            <Image
-              layout="fill"
-              src={currentSlide.split("/upload")[0] + "/upload/w_350/" + currentSlide.split("/upload")[1]}
-              quality={100}
-              objectFit="contain"
-              objectPosition="center"
-              alt="product"
-            />
-          </AspectRatio>
-        </div>
+    <div className="w-full tablet:w-auto flex flex-col justify-center gap-1 mobile:flex-row-reverse">
+      <div className="relative w-full mobile:w-[500px] tablet:w-[350px] laptop:w-[500px] transition-all">
+        <AspectRatio ratio={0.8 / 1} className="border rounded-md relative">
+          <Image
+            priority
+            src={currentSlide}
+            quality={100}
+            className="w-full h-full object-cover rounded-md"
+            alt="product"
+            width={0}
+            height={0}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          />
+        </AspectRatio>
       </div>
-    </>
+
+      <div className="flex justify-between w-full h-fit mobile:flex-col mobile:w-[100px] tablet:w-[70px] laptop:w-[100px] transition-all">
+        {images
+          .filter((image) => image.color === currentColor)
+          .map((image, index) => (
+            <div key={index} className={`cursor-pointer w-full`}>
+              <AspectRatio ratio={0.8 / 1} className="border rounded-md">
+                <Image
+                  priority
+                  key={image.key}
+                  src={image.url.split("/upload")[0] + "/upload/w_80/" + image.url.split("/upload")[1]}
+                  alt="product"
+                  className="w-full h-full object-cover rounded-md"
+                  width={0}
+                  height={0}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  onMouseEnter={() => {
+                    if (currentSlide === image.url) return;
+                    handleSlideChange(image.url);
+                  }}
+                />
+              </AspectRatio>
+            </div>
+          ))}
+      </div>
+    </div>
   );
 };
 
@@ -94,7 +95,7 @@ const ProductDetail = ({
   const [selectedSize, setSelectedSize] = useState<IKeyValue>();
 
   return (
-    <div className="w-full px-2 tablet:px-5 laptop:px-10 mt-5 tablet:mt-0">
+    <div className="w-full px-2 mt-2 tablet:mt-0 laptop:px-5">
       <div className="text-sm font-semibold text-light-3 mb-5">
         {data.category?.parent?.name} / {data.category?.name}
       </div>
@@ -150,7 +151,7 @@ const ProductDetail = ({
       </div>
       {selectedSize && (
         <p className="text-sm font-normal text-dark-3">
-          Size: <b>{selectedSize?.key}</b> <span className="ml-2">{formatText(selectedSize?.value)}</span>
+          Size: <b>{selectedSize?.key}</b> <span className="ml-2">{formatText(selectedSize?.value as string)}</span>
         </p>
       )}
 

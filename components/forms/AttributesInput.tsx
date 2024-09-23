@@ -3,22 +3,12 @@ import { FormItem, FormLabel } from "@/components/ui/form";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { IAttribute } from "@/types";
+import { IAttribute, IKeyValue } from "@/types";
 
 interface Props {
   label: string;
-  attributes: {
-    key: string;
-    value: string;
-  }[];
-  setAttributes: Dispatch<
-    SetStateAction<
-      {
-        key: string;
-        value: string;
-      }[]
-    >
-  >;
+  attributes: IKeyValue[];
+  setAttributes: Dispatch<SetStateAction<IKeyValue[]>>;
   defaultAttributes: IAttribute[];
 }
 

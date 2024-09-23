@@ -33,7 +33,7 @@ export function DeleteGroupCategory({ category }: { category: IGroupCategory }) 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="px-2 text-red-500 ml-5">
+      <DialogTrigger className="px-2 text-red-500 ml-5 hidden group-hover:inline">
         <MdDeleteOutline className="text-xl cursor-pointer" fill="red" onClick={() => setOpen(true)} />
       </DialogTrigger>
       <DialogContent>

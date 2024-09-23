@@ -18,10 +18,10 @@ const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: P
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const pickedColor = (color: string) => {
-    const isExist = colors.findIndex((c) => c.hex === color);
+    const isExist = colors.findIndex((c) => c.hex.toUpperCase() === color);
     if (isExist !== -1) return error("Color already selected!");
 
-    setColors([...colors, defaultColors.filter((c) => c.hex === color)[0]]);
+    setColors([...colors, defaultColors.filter((c) => c.hex.toUpperCase() === color)[0]]);
     setDisplayColorPicker(false);
   };
 

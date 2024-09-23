@@ -15,6 +15,7 @@ import ListAttributes from "@/components/shared/ListAttributes";
 import Sizes from "@/components/shared/Sizes";
 import Colors from "@/components/shared/Colors";
 import { useEnums } from "@/hook/useEnums";
+import { sizeCategories } from "@/constants";
 
 const Page = () => {
   const { sizes, colors, attributes } = useEnums();
@@ -74,13 +75,13 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Sizes</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <Sizes sizes={sizes} />
+              <Sizes sizes={sizes} sizeCategories={sizeCategories} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
       <div className="w-full">
-        <Accordion type="multiple">
+        <Accordion type="multiple" defaultValue={["item-1", "item-2", "item-3", "item-4"]}>
           <AccordionItem value="item-1">
             <AccordionTrigger className="hover:no-underline">
               <h2 className="text-lg font-semibold text-dark-3">Categories</h2>

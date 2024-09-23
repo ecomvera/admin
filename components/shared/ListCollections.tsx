@@ -12,7 +12,7 @@ const ListCollections = ({ categories }: { categories: IGroupCategory[] }) => {
         <CommandEmpty>No results found.</CommandEmpty>
 
         {categories?.map((category: IGroupCategory) => (
-          <CommandItem key={category.id}>
+          <CommandItem key={category.id} className="group">
             <Link href={`/gc/${category.id}`} className="text-[15px] w-full flex items-center gap-3">
               <p>{category.name}</p>
               {!category.isActive && (

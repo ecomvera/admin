@@ -87,7 +87,7 @@ const Item = ({ attribute }: { attribute: IAttribute }) => {
       <div className="flex gap-2 px-1">
         {attribute.value?.length === 0 && <p className="">No values</p>}
         {attribute.value?.map((value) => (
-          <p key={value} className="bg-light-3 text-white font-semibold px-2 rounded-full flex items-center gap-2 pr-1">
+          <p key={value} className="border font-semibold px-2 rounded-full flex items-center gap-2 pr-1">
             {value}{" "}
             <DeleteAttribute id={attribute?.id as string} type="value" values={attribute.value.filter((v) => v !== value)} />
           </p>

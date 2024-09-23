@@ -39,7 +39,7 @@ export function DeleteAttribute({ id, type, values }: { id: string; type: "key" 
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger className={`${type === "key" && "hidden group-hover:inline"}`}>
         {type === "value" ? (
-          <Cross2Icon className="cursor-pointer" onClick={() => setOpen(true)} />
+          <Cross2Icon className="cursor-pointer text-red-600" onClick={() => setOpen(true)} />
         ) : (
           <MdDeleteOutline className="text-lg cursor-pointer" fill="red" onClick={() => setOpen(true)} />
         )}

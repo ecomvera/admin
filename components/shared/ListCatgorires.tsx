@@ -12,6 +12,7 @@ import { Input } from "../ui/input";
 import { createSlug, error } from "@/lib/utils";
 import { updateCategoryNameDB } from "@/lib/actions/category.action";
 import { useCategoryStore } from "@/stores/category";
+import { capitalize } from "lodash";
 
 const ListCatgorires = ({ isLoading, allCategories }: { isLoading: boolean; allCategories: ICategory[] }) => {
   return (
@@ -57,11 +58,11 @@ const Item = ({ category }: { category: ICategory }) => {
     if (name.length < 3) return error("Name must be at least 3 characters");
 
     setLoading(true);
-    const res = await updateCategoryNameDB(category.id || "", name, createSlug(name));
+    const res = await updateCategoryNameDB(category.id || "", capitalize(name), createSlug(name));
     setLoading(false);
     if (!res.ok) return error(res.error || "Something went wrong");
 
-    updateCategoryName(category.id || "", name, createSlug(name), isGroup);
+    updateCategoryName(category.id || "", capitalize(name), createSlug(name), isGroup);
     setEdit(false);
   };
 
