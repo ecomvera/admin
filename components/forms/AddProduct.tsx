@@ -11,7 +11,7 @@ import SelectField from "./SelectField";
 import InputField from "./InputField";
 import SwitchField from "./SwitchField";
 import { useToast } from "@/components/ui/use-toast";
-import { ICategory, IKeyValue, IProduct } from "@/types";
+import { ICategory, IProduct, IProductAttribute, IProductSize } from "@/types";
 import AttributesInput from "./AttributesInput";
 import { createProduct } from "@/lib/actions/product.action";
 import Link from "next/link";
@@ -22,6 +22,8 @@ import { useEnums } from "@/hook/useEnums";
 import { error, success } from "@/lib/utils";
 import GenderInput from "./GenderInput";
 import { capitalize } from "lodash";
+import { sizeCategories } from "@/constants";
+import SizeCategory from "./SizeCategory";
 
 interface Props {
   categories: {
@@ -36,11 +38,12 @@ const AddProduct = ({ categories }: Props) => {
   const { addProduct } = useProductStore();
 
   const [genders, setGenders] = useState<string[]>([]);
-  const [sizes, setSizes] = useState<IKeyValue[]>([]);
+  const [sizeCategory, setSizeCatgory] = useState<string>("");
+  const [sizes, setSizes] = useState<IProductSize[]>([]);
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
-  const [attributes, setAttributes] = useState<{ key: string; value: string }[]>([]);
+  const [attributes, setAttributes] = useState<IProductAttribute[]>([]);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
@@ -77,6 +80,7 @@ const AddProduct = ({ categories }: Props) => {
       isNewArrival: values.isNewArrival,
       genders: genders,
       colors: colors,
+      sizeCategory: sizeCategory,
       sizes: sizes,
       images: files,
       attributes: attributes,
@@ -119,7 +123,7 @@ const AddProduct = ({ categories }: Props) => {
     if (!subCategory) return error("Please select the product sub category");
     if (!sizes.length) return error("Please select the product sizes");
     for (const item of sizes) {
-      if (!item.key || !item.value || !item.quantity) return error("Please fill all fields in size.");
+      if (!item.key || !item.quantity || !item.value) return error("Please fill all fields in size.");
     }
     if (!genders.length) return error("Please select at least one gender");
     if (!attributes.length) return error("Please add some attributes");
@@ -173,9 +177,22 @@ const AddProduct = ({ categories }: Props) => {
               label="Sub Category"
             />
           </div>
-          <div className="flex gap-3">
-            {/* <InputField control={form.control} name="quantity" label="Quantity" type="number" /> */}
-            <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} defaultSizes={defaultSizes} />
+          <div className="flex gap-3 flex-col tablet:flex-row">
+            <SizeCategory
+              value={sizeCategory}
+              onChange={setSizeCatgory}
+              setSizes={setSizes}
+              isLoading={categories.isLoading}
+              data={sizeCategories}
+              label="Size Category"
+            />
+            <SizeDetails
+              label="Size Details"
+              sizes={sizes}
+              setSizes={setSizes}
+              sizeCategory={sizeCategory}
+              defaultSizes={defaultSizes.filter((item) => item.type === sizeCategory)}
+            />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
             <div className="flex gap-3 w-full">

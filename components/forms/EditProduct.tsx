@@ -7,7 +7,7 @@ import { Form } from "@/components/ui/form";
 import { Button } from "../ui/button";
 import { productValidation } from "@/lib/validations/product";
 import { useEffect, useState } from "react";
-import { ICategory, IColor, IImageFile, IKeyValue, IProduct } from "@/types";
+import { ICategory, IColor, IImageFile, IProduct, IProductAttribute, IProductSize } from "@/types";
 import { updateProductDB } from "@/lib/actions/product.action";
 import { useRouter } from "next/navigation";
 import SizeDetails from "@/components/forms/SizeDetails";
@@ -21,6 +21,8 @@ import { error, success } from "@/lib/utils";
 import { useEnums } from "@/hook/useEnums";
 import GenderInput from "./GenderInput";
 import { capitalize } from "lodash";
+import SizeCategory from "./SizeCategory";
+import { sizeCategories } from "@/constants";
 
 const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
   const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
@@ -28,12 +30,13 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
   const router = useRouter();
   const [subCategory, setSubCategory] = useState(product.categoryId);
   const [category, setCategory] = useState(product.category?.parent?.id || "");
+  const [sizeCategory, setSizeCatgory] = useState<string>(product.sizeCategory);
   const [genders, setGenders] = useState<string[]>(product.genders);
-  const [sizes, setSizes] = useState<IKeyValue[]>(product.sizes);
+  const [sizes, setSizes] = useState<IProductSize[]>(product.sizes);
   const [files, setFiles] = useState<IImageFile[]>(product.images);
   const [colors, setColors] = useState<IColor[]>(product.colors);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
-  const [attributes, setAttributes] = useState<IKeyValue[]>(product.attributes);
+  const [attributes, setAttributes] = useState<IProductAttribute[]>(product.attributes);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
@@ -62,6 +65,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       price: Number(values.price),
       mrp: Number(values.mrp),
       material: capitalize(values.material),
+      sizeCategory: sizeCategory,
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
       genders,
@@ -92,7 +96,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
     if (!subCategory) return error("Please select the product sub category");
     if (!sizes.length) return error("Please select the product sizes");
     for (const item of sizes) {
-      if (!item.key || !item.value || !item.quantity) return error("Please fill all fields in size.");
+      if (!item.key || !item.quantity) return error("Please fill all fields in size.");
     }
     if (!attributes.length) return error("Please add some attributes");
     return { ok: true };
@@ -127,8 +131,21 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             <SelectFields value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />
           </div>
           <div className="flex gap-3">
-            {/* <InputField control={form.control} name="quantity" label="Quantity" type="number" /> */}
-            <SizeDetails label="Size Details" sizes={sizes} setSizes={setSizes} defaultSizes={defaultSizes} />
+            <SizeCategory
+              value={sizeCategory}
+              onChange={setSizeCatgory}
+              setSizes={setSizes}
+              isLoading={false}
+              data={sizeCategories}
+              label="Size Category"
+            />
+            <SizeDetails
+              label="Size Details"
+              sizes={sizes}
+              setSizes={setSizes}
+              sizeCategory={sizeCategory}
+              defaultSizes={defaultSizes.filter((item) => item.type === sizeCategory)}
+            />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
             <div className="flex gap-3 w-full">

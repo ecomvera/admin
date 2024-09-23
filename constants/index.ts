@@ -27,3 +27,4 @@ export const sidebarLinks = [
 ];
 
 export const defaultGenders = ["Male", "Female", "Unisex"];
+export const sizeCategories = ["standard", "numeric", "footwear"];

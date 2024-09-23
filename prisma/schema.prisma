@@ -30,8 +30,9 @@ model Color {
 }
 
 model Size {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  value String @unique
+  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  type  String   @unique
+  value String[]
 
   @@map("sizes")
 }
@@ -98,6 +99,7 @@ model Product {
   isNewArrival Boolean
   isBestSeller Boolean
   genders      String[]
+  sizeCategory String
 
   colors     ProductColors[]
   sizes      ProductSizes[]

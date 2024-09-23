@@ -18,6 +18,7 @@ export const createProduct = async (product: IProduct) => {
         price: product.price,
         mrp: product.mrp,
         material: product.material,
+        sizeCategory: product.sizeCategory,
         inStock: product.inStock,
         isNewArrival: product.isNewArrival,
         isBestSeller: false,
@@ -40,7 +41,7 @@ export const createProduct = async (product: IProduct) => {
       data: product.sizes.map((size) => ({
         key: size.key,
         value: size.value,
-        quantity: size.quantity || 0,
+        quantity: size.quantity,
         productId: res.id,
       })),
     });
@@ -123,7 +124,7 @@ export const updateProductDB = async (id: string, data: IProduct) => {
       data: data.sizes.map((size) => ({
         key: size.key,
         value: size.value,
-        quantity: size.quantity || 0,
+        quantity: size.quantity,
         productId: id,
       })),
     });

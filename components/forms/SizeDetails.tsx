@@ -1,18 +1,19 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormItem, FormLabel } from "@/components/ui/form";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { IKeyValue, ISize } from "@/types";
+import { IProductSize, ISize } from "@/types";
 
 interface Props {
   label: string;
-  sizes: IKeyValue[];
-  setSizes: Dispatch<SetStateAction<IKeyValue[]>>;
+  sizes: IProductSize[];
+  setSizes: Dispatch<SetStateAction<IProductSize[]>>;
   defaultSizes: ISize[];
+  sizeCategory: string;
 }
 
-const SizeDetails = ({ label, sizes, setSizes, defaultSizes }: Props) => {
+const SizeDetails = ({ label, sizes, setSizes, defaultSizes, sizeCategory }: Props) => {
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
@@ -24,7 +25,7 @@ const SizeDetails = ({ label, sizes, setSizes, defaultSizes }: Props) => {
             type="number"
             className="text-base w-16 placeholder:text-sm p-1"
             placeholder="Qnt."
-            defaultValue={item.quantity}
+            defaultValue={item.quantity === 0 ? "" : item.quantity}
             onChange={(e) => {
               const obj = { key: sizes[index].key, value: sizes[index].value, quantity: Number(e.target.value) };
               setSizes([...sizes.slice(0, index), obj, ...sizes.slice(index + 1)]);
@@ -53,16 +54,17 @@ const SizeDetails = ({ label, sizes, setSizes, defaultSizes }: Props) => {
 
       {sizes?.length > 0 && <div className="w-full h-1 bg-gray-200"></div>}
 
-      <Select onValueChange={(field) => setSizes([...sizes, { key: field, value: "" }])} value="">
+      <Select onValueChange={(value) => setSizes([...sizes, { key: value, quantity: 0, value: "" }])} value="">
         <SelectTrigger className="text-base">
           <SelectValue placeholder={`Select the Size`} />
         </SelectTrigger>
         <SelectContent>
           {defaultSizes
-            ?.filter((item) => !sizes.some((selected) => selected.key === item.value))
+            ?.find((item) => item.type === sizeCategory)
+            ?.value?.filter((item) => !sizes.some((size) => size.key === item))
             .map((size) => (
-              <SelectItem key={size.value} value={size.value}>
-                {size.value}
+              <SelectItem key={size} value={size}>
+                {size}
               </SelectItem>
             ))}
         </SelectContent>

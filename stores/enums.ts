@@ -1,4 +1,4 @@
-import { IAttribute, IColor, IKeyValue, ISize } from "@/types";
+import { IAttribute, IColor, ISize } from "@/types";
 import { create } from "zustand";
 
 const attributes: IAttribute[] = [];
@@ -17,8 +17,8 @@ interface IEnumsStore {
   // sizes
   sizes: ISize[];
   setsizes: (value: ISize[]) => void;
-  addSize: (size: ISize) => void;
-  removeSize: (value: string) => void;
+  addSize: (type: string, value: string) => void;
+  updateSize: (type: string, values: string[]) => void;
 
   // colors
   colors: IColor[];
@@ -53,8 +53,10 @@ export const useEnumsStore = create<IEnumsStore>((set) => ({
   // sizes
   sizes: sizes,
   setsizes: (sizes: ISize[]) => set({ sizes }),
-  addSize: (data: ISize) => set((state) => ({ sizes: [...state.sizes, data] })),
-  removeSize: (value: string) => set((state) => ({ sizes: state.sizes.filter((s) => s.value !== value) })),
+  addSize: (type: string, value: string) =>
+    set((state) => ({ sizes: state.sizes.map((s) => (s.type === type ? { ...s, value: [...s.value, value] } : s)) })),
+  updateSize: (type: string, values: string[]) =>
+    set((state) => ({ sizes: state.sizes.map((s) => (s.type === type ? { ...s, value: values } : s)) })),
 
   // colors
   colors: colors,

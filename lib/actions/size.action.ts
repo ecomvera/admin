@@ -2,10 +2,12 @@
 
 import { prisma } from "../prisma";
 
-export const createSizeDB = async (value: string) => {
+export const createSizeDB = async (category: string, value: string) => {
   try {
-    const size = await prisma.size.create({
-      data: { value },
+    const size = await prisma.size.upsert({
+      where: { type: category },
+      update: { value: { push: value } },
+      create: { type: category, value: [value] },
     });
 
     return { ok: true, data: size };
@@ -19,10 +21,11 @@ export const createSizeDB = async (value: string) => {
   }
 };
 
-export const deleteSizeDB = async (value: string) => {
+export const deleteSizeDB = async (category: string, values: string[]) => {
   try {
-    await prisma.size.delete({
-      where: { value },
+    await prisma.size.update({
+      where: { type: category },
+      data: { value: values },
     });
 
     return { ok: true };

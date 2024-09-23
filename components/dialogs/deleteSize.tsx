@@ -13,15 +13,15 @@ import { MdDeleteOutline } from "react-icons/md";
 import { deleteSizeDB } from "@/lib/actions/size.action";
 import { useEnumsStore } from "@/stores/enums";
 
-export function DeleteSize({ value }: { value: string }) {
-  const { removeSize } = useEnumsStore();
+export function DeleteSize({ type, values }: { type: string; values: string[] }) {
+  const { updateSize } = useEnumsStore();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    let res = await deleteSizeDB(value);
-    if (res.ok) removeSize(value);
+    let res = await deleteSizeDB(type, values);
+    if (res.ok) updateSize(type, values);
     setOpen(false);
     setIsDeleting(false);
   };
