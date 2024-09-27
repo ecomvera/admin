@@ -2,12 +2,7 @@
 
 import CategoryTabs from "@/components/shared/CategoryTabs";
 import ListCatgorires from "@/components/shared/ListCatgorires";
-import { fetcher, fetchOpt } from "@/lib/utils";
-import useSWR from "swr";
-import { useEffect } from "react";
-import { useCategoryStore } from "@/stores/category";
 import GroupCategory from "@/components/shared/GroupCategory";
-import { useGroupCategoryStore } from "@/stores/groupCategory";
 import Attributes from "@/components/shared/Attributes";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ListCollections from "@/components/shared/ListCollections";
@@ -15,15 +10,18 @@ import ListAttributes from "@/components/shared/ListAttributes";
 import Sizes from "@/components/shared/Sizes";
 import Colors from "@/components/shared/Colors";
 import { sizeCategories } from "@/constants";
-import { useEnumsStore } from "@/stores/enums";
 import { useCategories } from "@/hook/useCategories";
-import { useEnums } from "@/hook/useEnums";
 import { useGroupCategories } from "@/hook/useGroupCategories";
+import { useAttributes } from "@/hook/useAttributes";
+import { useSizes } from "@/hook/useSizes";
+import { useColors } from "@/hook/useColors";
 
 const Page = () => {
+  const { sizes, fetchingSizes } = useSizes();
+  const { colors, fetchingColors } = useColors();
+  const { attributes, fetchingAttributes } = useAttributes();
   const { categories, fetchCategoriesLoading } = useCategories();
-  const { attributes, sizes, colors, fetchEnumsLoading } = useEnums();
-  const { groupCategories, fetchGroupCategories } = useGroupCategories();
+  const { groupCategories, fetchingGroupCategories } = useGroupCategories();
 
   return (
     <div className="flex py-3 flex-col gap-5 tablet:flex-row">
@@ -58,7 +56,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Sizes</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <Sizes sizes={sizes} sizeCategories={sizeCategories} />
+              <Sizes sizes={sizes} sizeCategories={sizeCategories} isLoading={fetchingSizes} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -78,7 +76,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Collections</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <ListCollections categories={groupCategories || []} />
+              <ListCollections categories={groupCategories || []} isLoading={fetchingGroupCategories} />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
@@ -86,7 +84,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Attributes</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <ListAttributes attributes={attributes || []} />
+              <ListAttributes attributes={attributes || []} isLoading={fetchingAttributes} />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-4">
@@ -94,7 +92,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Colors</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <Colors colors={colors} />
+              <Colors colors={colors} isLoading={fetchingColors} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

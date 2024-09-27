@@ -11,8 +11,10 @@ import SwitchField from "@/components/forms/SwitchField";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { sizeCategories } from "@/constants";
+import { useAttributes } from "@/hook/useAttributes";
 import { useCategories } from "@/hook/useCategories";
-import { useEnums } from "@/hook/useEnums";
+import { useColors } from "@/hook/useColors";
+import { useSizes } from "@/hook/useSizes";
 import { createProduct } from "@/lib/actions/product.action";
 import { error, success } from "@/lib/utils";
 import { productValidation } from "@/lib/validations/product";
@@ -27,7 +29,9 @@ import { z } from "zod";
 
 const Page = () => {
   const { categories, fetchCategoriesLoading } = useCategories();
-  const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
+  const { sizes: defaultSizes, fetchingSizes } = useSizes();
+  const { colors: defaultColors, fetchingColors } = useColors();
+  const { attributes: defaultAttributes, fetchingAttributes } = useAttributes();
   const { files, setFiles, colors, setColors } = useFileStore();
   const { addProduct } = useProductStore();
 

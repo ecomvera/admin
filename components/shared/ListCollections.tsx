@@ -4,12 +4,12 @@ import { IGroupCategory } from "@/types";
 import { DeleteGroupCategory } from "../dialogs/deleteGroupCategory";
 import Link from "next/link";
 
-const ListCollections = ({ categories }: { categories: IGroupCategory[] }) => {
+const ListCollections = ({ categories, isLoading }: { categories: IGroupCategory[]; isLoading: boolean }) => {
   return (
     <Command className="h-full max-h-[400px]">
       <CommandInput placeholder="Type a collection or search..." />
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
+        {isLoading ? <p>Loading...</p> : <CommandEmpty>No results found.</CommandEmpty>}
 
         {categories?.map((category: IGroupCategory) => (
           <CommandItem key={category.id} className="group">

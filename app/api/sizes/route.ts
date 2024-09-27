@@ -5,18 +5,12 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    console.log("\x1b[32m%s\x1b[0m", "ENUM api called!");
-    const attributes = await prisma.attribute.findMany();
+    console.log("\x1b[32m%s\x1b[0m", "Sizes api called!");
     const sizes = await prisma.size.findMany();
-    const colors = await prisma.color.findMany();
 
     const response = NextResponse.json({
       ok: true,
-      data: {
-        sizes: sizes,
-        attributes: attributes,
-        colors: colors,
-      },
+      data: sizes,
     });
     // response.headers.set("Cache-Control", "no-store");
     return response;

@@ -12,11 +12,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/u
 import { capitalize } from "lodash";
 import { CheckIcon, CircleIcon, Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
 
-const Sizes = ({ sizes, sizeCategories }: { sizes: ISize[]; sizeCategories: string[] }) => {
+const Sizes = ({ sizes, sizeCategories, isLoading }: { sizes: ISize[]; sizeCategories: string[]; isLoading: boolean }) => {
   const { setsizes } = useEnumsStore();
 
   return (
     <div className="px-2 flex flex-col gap-2 pt-[1px]">
+      {isLoading && <p className="">Loading...</p>}
       {sizes.map((item, index) => (
         <Item key={index} item={item} />
       ))}

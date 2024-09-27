@@ -5,16 +5,16 @@ import useSWR from "swr";
 
 export const useCategories = () => {
   const { categories, setCategories } = useCategoryStore();
-  const { mutate: fetchCategories, isLoading: fetchCategoriesLoading } = useSWR("/api/categories", fetcher, fetchOpt);
+  const {
+    data,
+    mutate,
+    isLoading: fetchCategoriesLoading,
+  } = useSWR(categories.length === 0 ? "/api/categories" : null, fetcher, fetchOpt);
 
   useEffect(() => {
-    const fetch = async () => {
-      if (!categories.length) {
-        const res = await fetchCategories();
-        setCategories(res?.data || []);
-      }
-    };
-    fetch();
-  }, []);
+    if (data?.data && !categories.length) {
+      setCategories(data.data || []);
+    }
+  }, [data, mutate, setCategories]);
   return { categories, fetchCategoriesLoading };
 };

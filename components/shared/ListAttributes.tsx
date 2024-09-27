@@ -11,13 +11,12 @@ import { IoCheckmark } from "react-icons/io5";
 import { useEnumsStore } from "@/stores/enums";
 import { capitalize } from "lodash";
 
-const ListAttributes = ({ attributes }: { attributes: IAttribute[] }) => {
+const ListAttributes = ({ attributes, isLoading }: { attributes: IAttribute[]; isLoading: boolean }) => {
   return (
     <Command>
       <CommandInput placeholder="Type a category or search..." />
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
-
+        {isLoading ? <p>Loading...</p> : <CommandEmpty>No results found.</CommandEmpty>}
         {attributes?.map((attribute) => (
           <Item key={attribute?.id} attribute={attribute} />
         ))}

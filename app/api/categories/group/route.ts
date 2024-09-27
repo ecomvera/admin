@@ -17,7 +17,7 @@ export async function GET(req: NextApiRequest) {
       where: obj,
     });
     const duration = Date.now() - start;
-    console.log("\x1b[32m%s\x1b[0m", `Categories - Database query time: ${duration} ms`);
+    console.log("\x1b[32m%s\x1b[0m", `Group Categories - Database query time: ${duration} ms`);
 
     const response = NextResponse.json({
       ok: true,

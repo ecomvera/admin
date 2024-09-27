@@ -12,7 +12,7 @@ import tinyColor from "tinycolor2";
 import { SliderPicker } from "react-color";
 import { capitalize } from "lodash";
 
-const Colors = ({ colors }: { colors: IColor[] }) => {
+const Colors = ({ colors, isLoading }: { colors: IColor[]; isLoading: boolean }) => {
   const { addColor } = useEnumsStore();
   const [name, setName] = useState("");
   const [hex, setHex] = useState("");
@@ -67,6 +67,8 @@ const Colors = ({ colors }: { colors: IColor[] }) => {
 
       <h2 className="text-dark-3 text-lg font-semibold">Current Colors</h2>
       <div className="flex flex-wrap gap-2">
+        {isLoading && <div>Loading...</div>}
+        {colors.length === 0 && !isLoading && <div>No colors found</div>}
         {colors.map((color) => (
           <div key={color.id} className="flex items-center border border-dark-3 px-2 rounded gap-2">
             <div style={{ backgroundColor: color.hex }} className="w-6 h-6 "></div>
