@@ -16,7 +16,7 @@ export const createSizeDB = async (category: string, value: string) => {
       return { ok: false, error: "Size already exists" };
     }
 
-    console.log(error);
+    console.error(error);
     return { ok: false, error: error.message };
   }
 };
@@ -30,7 +30,7 @@ export const deleteSizeDB = async (category: string, values: string[]) => {
 
     return { ok: true };
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     return { ok: false, error: error.message };
   }
 };

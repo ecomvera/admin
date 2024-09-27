@@ -21,6 +21,7 @@ export function DeleteColor({ name }: { name: string }) {
   const handleDelete = async () => {
     setIsDeleting(true);
     let res = await deleteColorDB(name);
+    console.log(res);
     if (res.ok) removeColor(name);
     setOpen(false);
     setIsDeleting(false);

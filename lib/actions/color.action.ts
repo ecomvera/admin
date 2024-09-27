@@ -14,7 +14,7 @@ export const createColorDB = async (name: string, hex: string) => {
       return { ok: false, error: "color already exists" };
     }
 
-    console.log(error);
+    console.error(error);
     return { ok: false, error: error.message };
   }
 };
@@ -27,7 +27,7 @@ export const deleteColorDB = async (name: string) => {
 
     return { ok: true };
   } catch (error: any) {
-    console.log(error);
+    console.error(error);
     return { ok: false, error: error.message };
   }
 };
