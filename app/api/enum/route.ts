@@ -18,7 +18,7 @@ export async function GET() {
         colors: colors,
       },
     });
-    response.headers.set("Cache-Control", "no-store");
+    // response.headers.set("Cache-Control", "no-store");
     return response;
   } catch (error: any) {
     console.log("error -", error);

@@ -23,11 +23,7 @@ const Page = () => {
   const { categories, setCategories } = useCategoryStore();
   const { mutate: fetchCategories, isLoading: fetchCategoriesLoading } = useSWR("/api/categories", fetcher, fetchOpt);
   const { groupCategories, setGroupCategories } = useGroupCategoryStore();
-  const { mutate: fetchGroupCategories, isLoading: fetchGroupCategoriesLoading } = useSWR(
-    "/api/categories/group",
-    fetcher,
-    fetchOpt
-  );
+  const { mutate: fetchGroupCategories } = useSWR("/api/categories/group", fetcher, fetchOpt);
 
   useEffect(() => {
     const fetch = async () => {
