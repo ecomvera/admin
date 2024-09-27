@@ -39,13 +39,13 @@ const Page = () => {
         const res = await fetchGroupCategories();
         setGroupCategories(res?.data || []);
       }
-      if (!sizes.length || !colors.length || !attributes.length) {
-        console.log("calling enum");
-        const res = await fetchEnums();
-        setAttributes(res?.data?.attributes || []);
-        setsizes(res?.data?.sizes || []);
-        setColors(res?.data?.colors || []);
-      }
+      // if (!sizes.length || !colors.length || !attributes.length) {
+      console.log("calling enum");
+      const res = await fetchEnums();
+      setAttributes(res?.data?.attributes || []);
+      setsizes(res?.data?.sizes || []);
+      setColors(res?.data?.colors || []);
+      // }
     };
     fetch();
   }, []);
