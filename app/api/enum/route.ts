@@ -1,18 +1,16 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { NextApiResponse } from "next";
+import { NextResponse } from "next/server";
 
-export async function GET(res: NextApiResponse) {
-  res.setHeader("Cache-Control", "no-store");
-
+export async function GET() {
   try {
     console.log("\x1b[32m%s\x1b[0m", "ENUM api called!");
     const attributes = await prisma.attribute.findMany();
     const sizes = await prisma.size.findMany();
     const colors = await prisma.color.findMany();
 
-    res.status(200).json({
+    const response = NextResponse.json({
       ok: true,
       data: {
         sizes: sizes,
@@ -20,9 +18,11 @@ export async function GET(res: NextApiResponse) {
         colors: colors,
       },
     });
+    response.headers.set("Cache-Control", "no-store");
+    return response;
   } catch (error: any) {
-    console.error("error -", error);
-    res.status(500).json({
+    console.log("error -", error);
+    return NextResponse.json({
       ok: false,
       error: "something went wrong!",
     });
