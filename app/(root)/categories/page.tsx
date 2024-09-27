@@ -16,35 +16,14 @@ import Sizes from "@/components/shared/Sizes";
 import Colors from "@/components/shared/Colors";
 import { sizeCategories } from "@/constants";
 import { useEnumsStore } from "@/stores/enums";
+import { useCategories } from "@/hook/useCategories";
+import { useEnums } from "@/hook/useEnums";
+import { useGroupCategories } from "@/hook/useGroupCategories";
 
 const Page = () => {
-  const { attributes, setAttributes, setsizes, sizes, colors, setColors } = useEnumsStore();
-  const { mutate: fetchEnums, isLoading: fetchEnumsLoading } = useSWR("/api/enum", fetcher, fetchOpt);
-  const { categories, setCategories } = useCategoryStore();
-  const { mutate: fetchCategories, isLoading: fetchCategoriesLoading } = useSWR("/api/categories", fetcher, fetchOpt);
-  const { groupCategories, setGroupCategories } = useGroupCategoryStore();
-  const { mutate: fetchGroupCategories } = useSWR("/api/categories/group", fetcher, fetchOpt);
-
-  useEffect(() => {
-    const fetch = async () => {
-      if (!categories.length) {
-        const res = await fetchCategories();
-        setCategories(res?.data || []);
-      }
-      if (!groupCategories.length) {
-        const res = await fetchGroupCategories();
-        setGroupCategories(res?.data || []);
-      }
-      // if (!sizes.length || !colors.length || !attributes.length) {
-      console.log("calling enum");
-      const res = await fetchEnums();
-      setAttributes(res?.data?.attributes || []);
-      setsizes(res?.data?.sizes || []);
-      setColors(res?.data?.colors || []);
-      // }
-    };
-    fetch();
-  }, []);
+  const { categories, fetchCategoriesLoading } = useCategories();
+  const { attributes, sizes, colors, fetchEnumsLoading } = useEnums();
+  const { groupCategories, fetchGroupCategories } = useGroupCategories();
 
   return (
     <div className="flex py-3 flex-col gap-5 tablet:flex-row">

@@ -18,7 +18,6 @@ import SwitchField from "@/components/forms/SwitchField";
 import ImageContainer from "./ImageContainer";
 import { useProductStore } from "@/stores/product";
 import { error, success } from "@/lib/utils";
-import { useEnums } from "@/hook/useEnums";
 import GenderInput from "./GenderInput";
 import { capitalize } from "lodash";
 import SizeCategory from "./SizeCategory";
