@@ -24,6 +24,7 @@ import GenderInput from "./GenderInput";
 import { capitalize } from "lodash";
 import { sizeCategories } from "@/constants";
 import SizeCategory from "./SizeCategory";
+import { useEnumsStore } from "@/stores/enums";
 
 interface Props {
   categories: {
@@ -33,7 +34,7 @@ interface Props {
 }
 
 const AddProduct = ({ categories }: Props) => {
-  const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
+  const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnumsStore();
   const { files, setFiles, colors, setColors } = useFileStore();
   const { addProduct } = useProductStore();
 

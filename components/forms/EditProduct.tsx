@@ -23,9 +23,10 @@ import GenderInput from "./GenderInput";
 import { capitalize } from "lodash";
 import SizeCategory from "./SizeCategory";
 import { sizeCategories } from "@/constants";
+import { useEnumsStore } from "@/stores/enums";
 
 const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
-  const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnums();
+  const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnumsStore();
   const { updateProduct } = useProductStore();
   const router = useRouter();
   const [subCategory, setSubCategory] = useState(product.categoryId);
