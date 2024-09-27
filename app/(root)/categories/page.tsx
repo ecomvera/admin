@@ -14,11 +14,12 @@ import ListCollections from "@/components/shared/ListCollections";
 import ListAttributes from "@/components/shared/ListAttributes";
 import Sizes from "@/components/shared/Sizes";
 import Colors from "@/components/shared/Colors";
-import { useEnums } from "@/hook/useEnums";
 import { sizeCategories } from "@/constants";
+import { useEnumsStore } from "@/stores/enums";
 
 const Page = () => {
-  const { sizes, colors, attributes } = useEnums();
+  const { attributes, setAttributes, setsizes, sizes, colors, setColors } = useEnumsStore();
+  const { mutate: fetchEnums, isLoading: fetchEnumsLoading } = useSWR("/api/enum", fetcher, fetchOpt);
   const { categories, setCategories } = useCategoryStore();
   const { mutate: fetchCategories, isLoading: fetchCategoriesLoading } = useSWR("/api/categories", fetcher, fetchOpt);
   const { groupCategories, setGroupCategories } = useGroupCategoryStore();
@@ -37,6 +38,13 @@ const Page = () => {
       if (!groupCategories.length) {
         const res = await fetchGroupCategories();
         setGroupCategories(res?.data || []);
+      }
+      if (!sizes.length || !colors.length || !attributes.length) {
+        console.log("calling enum");
+        const res = await fetchEnums();
+        setAttributes(res?.data?.attributes || []);
+        setsizes(res?.data?.sizes || []);
+        setColors(res?.data?.colors || []);
       }
     };
     fetch();
