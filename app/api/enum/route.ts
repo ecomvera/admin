@@ -19,7 +19,7 @@ export async function GET() {
       },
     });
   } catch (error: any) {
-    console.error(error);
+    console.log(error);
     return NextResponse.json({
       ok: false,
       error: "something went wrong!",
