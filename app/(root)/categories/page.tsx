@@ -45,7 +45,7 @@ const Page = () => {
   return (
     <div className="flex py-3 flex-col gap-5 tablet:flex-row">
       <div className="w-full">
-        <Accordion type="single" collapsible>
+        <Accordion type="multiple" defaultValue={["item-4"]}>
           <AccordionItem value="item-1">
             <AccordionTrigger className="hover:no-underline">
               <h2 className="text-lg font-semibold text-dark-3">Add Category</h2>
@@ -81,7 +81,7 @@ const Page = () => {
         </Accordion>
       </div>
       <div className="w-full">
-        <Accordion type="multiple" defaultValue={["item-1", "item-2", "item-3", "item-4"]}>
+        <Accordion type="multiple" defaultValue={["item-3", "item-4"]}>
           <AccordionItem value="item-1">
             <AccordionTrigger className="hover:no-underline">
               <h2 className="text-lg font-semibold text-dark-3">Categories</h2>

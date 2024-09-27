@@ -10,7 +10,7 @@ export async function GET() {
     const sizes = await prisma.size.findMany();
     const colors = await prisma.color.findMany();
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       ok: true,
       data: {
         sizes: sizes,
@@ -18,6 +18,11 @@ export async function GET() {
         colors: colors,
       },
     });
+
+    response.headers.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    response.headers.set("Pragma", "no-cache");
+    response.headers.set("Expires", "0");
+    return response;
   } catch (error: any) {
     console.log("error -", error);
     return NextResponse.json({
