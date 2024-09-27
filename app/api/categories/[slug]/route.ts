@@ -71,6 +71,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     let products;
     let subcategories;
     let genders;
+    let productSizes;
 
     // fetch category with subcategories without filters
     const categoryData = await prisma.category.findUnique({
@@ -85,6 +86,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         include: { children: { where: { AND: categoryArr }, include: childrenObj } },
       });
       subcategories = categoryData?.children;
+      productSizes = [...new Set(category?.children.map((item) => item.products.map((p) => p.sizeCategory)).flat())];
 
       const isUniSexExist = category?.children.some((child) =>
         child.products.some((product) => product.genders.includes("Unisex"))
@@ -99,6 +101,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         include: childrenObj,
       });
 
+      productSizes = [...new Set(category?.products.map((item) => item.sizeCategory))];
       const isUniSexExist = category?.products.some((child) => child.genders.includes("Unisex"));
       if (isUniSexExist) {
         genders = ["Unisex"];
@@ -139,6 +142,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       subcategories = [
         ...new Map(subcategoriesData.map((item) => [item.product.category.slug, item.product.category])).values(),
       ];
+      productSizes = [...new Set(subcategoriesData.map((item) => item.product.sizeCategory))];
 
       // genders = [...new Set(productsData.map((item) => item.product.genders).flat())];
       genders = defaultGenders;
@@ -153,6 +157,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       products: products,
       subcategories: subcategories,
       genders: genders,
+      productSizes: productSizes,
     });
   } catch (error: any) {
     console.error(error);
