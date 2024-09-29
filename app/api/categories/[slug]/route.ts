@@ -76,7 +76,10 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     // fetch category with subcategories without filters
     const categoryData = await prisma.category.findUnique({
       where: { slug: slug },
-      include: { children: { select: { name: true, slug: true } } },
+      include: {
+        children: { select: { name: true, slug: true, products: { select: { sizeCategory: true, genders: true } } } },
+        products: { select: { sizeCategory: true, genders: true } },
+      },
     });
 
     // if parent category then fetch products from its subcategories with filters
@@ -86,14 +89,14 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         include: { children: { where: { AND: categoryArr }, include: childrenObj } },
       });
       subcategories = categoryData?.children;
-      productSizes = [...new Set(category?.children.map((item) => item.products.map((p) => p.sizeCategory)).flat())];
-
-      const isUniSexExist = category?.children.some((child) =>
-        child.products.some((product) => product.genders.includes("Unisex"))
-      );
-      if (isUniSexExist) {
-        genders = ["Unisex"];
-      }
+      productSizes = [...new Set(categoryData?.children.map((item) => item.products.map((p) => p.sizeCategory)).flat())];
+      genders = [...new Set(categoryData?.children?.flatMap((item) => item.products.flatMap((p) => p.genders)) || [])];
+      // const isUniSexExist = category?.children.some((child) =>
+      //   child.products.some((product) => product.genders.includes("Unisex"))
+      // );
+      // if (isUniSexExist) {
+      //   genders = ["Unisex"];
+      // }
     } else {
       // if sub category then fetch products with filters
       category = await prisma.category.findUnique({
@@ -101,11 +104,12 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         include: childrenObj,
       });
 
-      productSizes = [...new Set(category?.products.map((item) => item.sizeCategory))];
-      const isUniSexExist = category?.products.some((child) => child.genders.includes("Unisex"));
-      if (isUniSexExist) {
-        genders = ["Unisex"];
-      }
+      genders = [...new Set(categoryData?.products?.flatMap((item) => item.genders) || [])];
+      productSizes = [...new Set(categoryData?.products.map((item) => item.sizeCategory))];
+      // const isUniSexExist = category?.products.some((child) => child.genders.includes("Unisex"));
+      // if (isUniSexExist) {
+      //   genders = ["Unisex"];
+      // }
     }
 
     // If no category, check for groupCategory
@@ -138,14 +142,17 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         },
       });
       products = productsData.map((item) => item.product);
+
       // set unique sub categories
       subcategories = [
         ...new Map(subcategoriesData.map((item) => [item.product.category.slug, item.product.category])).values(),
       ];
+
+      // set unique product sizes
       productSizes = [...new Set(subcategoriesData.map((item) => item.product.sizeCategory))];
 
-      // genders = [...new Set(productsData.map((item) => item.product.genders).flat())];
-      genders = defaultGenders;
+      // set unique genders
+      genders = [...new Set(subcategoriesData.map((item) => item.product.genders).flat())];
     }
 
     const duration = Date.now() - start;
