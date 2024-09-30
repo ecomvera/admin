@@ -7,7 +7,7 @@ const Header = () => {
         <div className="flex justify-between gap-3 py-3 items-center">
           <div className="flex gap-3 items-center">
             {/* <IoStorefront className="text-3xl" /> */}
-            <h2 className="text-2xl text-dark-3 font-bold uppercase tracking-wide">Silkyester</h2>
+            <h2 className="text-2xl text-dark-3 font-bold uppercase tracking-wide">api</h2>
           </div>
 
           <div className="flex gap-5">
