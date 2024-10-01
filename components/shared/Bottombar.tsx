@@ -9,6 +9,7 @@ import { sidebarLinks } from "@/constants";
 function Bottombar() {
   const pathname = usePathname();
 
+  if (pathname === "/sign-in") return null;
   return (
     <section className="bottombar">
       <div className="bottombar_container">

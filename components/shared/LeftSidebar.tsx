@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 function LeftSidebar() {
   const pathname = usePathname();
 
+  if (pathname === "/sign-in") return null;
   return (
     <section className="custom-scrollbar leftsidebar">
       <div className="flex w-full flex-1 flex-col gap-6 px-6">
@@ -20,7 +21,7 @@ function LeftSidebar() {
               key={link.label}
               className={`leftsidebar_link ${isActive && "font-bold border-b-4 border-gray-800"}`}
             >
-              <Image src={link.imgURL} alt={link.label} width={28} height={28} />
+              <Image src={link.imgURL} alt={link.label} width={28} height={28} priority />
               <p className={`text-dark-3 max-lg:hidden`}>{link.label}</p>
             </Link>
           );

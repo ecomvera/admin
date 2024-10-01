@@ -40,3 +40,15 @@ export const getPublicId = (url: string) => {
 export const error = (msg: string) => toast({ title: "Error", description: msg, variant: "destructive" });
 export const success = (msg: string, type?: "success" | "default", action?: ReactElement) =>
   toast({ title: "Success", description: msg, variant: type || "default", action });
+
+export const generareHash = (str: string) => {
+  const secret = "sodhro";
+  const hash = c.createHmac("sha256", secret).update(str).digest("hex");
+  return hash;
+};
+
+export const verifyHash = (str: string, hash: string) => {
+  const secret = "sodhro";
+  const newHash = c.createHmac("sha256", secret).update(str).digest("hex");
+  return newHash === hash;
+};

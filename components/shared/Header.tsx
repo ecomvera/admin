@@ -1,6 +1,14 @@
+"use client";
+
+import { useAuthStore } from "@/stores/auth";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { IoLogOutOutline } from "react-icons/io5";
 
 const Header = () => {
+  const { user, setUser } = useAuthStore();
+  const router = useRouter();
+
   return (
     <div className="w-full fixed top-0 bg-white z-20 border-b-2">
       <div className="px-5 w-full sticky top-0 bg-white">
@@ -10,8 +18,15 @@ const Header = () => {
             <h2 className="text-2xl text-dark-3 font-bold uppercase tracking-wide">Silkyester</h2>
           </div>
 
-          <div className="flex gap-5">
-            <IoLogOutOutline className="text-3xl" />
+          <div className={`flex gap-5 ${!user ? "hidden" : ""}`}>
+            <IoLogOutOutline
+              className="text-3xl cursor-pointer"
+              onClick={() => {
+                setUser(null);
+                sessionStorage.removeItem("auth");
+                router.replace("/sign-in");
+              }}
+            />
           </div>
         </div>
       </div>

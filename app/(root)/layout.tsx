@@ -5,6 +5,7 @@ import Header from "@/components/shared/Header";
 import LeftSidebar from "@/components/shared/LeftSidebar";
 import Bottombar from "@/components/shared/Bottombar";
 import { Toaster } from "@/components/ui/toaster";
+import Authenticate from "@/components/shared/Authenticate";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,15 +24,17 @@ export default function RootLayout({
       <body className={inter.className}>
         <Header />
 
-        <main className="flex flex-row">
-          <LeftSidebar />
+        <Authenticate>
+          <main className="flex flex-row">
+            <LeftSidebar />
 
-          <section className="main-container">
-            <div className="w-full max-w-desktop mx-auto">{children}</div>
-          </section>
-          <Toaster />
-        </main>
-        <Bottombar />
+            <section className="main-container">
+              <div className="w-full max-w-desktop mx-auto">{children}</div>
+            </section>
+            <Toaster />
+          </main>
+          <Bottombar />
+        </Authenticate>
       </body>
     </html>
   );
