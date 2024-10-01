@@ -2,7 +2,6 @@
 
 import CategoryTabs from "@/components/shared/CategoryTabs";
 import ListCatgorires from "@/components/shared/ListCatgorires";
-import GroupCategory from "@/components/shared/GroupCategory";
 import Attributes from "@/components/shared/Attributes";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ListCollections from "@/components/shared/ListCollections";
@@ -11,17 +10,18 @@ import Sizes from "@/components/shared/Sizes";
 import Colors from "@/components/shared/Colors";
 import { sizeCategories } from "@/constants";
 import { useCategories } from "@/hook/useCategories";
-import { useGroupCategories } from "@/hook/useGroupCategories";
 import { useAttributes } from "@/hook/useAttributes";
 import { useSizes } from "@/hook/useSizes";
 import { useColors } from "@/hook/useColors";
+import { useCollections } from "@/hook/useCollections";
+import Collections from "@/components/shared/Collections";
 
 const Page = () => {
   const { sizes, fetchingSizes } = useSizes();
   const { colors, fetchingColors } = useColors();
   const { attributes, fetchingAttributes } = useAttributes();
   const { categories, fetchCategoriesLoading } = useCategories();
-  const { groupCategories, fetchingGroupCategories } = useGroupCategories();
+  const { collections, fetchingCollections } = useCollections();
 
   return (
     <div className="flex py-3 flex-col gap-5 tablet:flex-row">
@@ -40,7 +40,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Add Collection</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <GroupCategory />
+              <Collections />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
@@ -76,7 +76,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Collections</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <ListCollections categories={groupCategories || []} isLoading={fetchingGroupCategories} />
+              <ListCollections collections={collections || []} isLoading={fetchingCollections} />
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">

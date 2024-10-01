@@ -3,7 +3,7 @@
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Switch } from "@/components/ui/switch";
 import { createSlug, fetcher, fetchOpt, getPublicId } from "@/lib/utils";
-import { IGroupCategory, IProduct } from "@/types";
+import { ICollection, IProduct } from "@/types";
 import Image from "next/image";
 import React, { ChangeEvent, useEffect } from "react";
 import useSWR from "swr";
@@ -17,12 +17,12 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useGroupCategoryStore } from "@/stores/groupCategory";
+// import { useCollectionStore } from "@/stores/collections";
+import { updateCollectionDB, updateCollectionProductsDB } from "@/lib/actions/collection.action";
 
 const Page = ({ params }: { params: { id: string } }) => {
-  const { updateGroupCategory } = useGroupCategoryStore();
-  const category = useSWR(`/api/categories/group/${params.id}`, fetcher, {
+  // const { updateCollection } = useCollectionStore();
+  const category = useSWR(`/api/collections/${params.id}`, fetcher, {
     ...fetchOpt,
     revalidateOnMount: true,
   });
@@ -31,7 +31,7 @@ const Page = ({ params }: { params: { id: string } }) => {
     revalidateOnMount: true,
   });
 
-  const data: IGroupCategory = category.data?.data;
+  const data: ICollection = category.data?.data;
   const productsData: IProduct[] = products.data?.data;
 
   const [productsList, setProductsList] = React.useState<IProduct[]>([]);
@@ -54,14 +54,20 @@ const Page = ({ params }: { params: { id: string } }) => {
     );
   }
 
-  const handleUpdateCategory = async () => {
+  const handleUpdateCollection = async () => {
     setLoading(true);
     const data = { ...values, slug: createSlug(values?.name || "") };
-    const res = await fetch(`/api/categories/group/${params.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    const res = await updateCollectionDB({ id: params.id, data });
+    if (!res?.ok) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: res?.error || "Something went wrong",
+      });
+      setLoading(false);
+      return;
+    }
+
     toast({
       variant: "success",
       title: "Updated",
@@ -69,7 +75,8 @@ const Page = ({ params }: { params: { id: string } }) => {
     });
     setEdit(false);
     setLoading(false);
-    updateGroupCategory(params.id, data);
+    // updateCollection(params.id, data);
+    category.mutate();
   };
 
   const uploadFile = async (file: globalThis.File) => {
@@ -113,11 +120,10 @@ const Page = ({ params }: { params: { id: string } }) => {
 
   const handleUpdateProducts = async () => {
     setLoading(true);
-    await fetch(`/api/categories/group/${params.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productIds: addedProducts.map((product) => product.id), groupCategoryId: data?.id }),
-    }).then((res) => res.json());
+    await updateCollectionProductsDB({
+      collectionId: data?.id,
+      products: addedProducts.map((product) => product.id) as string[],
+    });
     toast({
       variant: "success",
       title: "Updated",
@@ -126,6 +132,11 @@ const Page = ({ params }: { params: { id: string } }) => {
     setEdit(false);
     setLoading(false);
     data.products = addedProducts;
+  };
+
+  const handleCancelEdit = () => {
+    setEdit(false);
+    setValues({ ...data, image: data.image, banner: data.banner });
   };
 
   useEffect(() => {
@@ -242,9 +253,14 @@ const Page = ({ params }: { params: { id: string } }) => {
               onClick={() => setEdit(true)}
             />
           ) : (
-            <Button className="text-sm rounded" size={"sm"} disabled={loading} onClick={handleUpdateCategory}>
-              {loading ? "saving..." : "Save"}
-            </Button>
+            <>
+              <Button variant={"outline"} className="text-sm rounded" size={"sm"} onClick={handleCancelEdit}>
+                Cancel
+              </Button>
+              <Button className="text-sm rounded" size={"sm"} disabled={loading} onClick={handleUpdateCollection}>
+                {loading ? "saving..." : "Save"}
+              </Button>
+            </>
           )}
         </div>
       </div>

@@ -9,23 +9,26 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-import { useGroupCategoryStore } from "@/stores/groupCategory";
 import { MdDeleteOutline } from "react-icons/md";
-import { IGroupCategory } from "@/types";
-import { getPublicId } from "@/lib/utils";
+import { ICollection } from "@/types";
+import { error, getPublicId } from "@/lib/utils";
+import { useCollectionStore } from "@/stores/collections";
+import { deleteCollectionDB } from "@/lib/actions/collection.action";
 
-export function DeleteGroupCategory({ category }: { category: IGroupCategory }) {
-  const { deleteGroupCategory } = useGroupCategoryStore();
+export function DeleteGroupCategory({ collection }: { collection: ICollection }) {
+  const { deleteCollection } = useCollectionStore();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    const res = await fetch(`/api/categories/group/${category.slug}?id=${category.id}`, { method: "DELETE" });
+    const res = await deleteCollectionDB(collection.id);
     if (res.ok) {
-      deleteGroupCategory(category.id); // delete from store
-      const imagesPublicIds = `${getPublicId(category.image)},${getPublicId(category.banner)}`;
+      deleteCollection(collection.id); // delete from store
+      const imagesPublicIds = `${getPublicId(collection.image)},${getPublicId(collection.banner)}`;
       await fetch(`/api/image?public_ids=${imagesPublicIds}`, { method: "DELETE" });
+    } else {
+      error("Something went wrong");
     }
     setOpen(false);
     setIsDeleting(false);
@@ -38,8 +41,8 @@ export function DeleteGroupCategory({ category }: { category: IGroupCategory }) 
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="text-xl text-left">Delete Category</DialogTitle>
-          <DialogDescription className="text-left">Are you sure you want to delete this group category?</DialogDescription>
+          <DialogTitle className="text-xl text-left">Delete Collection</DialogTitle>
+          <DialogDescription className="text-left">Are you sure you want to delete this group collection?</DialogDescription>
         </DialogHeader>
 
         <DialogFooter className="sm:justify-end">

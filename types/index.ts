@@ -27,15 +27,13 @@ export interface ICategory {
   parent?: ICategory;
 }
 
-export interface IGroupCategory {
+export interface ICollection {
   id: string;
   name: string;
   slug: string;
   image: string;
   banner: string;
   isActive: boolean;
-  parentId?: string | null;
-  parent?: ICategory;
   products: IProduct[];
 }
 

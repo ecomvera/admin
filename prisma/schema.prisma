@@ -37,35 +37,32 @@ model Size {
   @@map("sizes")
 }
 
-model GroupCategory {
+model Collection {
   id     String @id @default(auto()) @map("_id") @db.ObjectId
   name   String
   slug   String @unique
   image  String
   banner String
 
-  parentId String?   @db.ObjectId
-  parent   Category? @relation(fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  products GroupCategoryProducts[]
+  products CollectionProducts[]
 
   isActive  Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("groupCategories")
+  @@map("collections")
 }
 
-model GroupCategoryProducts {
+model CollectionProducts {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   productId String  @db.ObjectId
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
-  groupCategoryId String        @db.ObjectId
-  groupCategory   GroupCategory @relation(fields: [groupCategoryId], references: [id], onDelete: Cascade)
+  collectionId String     @db.ObjectId
+  collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
-  @@unique([productId, groupCategoryId])
-  @@map("groupCategoryProducts")
+  @@unique([productId, collectionId])
+  @@map("collectionProducts")
 }
 
 model Category {
@@ -77,9 +74,8 @@ model Category {
   parent   Category? @relation("subCategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   parentId String?   @db.ObjectId
 
-  children      Category[]      @relation("subCategory")
-  products      Product[]
-  GroupCategory GroupCategory[]
+  children Category[] @relation("subCategory")
+  products Product[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -115,7 +111,7 @@ model Product {
   CartItem Cart[]
   WishList WishList[]
 
-  GroupCategories GroupCategoryProducts[]
+  collections CollectionProducts[]
 
   @@map("products")
 }

@@ -112,14 +112,14 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       // }
     }
 
-    // If no category, check for groupCategory
+    // If no category, check for collection
     if (!categoryData) {
-      category = await prisma.groupCategory.findUnique({
+      category = await prisma.collection.findUnique({
         where: { slug: slug },
       });
       // fetch products with filters
-      const productsData = await prisma.groupCategoryProducts.findMany({
-        where: { groupCategoryId: category?.id, product: { category: { AND: categoryArr }, AND: conditionsArr } },
+      const productsData = await prisma.collectionProducts.findMany({
+        where: { collectionId: category?.id, product: { category: { AND: categoryArr }, AND: conditionsArr } },
         select: {
           product: {
             include: {
@@ -133,8 +133,8 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         },
       });
       // fetch sub categories of all products in group category
-      const subcategoriesData = await prisma.groupCategoryProducts.findMany({
-        where: { groupCategoryId: category?.id },
+      const subcategoriesData = await prisma.collectionProducts.findMany({
+        where: { collectionId: category?.id },
         select: {
           product: {
             include: { category: { select: { name: true, slug: true } } },

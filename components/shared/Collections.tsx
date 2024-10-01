@@ -5,18 +5,18 @@ import { Label } from "../ui/label";
 import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { ReloadIcon } from "@radix-ui/react-icons";
-import { createGroupCategoryDB, isExistGroupCategoryDB } from "@/lib/actions/category.action";
+import { createCollectionDB, isCollectionExist } from "@/lib/actions/collection.action";
 import { createSlug } from "@/lib/utils";
-import { useGroupCategoryStore } from "@/stores/groupCategory";
 import { capitalize } from "lodash";
 import { error, success } from "@/lib/utils";
+import { useCollectionStore } from "@/stores/collections";
 
-const GroupCategory = () => {
+const Collections = () => {
   const [name, setName] = useState("");
   const [image, setImage] = useState<{ blob?: string; file?: globalThis.File; type?: string; status?: string }>();
   const [banner, setBanner] = useState<{ blob?: string; file?: globalThis.File; type?: string; status?: string }>();
   const [loading, setLoading] = useState("");
-  const { addGroupCategory } = useGroupCategoryStore();
+  const { addCollection } = useCollectionStore();
 
   const uploadFile = async (file: globalThis.File, type: string) => {
     const formData = new FormData();
@@ -45,9 +45,9 @@ const GroupCategory = () => {
   const handleCreate = async () => {
     setLoading("verifying");
 
-    const isExist = await isExistGroupCategoryDB(createSlug(name));
+    const isExist = await isCollectionExist(createSlug(name));
     if (isExist) {
-      error("Category already exists");
+      error("Collection already exists");
       setLoading("");
       return;
     }
@@ -71,7 +71,7 @@ const GroupCategory = () => {
     });
 
     setLoading("creating");
-    const res = await createGroupCategoryDB(capitalize(name.trim()), createSlug(name), imageURL, bannerURL);
+    const res = await createCollectionDB(capitalize(name.trim()), createSlug(name), imageURL, bannerURL);
     if (!res?.ok) {
       error(res?.error || "Something went wrong");
       setLoading("");
@@ -80,7 +80,7 @@ const GroupCategory = () => {
 
     success("Collection created successfully");
     // @ts-ignore
-    addGroupCategory(res.data);
+    addCollection(res.data);
     setName("");
     setImage({});
     setBanner({});
@@ -165,4 +165,4 @@ const GroupCategory = () => {
   );
 };
 
-export default GroupCategory;
+export default Collections;

@@ -65,27 +65,3 @@ export const deleteCategoryDB = async (id: string) => {
   const res = await prisma.category.delete({ where: { id: category.id } });
   return { ok: true, data: res };
 };
-
-export const isExistGroupCategoryDB = async (slug: string) => {
-  try {
-    const res = await prisma.groupCategory.findUnique({ where: { slug } });
-    return res;
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
-
-export const createGroupCategoryDB = async (name: string, slug: string, image: string, banner: string) => {
-  try {
-    const gCategory = await prisma.groupCategory.create({ data: { name, slug, image, banner } });
-    return { ok: true, data: gCategory };
-  } catch (error: any) {
-    if (error.code === "P2002") {
-      return { ok: false, error: "Category already exists" };
-    }
-
-    console.error(error);
-    return { ok: false, error: error.message };
-  }
-};
