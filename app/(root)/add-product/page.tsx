@@ -5,6 +5,7 @@ import GenderInput from "@/components/forms/GenderInput";
 import ImageContainer from "@/components/forms/ImageContainer";
 import InputField from "@/components/forms/InputField";
 import SelectFields from "@/components/forms/SelectField";
+import SelectProductType from "@/components/forms/SelectProductType";
 import SizeCategory from "@/components/forms/SizeCategory";
 import SizeDetails from "@/components/forms/SizeDetails";
 import SwitchField from "@/components/forms/SwitchField";
@@ -15,6 +16,7 @@ import { useAttributes } from "@/hook/useAttributes";
 import { useCategories } from "@/hook/useCategories";
 import { useColors } from "@/hook/useColors";
 import { useSizes } from "@/hook/useSizes";
+import { useTypes } from "@/hook/useTypes";
 import { createProduct } from "@/lib/actions/product.action";
 import { error, success } from "@/lib/utils";
 import { productValidation } from "@/lib/validations/product";
@@ -32,12 +34,14 @@ const Page = () => {
   const { sizes: defaultSizes, fetchingSizes } = useSizes();
   const { colors: defaultColors, fetchingColors } = useColors();
   const { attributes: defaultAttributes, fetchingAttributes } = useAttributes();
+  const { types: defaultTypes, fetchingTypes } = useTypes();
   const { files, setFiles, colors, setColors } = useFileStore();
   const { addProduct } = useProductStore();
 
   const [genders, setGenders] = useState<string[]>([]);
   const [sizeCategory, setSizeCatgory] = useState<string>("");
   const [sizes, setSizes] = useState<IProductSize[]>([]);
+  const [productType, setProductType] = useState("");
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
@@ -78,6 +82,7 @@ const Page = () => {
       isNewArrival: values.isNewArrival,
       genders: genders,
       colors: colors,
+      productType: productType,
       sizeCategory: sizeCategory,
       sizes: sizes,
       images: files,
@@ -161,6 +166,13 @@ const Page = () => {
             <InputField control={form.control} name="price" label="Price" type="number" />
             <InputField control={form.control} name="mrp" label="MRP" type="number" />
           </div>
+          <SelectProductType
+            value={productType}
+            onChange={setProductType}
+            isLoading={fetchingTypes}
+            data={defaultTypes}
+            label="Product Type"
+          />
           <div className="flex gap-3">
             <SelectFields
               value={category}

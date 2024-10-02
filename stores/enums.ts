@@ -25,6 +25,12 @@ interface IEnumsStore {
   setColors: (value: IColor[]) => void;
   addColor: (value: IColor) => void;
   removeColor: (value: string) => void;
+
+  // types
+  types: string[];
+  setTypes: (value: string[]) => void;
+  addType: (value: string) => void;
+  removeType: (value: string) => void;
 }
 
 export const useEnumsStore = create<IEnumsStore>((set) => ({
@@ -63,4 +69,10 @@ export const useEnumsStore = create<IEnumsStore>((set) => ({
   setColors: (colors: IColor[]) => set({ colors }),
   addColor: (data: IColor) => set((state) => ({ colors: [...state.colors, data] })),
   removeColor: (name: string) => set((state) => ({ colors: state.colors.filter((s) => s.name !== name) })),
+
+  // types
+  types: [],
+  setTypes: (value: string[]) => set({ types: value }),
+  addType: (value: string) => set((state) => ({ types: [...state.types, value] })),
+  removeType: (value: string) => set((state) => ({ types: state.types.filter((s) => s !== value) })),
 }));

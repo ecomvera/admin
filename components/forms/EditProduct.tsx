@@ -22,21 +22,29 @@ import GenderInput from "./GenderInput";
 import { capitalize } from "lodash";
 import SizeCategory from "./SizeCategory";
 import { sizeCategories } from "@/constants";
-import { useEnumsStore } from "@/stores/enums";
+import SelectProductType from "./SelectProductType";
+import { useSizes } from "@/hook/useSizes";
+import { useColors } from "@/hook/useColors";
+import { useAttributes } from "@/hook/useAttributes";
+import { useTypes } from "@/hook/useTypes";
 
 const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
-  const { sizes: defaultSizes, colors: defaultColors, attributes: defaultAttributes } = useEnumsStore();
   const { updateProduct } = useProductStore();
   const router = useRouter();
+  const { sizes: defaultSizes } = useSizes();
+  const { colors: defaultColors } = useColors();
+  const { attributes: defaultAttributes } = useAttributes();
+  const { types: defaultTypes } = useTypes();
   const [subCategory, setSubCategory] = useState(product.categoryId);
   const [category, setCategory] = useState(product.category?.parent?.id || "");
+  const [productType, setProductType] = useState(product.productType);
   const [sizeCategory, setSizeCatgory] = useState<string>(product.sizeCategory);
   const [genders, setGenders] = useState<string[]>(product.genders);
   const [sizes, setSizes] = useState<IProductSize[]>(product.sizes);
   const [files, setFiles] = useState<IImageFile[]>(product.images);
   const [colors, setColors] = useState<IColor[]>(product.colors);
-  const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [attributes, setAttributes] = useState<IProductAttribute[]>(product.attributes);
+  const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
@@ -65,6 +73,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       price: Number(values.price),
       mrp: Number(values.mrp),
       material: capitalize(values.material),
+      productType: productType,
       sizeCategory: sizeCategory,
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
@@ -86,6 +95,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
     success("Product updated successfully");
     setLoading(false);
     updateProduct(product.id || "", data);
+    setProductType("");
     router.replace(path);
   };
 
@@ -108,6 +118,18 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
     }
   }, [category]);
 
+  useEffect(() => {
+    setSubCategory(product.categoryId);
+    setCategory(product.category?.parent?.id || "");
+    setProductType(product.productType);
+    setSizeCatgory(product.sizeCategory);
+    setGenders(product.genders);
+    setSizes(product.sizes);
+    setFiles(product.images);
+    setColors(product.colors);
+    setAttributes(product.attributes);
+  }, [product]);
+
   return (
     <>
       <ImageContainer
@@ -126,6 +148,13 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             <InputField control={form.control} name="price" label="Price" type="number" />
             <InputField control={form.control} name="mrp" label="MRP" type="number" />
           </div>
+          <SelectProductType
+            value={productType}
+            onChange={setProductType}
+            isLoading={false}
+            data={defaultTypes}
+            label="Product Type"
+          />
           <div className="flex gap-3">
             <SelectFields value={category} onChange={setCategory} data={categories} label="Category" />
             <SelectFields value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />

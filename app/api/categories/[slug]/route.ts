@@ -29,6 +29,10 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     conditionsArr.push({ genders: { hasSome: output.gender } });
   }
 
+  if (output.category && output.category.length) {
+    conditionsArr.push({ productType: { in: output.category } });
+  }
+
   if (output.colors && output.colors.length) {
     conditionsArr.push({ colors: { some: { name: { in: output.colors } } } });
   }
@@ -50,10 +54,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
   }
 
   // filter by category
-  const categoryArr: any[] = [];
-  if (output.category && output.category.length) {
-    categoryArr.push({ slug: { in: output.category } });
-  }
+  const categoryArr: any[] = []; // empty for now
 
   const childrenObj = {
     parent: { select: { name: true, slug: true } },
@@ -69,7 +70,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     const start = Date.now();
     let category;
     let products;
-    let subcategories;
+    let productTypes;
     let genders;
     let productSizes;
 
@@ -77,8 +78,10 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
     const categoryData = await prisma.category.findUnique({
       where: { slug: slug },
       include: {
-        children: { select: { name: true, slug: true, products: { select: { sizeCategory: true, genders: true } } } },
-        products: { select: { sizeCategory: true, genders: true } },
+        children: {
+          select: { name: true, slug: true, products: { select: { sizeCategory: true, genders: true, productType: true } } },
+        },
+        products: { select: { sizeCategory: true, genders: true, productType: true } },
       },
     });
 
@@ -88,15 +91,9 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         where: { slug: slug },
         include: { children: { where: { AND: categoryArr }, include: childrenObj } },
       });
-      subcategories = categoryData?.children;
+      productTypes = [...new Set(categoryData?.children.map((item) => item.products.map((p) => p.productType)).flat())];
       productSizes = [...new Set(categoryData?.children.map((item) => item.products.map((p) => p.sizeCategory)).flat())];
       genders = [...new Set(categoryData?.children?.flatMap((item) => item.products.flatMap((p) => p.genders)) || [])];
-      // const isUniSexExist = category?.children.some((child) =>
-      //   child.products.some((product) => product.genders.includes("Unisex"))
-      // );
-      // if (isUniSexExist) {
-      //   genders = ["Unisex"];
-      // }
     } else {
       // if sub category then fetch products with filters
       category = await prisma.category.findUnique({
@@ -106,10 +103,6 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
 
       genders = [...new Set(categoryData?.products?.flatMap((item) => item.genders) || [])];
       productSizes = [...new Set(categoryData?.products.map((item) => item.sizeCategory))];
-      // const isUniSexExist = category?.products.some((child) => child.genders.includes("Unisex"));
-      // if (isUniSexExist) {
-      //   genders = ["Unisex"];
-      // }
     }
 
     // If no category, check for collection
@@ -144,9 +137,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       products = productsData.map((item) => item.product);
 
       // set unique sub categories
-      subcategories = [
-        ...new Map(subcategoriesData.map((item) => [item.product.category.slug, item.product.category])).values(),
-      ];
+      productTypes = [...new Set(subcategoriesData.map((item) => item.product.productType))];
 
       // set unique product sizes
       productSizes = [...new Set(subcategoriesData.map((item) => item.product.sizeCategory))];
@@ -162,7 +153,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       ok: true,
       category: category,
       products: products,
-      subcategories: subcategories,
+      productTypes: productTypes,
       genders: genders,
       productSizes: productSizes,
     });

@@ -18,6 +18,7 @@ export const createProduct = async (product: IProduct) => {
         price: product.price,
         mrp: product.mrp,
         material: product.material,
+        productType: product.productType,
         sizeCategory: product.sizeCategory,
         inStock: product.inStock,
         isNewArrival: product.isNewArrival,
@@ -100,6 +101,8 @@ export const updateProductDB = async (id: string, data: IProduct) => {
         price: data.price,
         mrp: data.mrp,
         material: data.material,
+        productType: data.productType,
+        sizeCategory: data.sizeCategory,
         inStock: data.inStock,
         isNewArrival: data.isNewArrival,
         genders: data.genders,
@@ -170,7 +173,7 @@ export const deleteProductDB = async (id: string) => {
       return { ok: false, error: "Product not found" };
     }
 
-    await prisma.groupCategoryProducts.deleteMany({
+    await prisma.collectionProducts.deleteMany({
       where: { productId: id },
     });
 

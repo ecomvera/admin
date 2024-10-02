@@ -96,6 +96,7 @@ model Product {
   isBestSeller Boolean
   genders      String[]
   sizeCategory String
+  productType  String
 
   colors     ProductColors[]
   sizes      ProductSizes[]
@@ -114,6 +115,11 @@ model Product {
   collections CollectionProducts[]
 
   @@map("products")
+}
+
+model ProductTypes {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  name String @unique
 }
 
 model ProductColors {
