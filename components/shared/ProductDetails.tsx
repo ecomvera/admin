@@ -2,7 +2,7 @@
 
 import Image from "next/legacy/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { IKeyValue, IProduct } from "@/types";
+import { IProduct, IProductSize } from "@/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { AspectRatio } from "../ui/aspect-ratio";
@@ -92,7 +92,7 @@ const ProductDetail = ({
   currentColor: string;
   setCurrentColor: Dispatch<SetStateAction<string>>;
 }) => {
-  const [selectedSize, setSelectedSize] = useState<IKeyValue>();
+  const [selectedSize, setSelectedSize] = useState<IProductSize>();
 
   return (
     <div className="w-full px-2 mt-2 tablet:mt-0 laptop:px-5">
@@ -133,23 +133,26 @@ const ProductDetail = ({
       </div>
       <p className="text-base mobile:text-lg font-semibold text-dark-3 uppercase mt-5">Select Size</p>
       <div className="flex gap-2">
-        {data.sizes.map((size) => (
-          <div key={size.key} className={`cursor-pointer`} onClick={() => setSelectedSize(size)}>
-            <div
-              key={size.key}
-              className={`border-2 ${
-                size.key === selectedSize?.key ? "border-2 border-yellow-400 bg-yellow-400" : ""
-              } px-3 py-1`}
-            >
-              <p className="text-base mobile:text-lg font-semibold text-dark-3">{size.key}</p>
-            </div>
-            {size.quantity && size.quantity < 10 && (
-              <p className="text-sm font-semibold text-red-500">{size.quantity} Left</p>
-            )}
-          </div>
-        ))}
+        {data.sizes.map(
+          (size) =>
+            size.productColor === currentColor && (
+              <div key={size.key} className={`cursor-pointer`} onClick={() => setSelectedSize(size)}>
+                <div
+                  key={size.key}
+                  className={`border-2 ${
+                    size.key === selectedSize?.key ? "border-2 border-yellow-400 bg-yellow-400" : ""
+                  } px-3 py-1`}
+                >
+                  <p className="text-base mobile:text-lg font-semibold text-dark-3">{size.key}</p>
+                </div>
+                {size.quantity && size.quantity < 10 && (
+                  <p className="text-sm font-semibold text-red-500">{size.quantity} Left</p>
+                )}
+              </div>
+            )
+        )}
       </div>
-      {selectedSize && (
+      {selectedSize && selectedSize.productColor === currentColor && (
         <p className="text-sm font-normal text-dark-3">
           Size: <b>{selectedSize?.key}</b> <span className="ml-2">{formatText(selectedSize?.value as string)}</span>
         </p>

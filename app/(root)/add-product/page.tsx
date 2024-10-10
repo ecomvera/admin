@@ -200,6 +200,7 @@ const Page = () => {
             />
             <SizeDetails
               label="Size Details"
+              colors={colors}
               sizes={sizes}
               setSizes={setSizes}
               sizeCategory={sizeCategory}

@@ -43,6 +43,7 @@ export const createProduct = async (product: IProduct) => {
         key: size.key,
         value: size.value,
         quantity: size.quantity,
+        productColor: size.productColor,
         productId: res.id,
       })),
     });
@@ -128,6 +129,7 @@ export const updateProductDB = async (id: string, data: IProduct) => {
         key: size.key,
         value: size.value,
         quantity: size.quantity,
+        productColor: size.productColor,
         productId: id,
       })),
     });

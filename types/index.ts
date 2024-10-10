@@ -76,6 +76,7 @@ export interface IProductSize {
   key: string;
   value: string;
   quantity: number;
+  productColor: string;
   productId?: string;
 }
 

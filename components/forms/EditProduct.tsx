@@ -170,6 +170,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             />
             <SizeDetails
               label="Size Details"
+              colors={colors}
               sizes={sizes}
               setSizes={setSizes}
               sizeCategory={sizeCategory}
