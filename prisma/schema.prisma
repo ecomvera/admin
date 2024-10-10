@@ -113,6 +113,7 @@ model Product {
   WishList WishList[]
 
   collections CollectionProducts[]
+  orders      OrderedItem[]
 
   @@map("products")
 }
@@ -148,6 +149,8 @@ model ProductSizes {
 
   Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String?  @db.ObjectId
+
+  @@unique([key, productId])
 }
 
 model ProductImages {
@@ -203,31 +206,15 @@ model Address {
   phone         String
   residenceType String
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String @db.ObjectId
-
-  orders Order[]
+  userId          String  @db.ObjectId
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  BillingAddress  Order[] @relation("billing")
+  shippingAddress Order[] @relation("shipping")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("addresses")
-}
-
-model Order {
-  id        String @id @default(auto()) @map("_id") @db.ObjectId
-  userId    String @db.ObjectId
-  paymentId String @db.ObjectId
-  addressId String @db.ObjectId
-  status    String
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  address Address @relation(fields: [addressId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("orders")
 }
 
 model Cart {
@@ -254,4 +241,53 @@ model WishList {
   User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("wishlists")
+}
+
+model Order {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber     String        @unique
+  userId          String        @db.ObjectId
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  billingId       String        @db.ObjectId
+  shippingId      String        @db.ObjectId
+  billingAddress  Address       @relation("billing", fields: [billingId], references: [id], onDelete: Cascade)
+  shippingAddress Address       @relation("shipping", fields: [shippingId], references: [id], onDelete: Cascade)
+  items           OrderedItem[]
+  status          OrderStatus
+  totalPrice      Float
+  paymentId       String?       @db.ObjectId
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@map("orders")
+}
+
+model OrderedItem {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  orderId    String  @db.ObjectId
+  Order      Order   @relation(fields: [orderId], references: [id])
+  itemId     String  @db.ObjectId
+  item       Product @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  color      String
+  size       String
+  quantity   Int
+  price      Float
+  totalPrice Float
+
+  @@map("orderedItems")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  PICKED_UP
+  SHIPPED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+  FAILED
+  RETURN_REQUESTED
+  RETURNED
+  REFUNDED
 }

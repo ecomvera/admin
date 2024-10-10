@@ -85,3 +85,13 @@ export interface IProductAttribute {
   value: string;
   productId?: string;
 }
+
+export interface IOrderItem {
+  id: string;
+  orderId: string;
+  color: string;
+  size: string;
+  quantity: number;
+  price: number;
+  totalPrice: number;
+}
