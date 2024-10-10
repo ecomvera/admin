@@ -41,10 +41,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, data: { user: newUser, otp } });
   }
 
-  if (!user.onBoarded) {
-    return NextResponse.json({ ok: true, data: { user, otp } });
-  }
-
   return NextResponse.json({
     ok: true,
     data: {
