@@ -14,6 +14,11 @@ export async function GET(req: NextApiRequest) {
   try {
     const start = Date.now();
     const data = await prisma.collection.findMany({
+      include: {
+        _count: {
+          select: { products: true },
+        },
+      },
       where: obj,
     });
     const duration = Date.now() - start;
@@ -21,7 +26,7 @@ export async function GET(req: NextApiRequest) {
 
     const response = NextResponse.json({
       ok: true,
-      data: data,
+      data: data.filter((collection) => collection._count.products !== 0) || [],
     });
 
     return response;
