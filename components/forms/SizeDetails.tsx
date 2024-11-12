@@ -4,6 +4,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { IColor, IProductSize, ISize } from "@/types";
+import { size } from "lodash";
 
 interface Props {
   label: string;
@@ -34,10 +35,11 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
                   type="number"
                   className="text-base w-16 placeholder:text-sm p-1"
                   placeholder="Qnt."
-                  defaultValue={item.quantity === 0 ? "" : item.quantity}
+                  value={item.quantity === 0 ? "" : item.quantity}
                   onChange={(e) => {
                     const objIndex = sizes.findIndex((k) => k.key === item.key && k.productColor === item.productColor);
                     const obj = {
+                      index: sizes[objIndex].index,
                       key: sizes[objIndex].key,
                       value: sizes[objIndex].value,
                       quantity: Number(e.target.value),
@@ -47,13 +49,14 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
                   }}
                 />
                 <Input
-                  defaultValue={item.value}
+                  value={item.value}
                   className="w-full text-base placeholder:text-xs placeholder:font-normal"
                   type="text"
                   placeholder="Chest (in Inch): 43.0 | Front Length (in Inch): 28.0 | Sleeve Length (in Inch): 9.75"
                   onChange={(e) => {
                     const objIndex = sizes.findIndex((k) => k.key === item.key && k.productColor === item.productColor);
                     const obj = {
+                      index: sizes[objIndex].index,
                       key: sizes[objIndex].key,
                       quantity: sizes[objIndex].quantity,
                       value: e.target.value,
@@ -66,7 +69,10 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
                   type="button"
                   variant={"outline"}
                   className="text-lg p-2 text-red-500 rounded-[5px] font-semibold"
-                  onClick={() => setSizes(sizes.filter((k) => k.key !== item.key))}
+                  onClick={() => {
+                    const objIndex = sizes.findIndex((k) => k.key === item.key && k.productColor === item.productColor);
+                    setSizes(sizes.slice(0, objIndex).concat(sizes.slice(objIndex + 1)));
+                  }}
                 >
                   X
                 </Button>
@@ -76,7 +82,13 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
           {/* {sizes?.length > 0 && <div className="w-full h-1 bg-gray-200"></div>} */}
 
           <Select
-            onValueChange={(value) => setSizes([...sizes, { key: value, quantity: 0, value: "", productColor: color.hex }])}
+            onValueChange={(value) => {
+              console.log(defaultSizes, value);
+              const index = defaultSizes.find((i) => i.type === sizeCategory)?.value.indexOf(value) || 0;
+              const obj = { index: index, key: value, quantity: 0, value: "", productColor: color.hex };
+              const newArr = [...sizes, obj].sort((a, b) => a.index - b.index);
+              setSizes(newArr);
+            }}
             value=""
           >
             <SelectTrigger className="text-base">
@@ -86,8 +98,8 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
               {defaultSizes
                 ?.find((item) => item.type === sizeCategory)
                 ?.value?.filter((item) => !sizes.some((size) => size.key === item && size.productColor === color.hex))
-                .map((size) => (
-                  <SelectItem key={size} value={size}>
+                .map((size, index) => (
+                  <SelectItem key={index} value={size}>
                     {size}
                   </SelectItem>
                 ))}

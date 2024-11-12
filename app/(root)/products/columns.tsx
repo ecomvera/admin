@@ -49,6 +49,15 @@ export const columns: ColumnDef<IProduct>[] = [
     },
   },
   {
+    accessorKey: "sizes",
+    header: "Quantity",
+    cell: ({ row }) => {
+      const data: { quantity: number }[] = row.getValue("sizes");
+      const totalQuantity = data.reduce((acc, item) => acc + item.quantity, 0);
+      return <div className="capitalize">{totalQuantity || 0}</div>;
+    },
+  },
+  {
     accessorKey: "price",
     header: ({ column }) => {
       return (

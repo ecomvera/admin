@@ -151,7 +151,7 @@ model ProductSizes {
   Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId String?  @db.ObjectId
 
-  @@unique([key, productId])
+  @@unique([key, productId, productColor])
 }
 
 model ProductImages {

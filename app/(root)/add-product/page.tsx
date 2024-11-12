@@ -117,6 +117,7 @@ const Page = () => {
     setAttributes([]);
     setFiles([]);
     setColors([]);
+    setGenders([]);
   };
 
   const validateData = () => {

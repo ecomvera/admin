@@ -52,3 +52,11 @@ export const verifyHash = (str: string, hash: string) => {
   const newHash = c.createHmac("sha256", secret).update(str).digest("hex");
   return newHash === hash;
 };
+
+export const getDiscount = (mrp: number, price: number) => {
+  return ((mrp - price / mrp) / 100).toFixed(2);
+};
+
+export function boldNumbersInString(str: string) {
+  return str.replace(/\d+/g, (match) => `<b>${match}</b>`);
+}

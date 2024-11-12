@@ -4,7 +4,6 @@ import CategoryTabs from "@/components/shared/CategoryTabs";
 import ListCatgorires from "@/components/shared/ListCatgorires";
 import Attributes from "@/components/shared/Attributes";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import ListCollections from "@/components/shared/ListCollections";
 import ListAttributes from "@/components/shared/ListAttributes";
 import Sizes from "@/components/shared/Sizes";
 import Colors from "@/components/shared/Colors";
@@ -13,8 +12,6 @@ import { useCategories } from "@/hook/useCategories";
 import { useAttributes } from "@/hook/useAttributes";
 import { useSizes } from "@/hook/useSizes";
 import { useColors } from "@/hook/useColors";
-import { useCollections } from "@/hook/useCollections";
-import Collections from "@/components/shared/Collections";
 import Types from "@/components/shared/Types";
 import { useTypes } from "@/hook/useTypes";
 
@@ -24,7 +21,6 @@ const Page = () => {
   const { colors, fetchingColors } = useColors();
   const { attributes, fetchingAttributes } = useAttributes();
   const { categories, fetchCategoriesLoading } = useCategories();
-  const { collections, fetchingCollections } = useCollections();
 
   return (
     <div className="flex py-3 flex-col gap-5 tablet:flex-row">
@@ -38,14 +34,7 @@ const Page = () => {
               <CategoryTabs parentCategories={categories || []} isLoading={fetchCategoriesLoading} />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-2">
-            <AccordionTrigger className="hover:no-underline">
-              <h2 className="text-lg font-semibold text-dark-3">Add Collection</h2>
-            </AccordionTrigger>
-            <AccordionContent>
-              <Collections />
-            </AccordionContent>
-          </AccordionItem>
+
           <AccordionItem value="item-3">
             <AccordionTrigger className="hover:no-underline">
               <h2 className="text-lg font-semibold text-dark-3">Add Attribute</h2>
@@ -82,14 +71,7 @@ const Page = () => {
               <ListCatgorires isLoading={fetchCategoriesLoading} allCategories={categories || []} />
             </AccordionContent>
           </AccordionItem>
-          <AccordionItem value="item-2">
-            <AccordionTrigger className="hover:no-underline">
-              <h2 className="text-lg font-semibold text-dark-3">Collections</h2>
-            </AccordionTrigger>
-            <AccordionContent>
-              <ListCollections collections={collections || []} isLoading={fetchingCollections} />
-            </AccordionContent>
-          </AccordionItem>
+
           <AccordionItem value="item-3">
             <AccordionTrigger className="hover:no-underline">
               <h2 className="text-lg font-semibold text-dark-3">Attributes</h2>

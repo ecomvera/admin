@@ -31,10 +31,10 @@ export default function RootLayout({
             <section className="main-container">
               <div className="w-full max-w-desktop mx-auto">{children}</div>
             </section>
-            <Toaster />
           </main>
           <Bottombar />
         </Authenticate>
+        <Toaster />
       </body>
     </html>
   );

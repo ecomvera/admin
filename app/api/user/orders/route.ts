@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       await Promise.all(
         body.items.map(async (item: IOrderItem) => {
           await prisma.productSizes.update({
-            where: { key_productId: { productId: item.id, key: item.size } },
+            where: { key_productId_productColor: { productId: item.id, key: item.size, productColor: item.color } },
             data: { quantity: { decrement: item.quantity } },
           });
         })

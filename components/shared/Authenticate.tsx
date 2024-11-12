@@ -21,7 +21,7 @@ const Authenticate = ({ children }: { children: React.ReactNode }) => {
       }
     };
     fetch();
-  }, [user, setUser]);
+  }, [user, setUser, router]);
 
   return <>{children}</>;
 };

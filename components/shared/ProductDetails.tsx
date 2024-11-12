@@ -6,6 +6,8 @@ import { IProduct, IProductSize } from "@/types";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { AspectRatio } from "../ui/aspect-ratio";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { boldNumbersInString, getDiscount } from "@/lib/utils";
 
 const ProductDetails = ({ data }: { data: IProduct }) => {
   const [currentColor, setCurrentColor] = useState(data.colors[0].hex);
@@ -76,13 +78,6 @@ const LeftGallaryView = ({ images, currentColor }: { images: IProduct["images"];
   );
 };
 
-// make text bold with brackets <>
-const formatText = (text: string) => {
-  const regex = /<([^>]+)>/g;
-  const parts = text.split(regex);
-  return parts.map((part, index) => (index % 2 === 1 ? <strong key={index}>{part}</strong> : part));
-};
-
 const ProductDetail = ({
   data,
   currentColor,
@@ -93,6 +88,7 @@ const ProductDetail = ({
   setCurrentColor: Dispatch<SetStateAction<string>>;
 }) => {
   const [selectedSize, setSelectedSize] = useState<IProductSize>();
+  const [showMore, setShowMore] = useState(false);
 
   return (
     <div className="w-full px-2 mt-2 tablet:mt-0 laptop:px-5">
@@ -106,12 +102,19 @@ const ProductDetail = ({
         </Button>
       </Link>
 
-      <h2 className="head-text text-dark-3 font-bold mt-5">{data.name}</h2>
-      <p className="text-sm mobile:text-lg">{data.description}</p>
-      <p className="head-text font-semibold mt-5">
-        Rs. {data.price} <span className="text-sm font-normal text-light-3">incl. of all taxes</span>
-      </p>
-      <p className="text-sm font-normal text-light-3 line-through">MRP {data.mrp}</p>
+      <h2 className="text-xl font-bold mt-5">{data.name}</h2>
+      <div>
+        <p className={`${!showMore && "line-clamp-3"}`}>{data.description}</p>
+        <span onClick={() => setShowMore(!showMore)} className="text-sm font-semibold text-blue-700 cursor-pointer">
+          {!showMore ? "Read more" : "Read less"}
+        </span>
+      </div>
+      <div className="flex mt-5 items-end gap-2">
+        <p className="text-xl font-semibold">Rs. {data.price}</p>
+        <p className="text-sm font-normal text-light-3 line-through">MRP {data.mrp}</p>
+        <p className="text-lg text-green-600 font-semibold">{getDiscount(data.price, data.mrp)}% off</p>
+      </div>
+      <span className="text-sm font-normal text-light-3">incl. of all taxes</span>
       <div className="border w-fit border-light-3 px-3 my-5">
         <p className="text-base font-semibold text-light-3">{data.material}</p>
       </div>
@@ -120,9 +123,9 @@ const ProductDetail = ({
         {data.colors.map((color) => (
           <div
             key={color.id}
-            className="rounded-full cursor-pointer"
+            className="rounded-full cursor-pointer shadow-gray-500 shadow-sm"
             style={{
-              border: currentColor === color.hex ? `2px solid ${color.hex}` : "2px solid transparent",
+              border: currentColor === color.hex ? `2px solid green` : "2px solid transparent",
               padding: "2px",
             }}
             onClick={() => setCurrentColor(color.hex)}
@@ -145,16 +148,17 @@ const ProductDetail = ({
                 >
                   <p className="text-base mobile:text-lg font-semibold text-dark-3">{size.key}</p>
                 </div>
-                {size.quantity && size.quantity < 10 && (
-                  <p className="text-sm font-semibold text-red-500">{size.quantity} Left</p>
-                )}
+                {size.quantity && <p className="text-xs font-semibold">{size.quantity} Left</p>}
               </div>
             )
         )}
       </div>
       {selectedSize && selectedSize.productColor === currentColor && (
-        <p className="text-sm font-normal text-dark-3">
-          Size: <b>{selectedSize?.key}</b> <span className="ml-2">{formatText(selectedSize?.value as string)}</span>
+        <p className="text-sm font-normal mt-2">
+          <span>
+            Size: <b>{selectedSize?.key}</b>
+          </span>
+          <span className="ml-2" dangerouslySetInnerHTML={{ __html: boldNumbersInString(selectedSize?.value as string) }} />
         </p>
       )}
 

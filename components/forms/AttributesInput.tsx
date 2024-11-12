@@ -1,19 +1,23 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormItem, FormLabel } from "@/components/ui/form";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { IAttribute, IKeyValue } from "@/types";
+import { IAttribute, IProductAttribute } from "@/types";
 
 interface Props {
   label: string;
-  attributes: IKeyValue[];
-  setAttributes: Dispatch<SetStateAction<IKeyValue[]>>;
+  attributes: IProductAttribute[];
+  setAttributes: Dispatch<SetStateAction<IProductAttribute[]>>;
   defaultAttributes: IAttribute[];
 }
 
 const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }: Props) => {
   const [selectedSize, setSelectedSize] = useState<string[]>([...attributes.map((i) => i.key)]);
+
+  useEffect(() => {
+    if (attributes.length === 0) setSelectedSize([]);
+  }, [attributes]);
 
   return (
     <FormItem className="flex w-full flex-col">

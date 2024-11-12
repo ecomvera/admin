@@ -25,7 +25,7 @@ export async function GET(req: NextApiRequest) {
 
     const start = Date.now();
     if ("table-data" in searchParams) {
-      data = await prisma.product.findMany({ include: { category: { include: { parent: true } } } });
+      data = await prisma.product.findMany({ include: { category: { include: { parent: true } }, sizes: true } });
     } else if ("new-arrivals" in searchParams) {
       data = await prisma.product.findMany({ where: { isNewArrival: true }, select: obj });
     } else if ("best-sellers" in searchParams) {

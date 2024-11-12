@@ -72,6 +72,7 @@ export interface IImageFile {
 }
 
 export interface IProductSize {
+  index: number;
   id?: string;
   key: string;
   value: string;

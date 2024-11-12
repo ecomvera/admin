@@ -26,7 +26,7 @@ export async function GET(req: NextApiRequest) {
 
     const response = NextResponse.json({
       ok: true,
-      data: data.filter((collection) => collection._count.products !== 0) || [],
+      data: isActive ? data.filter((collection) => collection._count.products !== 0) || [] : data,
     });
 
     return response;
