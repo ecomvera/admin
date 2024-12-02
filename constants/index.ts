@@ -1,28 +1,35 @@
+import { ChartBarStacked, House, Package, PackagePlus, PackageSearch, Warehouse } from "lucide-react";
+
 export const sidebarLinks = [
   {
-    imgURL: "/assets/home.png",
+    icon: House,
     route: "/",
     label: "Home",
   },
   {
-    imgURL: "/assets/add-product.png",
+    icon: PackagePlus,
     route: "/add-product",
     label: "Add Product",
   },
   {
-    imgURL: "/assets/product.png",
+    icon: PackageSearch,
     route: "/products",
     label: "Products",
   },
   {
-    imgURL: "/assets/category.png",
+    icon: ChartBarStacked,
     route: "/categories",
     label: "Categories",
   },
   {
-    imgURL: "/assets/order.png",
+    icon: Package,
     route: "/orders",
     label: "Orders",
+  },
+  {
+    icon: Warehouse,
+    route: "/warehouses",
+    label: "Warehouses",
   },
 ];
 
