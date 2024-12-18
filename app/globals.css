@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.space-y-2 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 0;
+}
+
 @layer components {
   .main-container {
     @apply flex flex-1 flex-col pt-16 p-2 py-4 items-center pb-10 max-md:pb-32;
@@ -12,7 +16,7 @@
   }
 
   .head-text {
-    @apply text-2xl font-semibold text-dark-3;
+    @apply text-xl sm:text-2xl font-semibold text-dark-3;
   }
 
   .leftsidebar {

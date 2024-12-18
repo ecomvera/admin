@@ -24,16 +24,16 @@ export default function RootLayout({
       <body className={inter.className}>
         <Header />
 
-        <Authenticate>
-          <main className="flex flex-row">
-            <LeftSidebar />
+        {/* <Authenticate> */}
+        <main className="flex flex-row">
+          <LeftSidebar />
 
-            <section className="main-container">
-              <div className="w-full max-w-desktop mx-auto">{children}</div>
-            </section>
-          </main>
-          <Bottombar />
-        </Authenticate>
+          <section className="main-container">
+            <div className="w-full max-w-desktop mx-auto">{children}</div>
+          </section>
+        </main>
+        <Bottombar />
+        {/* </Authenticate> */}
         <Toaster />
       </body>
     </html>

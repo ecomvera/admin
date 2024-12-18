@@ -13,6 +13,33 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model WareHouse {
+  id                String              @id @default(auto()) @map("_id") @db.ObjectId
+  name              String              @unique
+  mobile            Int
+  email             String
+  address           String
+  city              String
+  state             String
+  country           String
+  pincode           Int
+  WareHouseProducts WareHouseProducts[]
+
+  @@map("warehouses")
+}
+
+model WareHouseProducts {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int
+
+  warehouseId String    @db.ObjectId
+  warehouse   WareHouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, warehouseId])
+}
+
 model Attribute {
   id    String   @id @default(auto()) @map("_id") @db.ObjectId
   key   String   @unique
@@ -114,6 +141,8 @@ model Product {
 
   collections CollectionProducts[]
   orders      OrderedItem[]
+
+  WareHouseProducts WareHouseProducts[]
 
   @@map("products")
 }

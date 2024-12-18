@@ -10,7 +10,7 @@ export default function Home() {
 
   return (
     <main>
-      <h2 className="head-text py-8">Home</h2>
+      <h2 className="head-text md:py-6">Home</h2>
       <div className="w-full flex flex-col tablet:flex-row gap-3">
         <Accordion type="multiple" className="w-full">
           <AccordionItem value="item-2">
