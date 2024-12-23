@@ -27,6 +27,18 @@ export interface ICategory {
   parent?: ICategory;
 }
 
+export interface IWarehouse {
+  id: string;
+  name: string;
+  email: string;
+  mobile: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  products: IProduct[];
+}
+
 export interface ICollection {
   id: string;
   name: string;
@@ -50,6 +62,10 @@ export interface IProduct {
   isBestSeller?: boolean;
   colors: IColor[];
   genders: string[];
+  warehouses: {
+    id: string;
+    quantity: number;
+  }[];
   productType: string;
   sizeCategory: string;
   sizes: IProductSize[];

@@ -20,6 +20,8 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
 
+      {colors.length === 0 && <p className="text-sm font-mono">Please add product images.</p>}
+
       {colors?.map((color, index) => (
         <div className="flex gap-3 flex-col pb-2" key={index}>
           <p className="border-l-8 pl-2" style={{ borderColor: color.hex }}>

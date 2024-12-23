@@ -1,239 +1,41 @@
-"use client";
-
-import AttributesInput from "@/components/forms/AttributesInput";
-import GenderInput from "@/components/forms/GenderInput";
-import ImageContainer from "@/components/forms/ImageContainer";
-import InputField from "@/components/forms/InputField";
-import SelectFields from "@/components/forms/SelectField";
-import SelectProductType from "@/components/forms/SelectProductType";
-import SizeCategory from "@/components/forms/SizeCategory";
-import SizeDetails from "@/components/forms/SizeDetails";
-import SwitchField from "@/components/forms/SwitchField";
-import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { sizeCategories } from "@/constants";
-import { useAttributes } from "@/hook/useAttributes";
-import { useCategories } from "@/hook/useCategories";
-import { useColors } from "@/hook/useColors";
-import { useSizes } from "@/hook/useSizes";
-import { useTypes } from "@/hook/useTypes";
-import { createProduct } from "@/lib/actions/product.action";
-import { error, success } from "@/lib/utils";
-import { productValidation } from "@/lib/validations/product";
-import { useFileStore, useProductStore } from "@/stores/product";
-import { ICategory, IProduct, IProductAttribute, IProductSize } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { capitalize } from "lodash";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { PackagePlus } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import AddProductPage from "@/screens/add-product/AddProductPage";
 
 const Page = () => {
-  const { categories, fetchCategoriesLoading } = useCategories();
-  const { sizes: defaultSizes, fetchingSizes } = useSizes();
-  const { colors: defaultColors, fetchingColors } = useColors();
-  const { attributes: defaultAttributes, fetchingAttributes } = useAttributes();
-  const { types: defaultTypes, fetchingTypes } = useTypes();
-  const { files, setFiles, colors, setColors } = useFileStore();
-  const { addProduct } = useProductStore();
-
-  const [genders, setGenders] = useState<string[]>([]);
-  const [sizeCategory, setSizeCatgory] = useState<string>("");
-  const [sizes, setSizes] = useState<IProductSize[]>([]);
-  const [productType, setProductType] = useState("");
-  const [category, setCategory] = useState("");
-  const [subCategory, setSubCategory] = useState("");
-  const [subCategories, setSubCategories] = useState<ICategory[]>([]);
-  const [attributes, setAttributes] = useState<IProductAttribute[]>([]);
-  const [loading, setLoading] = useState(false);
-
-  const form = useForm<z.infer<typeof productValidation>>({
-    resolver: zodResolver(productValidation),
-    defaultValues: {
-      name: "",
-      description: "",
-      price: "",
-      mrp: "",
-      material: "",
-      inStock: false,
-      isNewArrival: false,
-    },
-  });
-
-  // const formData = form.watch();
-  // // useRef to store previous formData to avoid infinite loop
-  // const prevFormData = useRef(formData);
-
-  const onSubmit = async (values: z.infer<typeof productValidation>) => {
-    const res = validateData();
-    // @ts-ignore
-    if (!res?.ok) return;
-
-    setLoading(true);
-    const data: IProduct = {
-      name: capitalize(values.name),
-      slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
-      description: values.description,
-      price: Number(values.price),
-      mrp: Number(values.mrp),
-      material: capitalize(values.material),
-      inStock: values.inStock,
-      isNewArrival: values.isNewArrival,
-      genders: genders,
-      colors: colors,
-      productType: productType,
-      sizeCategory: sizeCategory,
-      sizes: sizes,
-      images: files,
-      attributes: attributes,
-      categoryId: subCategory,
-    };
-
-    const response = await createProduct(data);
-    if (!response?.ok) {
-      error(response?.error || "Something went wrong");
-      setLoading(false);
-      return;
-    }
-
-    addProduct({ id: response.productId, ...data });
-    success(
-      "Product created successfully",
-      "default",
-      <Link href={`/p/${data?.slug}`}>
-        <Button variant="outline" size="sm" className="rounded-xl font-semibold text-black">
-          View
-        </Button>
-      </Link>
-    );
-
-    setLoading(false);
-    form.reset();
-    setSizes([]);
-    setCategory("");
-    setSubCategory("");
-    setSubCategories([]);
-    setAttributes([]);
-    setFiles([]);
-    setColors([]);
-    setGenders([]);
-  };
-
-  const validateData = () => {
-    if (!files.length) return error("Please add some images");
-    if (colors.length * 5 !== files.length) return error("Please add all the images");
-    if (!category) return error("Please select the product category");
-    if (!subCategory) return error("Please select the product sub category");
-    if (!sizes.length) return error("Please select the product sizes");
-    for (const item of sizes) {
-      if (!item.key || !item.quantity || !item.value) return error("Please fill all fields in size.");
-    }
-    if (!genders.length) return error("Please select at least one gender");
-    if (!attributes.length) return error("Please add some attributes");
-    return { ok: true };
-  };
-
-  useEffect(() => {
-    if (category) {
-      setSubCategories(categories.find((item) => item.id === category)?.children || []);
-    }
-  }, [category]);
-
-  // useEffect(() => {
-  //   if (!isEqual(prevFormData.current, formData)) {
-  //     setProduct(formData);
-  //     prevFormData.current = formData;
-  //   }
-  // }, [formData]);
-
   return (
-    <div>
-      <h2 className="head-text py-8">Add Product</h2>
+    <main>
+      <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">
+        <div className="flex flex-col">
+          <div className="head-text flex gap-3">
+            <PackagePlus className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6" />
+            <h2>Add Product</h2>
+          </div>
+          <p className="text-xs sm:text-sm text-gray-500">Add new product</p>
+        </div>
 
-      <ImageContainer
-        files={files}
-        setFiles={setFiles}
-        colors={colors}
-        setColors={setColors}
-        defaultColors={defaultColors}
-      />
+        <Breadcrumb className="w-fit flex-1 mt-1">
+          <BreadcrumbList className="justify-end text-xs sm:text-sm gap-[2px]">
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Add Product</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
 
-      <Form {...form}>
-        <form className="flex flex-col justify-start gap-3 p-2 mt-5" onSubmit={form.handleSubmit(onSubmit)}>
-          <InputField control={form.control} name="name" label="Product Name" />
-          <InputField control={form.control} name="description" label="Product Description" textarea />
-          <div className="flex gap-3">
-            <InputField control={form.control} name="price" label="Price" type="number" />
-            <InputField control={form.control} name="mrp" label="MRP" type="number" />
-          </div>
-          <SelectProductType
-            value={productType}
-            onChange={setProductType}
-            isLoading={fetchingTypes}
-            data={defaultTypes}
-            label="Product Type"
-          />
-          <div className="flex gap-3">
-            <SelectFields
-              value={category}
-              onChange={setCategory}
-              isLoading={fetchCategoriesLoading}
-              data={categories}
-              label="Category"
-            />
-            <SelectFields
-              value={subCategory}
-              onChange={setSubCategory}
-              isLoading={fetchCategoriesLoading}
-              data={subCategories}
-              label="Sub Category"
-            />
-          </div>
-          <div className="flex gap-3 flex-col tablet:flex-row">
-            <SizeCategory
-              value={sizeCategory}
-              onChange={setSizeCatgory}
-              setSizes={setSizes}
-              isLoading={fetchCategoriesLoading}
-              data={sizeCategories}
-              label="Size Category"
-            />
-            <SizeDetails
-              label="Size Details"
-              colors={colors}
-              sizes={sizes}
-              setSizes={setSizes}
-              sizeCategory={sizeCategory}
-              defaultSizes={defaultSizes.filter((item) => item.type === sizeCategory)}
-            />
-          </div>
-          <div className="flex gap-3 flex-col tablet:flex-row">
-            <div className="flex gap-3 w-full">
-              <InputField control={form.control} name="material" label="Material" />
-              <GenderInput genders={genders} setGenders={setGenders} />
-            </div>
-            <AttributesInput
-              label="Attributes"
-              attributes={attributes}
-              setAttributes={setAttributes}
-              defaultAttributes={defaultAttributes}
-            />
-          </div>
-          <div className="w-full flex gap-5">
-            <SwitchField control={form.control} name="inStock" label="In Stock" />
-            <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
-          </div>
-
-          <Button
-            type="submit"
-            className={`${loading ? "bg-gray-500" : "bg-gray-700"} rounded-[5px] h-10 text-lg font-semibold my-5`}
-          >
-            {loading ? "Loading..." : "Submit"}
-          </Button>
-        </form>
-      </Form>
-    </div>
+      <AddProductPage />
+    </main>
   );
 };
 

@@ -24,8 +24,8 @@ const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
 
       {selectedSize?.map((item, index) => (
-        <div className="flex gap-3" key={index}>
-          <Input value={item} aria-checked className="text-base font-semibold" readOnly />
+        <div className="flex gap-3 py-[1px]" key={index}>
+          <Input value={item} aria-checked className="text-sm font-semibold" readOnly />
           <Select
             value={attributes[index]?.value}
             onValueChange={(field) => {
@@ -33,7 +33,7 @@ const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }
               setAttributes([...attributes.slice(0, index), obj, ...attributes.slice(index + 1)]);
             }}
           >
-            <SelectTrigger className="text-base">
+            <SelectTrigger className="text-sm">
               <SelectValue placeholder={`Select the value`} />
             </SelectTrigger>
             <SelectContent>
@@ -60,9 +60,15 @@ const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }
         </div>
       ))}
 
-      {attributes?.length > 0 && <div className="w-full h-1 bg-gray-200"></div>}
+      {attributes?.length > 0 && <div className="w-full h-1 my-2"></div>}
 
-      <Select onValueChange={(field) => setSelectedSize([...selectedSize, field])} value="">
+      <Select
+        onValueChange={(field) => {
+          setAttributes([...attributes, { key: field, value: "" }]);
+          setSelectedSize([...selectedSize, field]);
+        }}
+        value=""
+      >
         <SelectTrigger className="text-base">
           <SelectValue placeholder={`Select the key`} />
         </SelectTrigger>

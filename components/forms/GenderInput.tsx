@@ -16,7 +16,7 @@ const GenderInput = ({
       <FormLabel className="text-base text-dark-3">Gender</FormLabel>
 
       {genders.map((item, index) => (
-        <div className="flex gap-3 items-center justify-between" key={index}>
+        <div className="flex gap-3 items-center justify-between py-[1px]" key={index}>
           <div className="text-sm text-dark-3 ">{item}</div>
           <Cross1Icon
             className="cursor-pointer text-red-600"
@@ -24,6 +24,8 @@ const GenderInput = ({
           />
         </div>
       ))}
+
+      {genders.length > 0 && <p className="w-full h-1 my-2"></p>}
 
       <Select onValueChange={(value) => setGenders([...genders, value])}>
         <SelectTrigger className="w-full">

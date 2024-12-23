@@ -14,16 +14,16 @@ datasource db {
 }
 
 model WareHouse {
-  id                String              @id @default(auto()) @map("_id") @db.ObjectId
-  name              String              @unique
-  mobile            Int
-  email             String
-  address           String
-  city              String
-  state             String
-  country           String
-  pincode           Int
-  WareHouseProducts WareHouseProducts[]
+  id       String              @id @default(auto()) @map("_id") @db.ObjectId
+  name     String              @unique
+  mobile   Int
+  email    String
+  address  String
+  city     String
+  state    String
+  country  String
+  pincode  Int
+  products WareHouseProducts[]
 
   @@map("warehouses")
 }
@@ -142,7 +142,7 @@ model Product {
   collections CollectionProducts[]
   orders      OrderedItem[]
 
-  WareHouseProducts WareHouseProducts[]
+  warehouses WareHouseProducts[]
 
   @@map("products")
 }
