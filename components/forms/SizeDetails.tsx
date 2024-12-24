@@ -1,10 +1,9 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormItem, FormLabel } from "@/components/ui/form";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useCallback } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { IColor, IProductSize, ISize } from "@/types";
-import { size } from "lodash";
 
 interface Props {
   label: string;
@@ -16,6 +15,15 @@ interface Props {
 }
 
 const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategory }: Props) => {
+  const sizeOptions = useCallback(
+    (hex: string) => {
+      return defaultSizes
+        ?.find((item) => item.type === sizeCategory)
+        ?.value?.filter((item) => !sizes.some((size) => size.key === item && size.productColor === hex));
+    },
+    [sizes]
+  );
+
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
@@ -23,7 +31,7 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
       {colors.length === 0 && <p className="text-sm font-mono">Please add product images.</p>}
 
       {colors?.map((color, index) => (
-        <div className="flex gap-3 flex-col pb-2" key={index}>
+        <div className="flex gap-1 flex-col pb-4" key={index}>
           <p className="border-l-8 pl-2" style={{ borderColor: color.hex }}>
             Sizes for color {color.name}
           </p>
@@ -31,7 +39,7 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
           {sizes
             ?.filter((i) => i.productColor === color.hex)
             .map((item, index) => (
-              <div className="flex gap-3" key={index}>
+              <div className="flex gap-1" key={index}>
                 <Input value={item.key} aria-checked className="text-base font-semibold w-14" readOnly />
                 <Input
                   type="number"
@@ -83,30 +91,28 @@ const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategor
 
           {/* {sizes?.length > 0 && <div className="w-full h-1 bg-gray-200"></div>} */}
 
-          <Select
-            onValueChange={(value) => {
-              console.log(defaultSizes, value);
-              const index = defaultSizes.find((i) => i.type === sizeCategory)?.value.indexOf(value) || 0;
-              const obj = { index: index, key: value, quantity: 0, value: "", productColor: color.hex };
-              const newArr = [...sizes, obj].sort((a, b) => a.index - b.index);
-              setSizes(newArr);
-            }}
-            value=""
-          >
-            <SelectTrigger className="text-base">
-              <SelectValue placeholder={`Select the Size`} />
-            </SelectTrigger>
-            <SelectContent>
-              {defaultSizes
-                ?.find((item) => item.type === sizeCategory)
-                ?.value?.filter((item) => !sizes.some((size) => size.key === item && size.productColor === color.hex))
-                .map((size, index) => (
+          {sizeOptions(color.hex)?.length !== 0 && (
+            <Select
+              onValueChange={(value) => {
+                const index = defaultSizes.find((i) => i.type === sizeCategory)?.value.indexOf(value) || 0;
+                const obj = { index: index, key: value, quantity: 0, value: "", productColor: color.hex };
+                const newArr = [...sizes, obj].sort((a, b) => a.index - b.index);
+                setSizes(newArr);
+              }}
+              value=""
+            >
+              <SelectTrigger className="text-base">
+                <SelectValue placeholder={`Select the Size`} />
+              </SelectTrigger>
+              <SelectContent>
+                {sizeOptions(color.hex)?.map((size, index) => (
                   <SelectItem key={index} value={size}>
                     {size}
                   </SelectItem>
                 ))}
-            </SelectContent>
-          </Select>
+              </SelectContent>
+            </Select>
+          )}
         </div>
       ))}
     </FormItem>

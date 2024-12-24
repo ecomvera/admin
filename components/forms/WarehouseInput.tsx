@@ -66,29 +66,31 @@ const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }:
 
       {warehouses?.length > 0 && <div className="w-full h-1 my-2"></div>}
 
-      <Select
-        onValueChange={(field) => {
-          setWarehouses([...warehouses, { id: field, quantity: 0 }]);
-          setSelectedWarehouses([
-            ...selectedWarehouses,
-            { id: field, name: defaultWarehouses.find((w) => w.id === field)?.name ?? "" },
-          ]);
-        }}
-        value=""
-      >
-        <SelectTrigger className="text-base">
-          <SelectValue placeholder={`Select the key`} />
-        </SelectTrigger>
-        <SelectContent>
-          {defaultWarehouses
-            ?.filter((dw) => !selectedWarehouses.some((w) => w.id === dw.id))
-            .map((item) => (
-              <SelectItem key={item.id} value={item.id}>
-                {item.name}
-              </SelectItem>
-            ))}
-        </SelectContent>
-      </Select>
+      {defaultWarehouses.length !== selectedWarehouses.length && (
+        <Select
+          onValueChange={(field) => {
+            setWarehouses([...warehouses, { id: field, quantity: 0 }]);
+            setSelectedWarehouses([
+              ...selectedWarehouses,
+              { id: field, name: defaultWarehouses.find((w) => w.id === field)?.name ?? "" },
+            ]);
+          }}
+          value=""
+        >
+          <SelectTrigger className="text-base">
+            <SelectValue placeholder={`Select`} />
+          </SelectTrigger>
+          <SelectContent>
+            {defaultWarehouses
+              ?.filter((dw) => !selectedWarehouses.some((w) => w.id === dw.id))
+              .map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+      )}
     </FormItem>
   );
 };

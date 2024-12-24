@@ -62,26 +62,28 @@ const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }
 
       {attributes?.length > 0 && <div className="w-full h-1 my-2"></div>}
 
-      <Select
-        onValueChange={(field) => {
-          setAttributes([...attributes, { key: field, value: "" }]);
-          setSelectedSize([...selectedSize, field]);
-        }}
-        value=""
-      >
-        <SelectTrigger className="text-base">
-          <SelectValue placeholder={`Select the key`} />
-        </SelectTrigger>
-        <SelectContent>
-          {defaultAttributes
-            ?.filter((attribute) => !attributes.some((selected) => selected.key === attribute.key))
-            .map((item) => (
-              <SelectItem key={item.key} value={item.key}>
-                {item.key}
-              </SelectItem>
-            ))}
-        </SelectContent>
-      </Select>
+      {defaultAttributes.length !== selectedSize.length && (
+        <Select
+          onValueChange={(field) => {
+            setAttributes([...attributes, { key: field, value: "" }]);
+            setSelectedSize([...selectedSize, field]);
+          }}
+          value=""
+        >
+          <SelectTrigger className="text-base">
+            <SelectValue placeholder={`Select the key`} />
+          </SelectTrigger>
+          <SelectContent>
+            {defaultAttributes
+              ?.filter((attribute) => !attributes.some((selected) => selected.key === attribute.key))
+              .map((item) => (
+                <SelectItem key={item.key} value={item.key}>
+                  {item.key}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+      )}
     </FormItem>
   );
 };

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { FormItem, FormLabel } from "../ui/form";
 import { Cross1Icon } from "@radix-ui/react-icons";
@@ -11,6 +11,15 @@ const GenderInput = ({
   genders: string[];
   setGenders: React.Dispatch<React.SetStateAction<string[]>>;
 }) => {
+  const genderOptions = useMemo(() => {
+    return defaultGenders.filter((item) => {
+      if ((genders.includes("Male") && item === "Female") || (genders.includes("Female") && item === "Male")) {
+        return false;
+      }
+      return !genders.includes(item);
+    });
+  }, [genders]);
+
   return (
     <FormItem className="flex w-full flex-col p-0 m-0">
       <FormLabel className="text-base text-dark-3">Gender</FormLabel>
@@ -27,25 +36,20 @@ const GenderInput = ({
 
       {genders.length > 0 && <p className="w-full h-1 my-2"></p>}
 
-      <Select onValueChange={(value) => setGenders([...genders, value])}>
-        <SelectTrigger className="w-full">
-          <p>Select Gender</p>
-        </SelectTrigger>
-        <SelectContent>
-          {defaultGenders
-            .filter((item) => {
-              if ((genders.includes("Male") && item === "Female") || (genders.includes("Female") && item === "Male")) {
-                return false;
-              }
-              return !genders.includes(item);
-            })
-            .map((item) => (
+      {genderOptions.length !== 0 && (
+        <Select onValueChange={(value) => setGenders([...genders, value])}>
+          <SelectTrigger className="w-full">
+            <p>Select Gender</p>
+          </SelectTrigger>
+          <SelectContent>
+            {genderOptions.map((item) => (
               <SelectItem key={item} value={item} onClick={() => console.log(item)}>
                 {item}
               </SelectItem>
             ))}
-        </SelectContent>
-      </Select>
+          </SelectContent>
+        </Select>
+      )}
     </FormItem>
   );
 };
