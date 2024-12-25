@@ -35,6 +35,7 @@ export interface IWarehouse {
   address: string;
   city: string;
   state: string;
+  country: string;
   pincode: string;
   products: IProduct[];
 }
