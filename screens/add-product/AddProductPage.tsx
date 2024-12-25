@@ -26,7 +26,7 @@ import { addProductState } from "@/stores/add-product-state";
 import { useFileStore, useProductStore } from "@/stores/product";
 import { ICategory, IProduct, IProductAttribute, IProductSize } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { capitalize, isEqual, set } from "lodash";
+import { capitalize, debounce, isEqual, set } from "lodash";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -41,40 +41,28 @@ const AddProductPage = () => {
   const { types: defaultTypes, fetchingTypes } = useTypes();
   const { files, setFiles, colors, setColors } = useFileStore();
   const { addProduct } = useProductStore();
-  const { formData: fcs, setFormData } = addProductState();
-  // fcs -> form control state
 
-  const [genders, setGenders] = useState<string[]>(fcs.genders || []);
-  const [sizeCategory, setSizeCatgory] = useState<string>(fcs.sizeCategory || "");
-  const [sizes, setSizes] = useState<IProductSize[]>(fcs.sizes || []);
-  const [warehouses, setWarehouses] = useState<{ id: string; quantity: number; name: string }[]>(fcs.warehouses || []);
-  const [productType, setProductType] = useState(fcs.productType || "");
-  const [category, setCategory] = useState(fcs.category || "");
-  const [subCategory, setSubCategory] = useState(fcs.subCategory || "");
+  const { formData, setFormData } = addProductState();
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
-  const [attributes, setAttributes] = useState<IProductAttribute[]>(fcs.attributes || []);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
-    defaultValues: fcs,
+    defaultValues: formData,
   });
 
-  // storing form current state
-  const formData = form.watch();
-  const prevFormData = useRef(formData); // useRef to store previous formData to avoid infinite loop
+  // Debounced update function to reduce frequent updates
+  const updateFormData = debounce((data) => {
+    setFormData(data);
+  }, 300);
+
   useEffect(() => {
-    if (!isEqual(prevFormData.current, formData)) {
-      // @ts-ignore
-      setFormData(formData);
-      prevFormData.current = formData;
-    }
-  }, [formData]);
-  useEffect(() => {
-    // @ts-ignore
-    setFormData({ ...formData, genders, sizeCategory, sizes, warehouses, productType, category, subCategory, attributes });
-  }, [genders, sizeCategory, sizes, warehouses, productType, category, subCategory, attributes]);
-  // end
+    const subscription = form.watch((value) => {
+      updateFormData(value); // Update Zustand on form changes
+    });
+
+    return () => subscription.unsubscribe(); // Cleanup subscription
+  }, [form.watch]);
 
   const onSubmit = async (values: z.infer<typeof productValidation>) => {
     const res = validateData();
@@ -91,15 +79,15 @@ const AddProductPage = () => {
       material: capitalize(values.material),
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
-      genders: genders,
+      genders: formData.genders,
       colors: colors,
-      warehouses: warehouses,
-      productType: productType,
-      sizeCategory: sizeCategory,
-      sizes: sizes,
+      warehouses: formData.warehouses,
+      productType: formData.productType,
+      sizeCategory: formData.sizeCategory,
+      sizes: formData.sizes,
       images: files,
-      attributes: attributes,
-      categoryId: subCategory,
+      attributes: formData.attributes,
+      categoryId: formData.subCategory,
     };
 
     const response = await createProduct(data);
@@ -122,32 +110,27 @@ const AddProductPage = () => {
 
     setLoading(false);
     form.reset();
-    setSizes([]);
-    setCategory("");
-    setSubCategory("");
+    setFormData({});
     setSubCategories([]);
-    setAttributes([]);
     setFiles([]);
     setColors([]);
-    setGenders([]);
-    setWarehouses([]);
   };
 
   const validateData = () => {
     if (!files.length) return error("Please add some images");
     if (colors.length * 5 !== files.length) return error("Please add all the images");
-    if (!warehouses.length) return error("Please add a warehouse");
-    for (const item of warehouses) {
+    if (!formData.warehouses.length) return error("Please add a warehouse");
+    for (const item of formData.warehouses) {
       if (!item.quantity) return error("Please fill all the warehouse quantity");
     }
-    if (!category) return error("Please select the product category");
-    if (!subCategory) return error("Please select the product sub category");
-    if (!sizes.length) return error("Please select the product sizes");
-    for (const item of sizes) {
+    if (!formData.category) return error("Please select the product category");
+    if (!formData.subCategory) return error("Please select the product sub category");
+    if (!formData.sizes.length) return error("Please select the product sizes");
+    for (const item of formData.sizes) {
       if (!item.key || !item.quantity || !item.value) return error("Please fill all fields in size.");
     }
-    if (!genders.length) return error("Please select at least one gender");
-    for (const item of attributes) {
+    if (!formData.genders.length) return error("Please select at least one gender");
+    for (const item of formData.attributes) {
       if (!item.key || !item.value) return error("Please fill all fields in attributes.");
     }
 
@@ -155,10 +138,10 @@ const AddProductPage = () => {
   };
 
   useEffect(() => {
-    if (category) {
-      setSubCategories(categories.find((item) => item.id === category)?.children || []);
+    if (formData.category) {
+      setSubCategories(categories.find((item) => item.id === formData.category)?.children || []);
     }
-  }, [category]);
+  }, [formData.category]);
 
   return (
     <div className="p-2">
@@ -181,13 +164,13 @@ const AddProductPage = () => {
           <div className="flex flex-col mobile:flex-row gap-3">
             <WarehouseInput
               label="Warehouse"
-              warehouses={warehouses}
-              setWarehouses={setWarehouses}
+              warehouses={formData.warehouses}
+              setWarehouses={(data: any) => setFormData({ ...formData, warehouses: data })}
               defaultWarehouses={defaultWarehouses}
             />
             <SelectProductType
-              value={productType}
-              onChange={setProductType}
+              value={formData.productType}
+              onChange={(data: any) => setFormData({ ...formData, productType: data })}
               isLoading={fetchingTypes}
               data={defaultTypes}
               label="Product Type"
@@ -195,15 +178,15 @@ const AddProductPage = () => {
           </div>
           <div className="flex flex-col mobile:flex-row gap-3">
             <SelectFields
-              value={category}
-              onChange={setCategory}
+              value={formData.category}
+              onChange={(data: any) => setFormData({ ...formData, category: data })}
               isLoading={fetchCategoriesLoading}
               data={categories}
               label="Category"
             />
             <SelectFields
-              value={subCategory}
-              onChange={setSubCategory}
+              value={formData.subCategory}
+              onChange={(data: any) => setFormData({ ...formData, subCategory: data })}
               isLoading={fetchCategoriesLoading}
               data={subCategories}
               label="Sub Category"
@@ -211,9 +194,9 @@ const AddProductPage = () => {
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
             <SizeCategory
-              value={sizeCategory}
-              onChange={setSizeCatgory}
-              setSizes={setSizes}
+              value={formData.sizeCategory}
+              onChange={(data: any) => setFormData({ ...formData, sizeCategory: data })}
+              setSizes={(data: any) => setFormData({ ...formData, sizes: data })}
               isLoading={fetchCategoriesLoading}
               data={sizeCategories}
               label="Size Category"
@@ -221,21 +204,24 @@ const AddProductPage = () => {
             <SizeDetails
               label="Size Details"
               colors={colors}
-              sizes={sizes}
-              setSizes={setSizes}
-              sizeCategory={sizeCategory}
-              defaultSizes={defaultSizes.filter((item) => item.type === sizeCategory)}
+              sizes={formData.sizes}
+              setSizes={(data: any) => setFormData({ ...formData, sizes: data })}
+              sizeCategory={formData.sizeCategory}
+              defaultSizes={defaultSizes.filter((item) => item.type === formData.sizeCategory)}
             />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
             <div className="flex gap-3 w-full">
               <InputField control={form.control} name="material" label="Material" />
-              <GenderInput genders={genders} setGenders={setGenders} />
+              <GenderInput
+                genders={formData.genders}
+                setGenders={(data: any) => setFormData({ ...formData, genders: data })}
+              />
             </div>
             <AttributesInput
               label="Attributes"
-              attributes={attributes}
-              setAttributes={setAttributes}
+              attributes={formData.attributes}
+              setAttributes={(data: any) => setFormData({ ...formData, attributes: data })}
               defaultAttributes={defaultAttributes}
             />
           </div>

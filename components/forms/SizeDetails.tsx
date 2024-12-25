@@ -15,14 +15,11 @@ interface Props {
 }
 
 const SizeDetails = ({ label, colors, sizes, setSizes, defaultSizes, sizeCategory }: Props) => {
-  const sizeOptions = useCallback(
-    (hex: string) => {
-      return defaultSizes
-        ?.find((item) => item.type === sizeCategory)
-        ?.value?.filter((item) => !sizes.some((size) => size.key === item && size.productColor === hex));
-    },
-    [sizes]
-  );
+  const sizeOptions = (hex: string) => {
+    return defaultSizes
+      ?.find((item) => item.type === sizeCategory)
+      ?.value?.filter((item) => !sizes.some((size) => size.key === item && size.productColor === hex));
+  };
 
   return (
     <FormItem className="flex w-full flex-col">
