@@ -33,6 +33,7 @@ model WareHouseProducts {
   productId String  @db.ObjectId
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
+  name      String
 
   warehouseId String    @db.ObjectId
   warehouse   WareHouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)

@@ -35,6 +35,7 @@ export const createProduct = async (product: IProduct) => {
           productId: data.id,
           quantity: warehouse.quantity,
           warehouseId: warehouse.id,
+          name: warehouse.name,
         })),
       });
 
@@ -126,6 +127,17 @@ export const updateProductDB = async (id: string, data: IProduct) => {
         },
       });
 
+      // update warehouses
+      await prisma.wareHouseProducts.deleteMany({ where: { productId: id } });
+      await prisma.wareHouseProducts.createMany({
+        data: data.warehouses.map((warehouse) => ({
+          productId: id,
+          quantity: warehouse.quantity,
+          warehouseId: warehouse.id,
+          name: warehouse.name,
+        })),
+      });
+
       // update product colors
       await prisma.productColors.deleteMany({ where: { productId: id } });
       await prisma.productColors.createMany({
@@ -174,6 +186,7 @@ export const updateProductDB = async (id: string, data: IProduct) => {
 
     return { ok: true };
   } catch (error: any) {
+    console.log(error.message);
     if (error.code === "P2002") {
       return { ok: false, error: "Product already exists" };
     }

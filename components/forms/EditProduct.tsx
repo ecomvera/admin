@@ -27,6 +27,8 @@ import { useSizes } from "@/hook/useSizes";
 import { useColors } from "@/hook/useColors";
 import { useAttributes } from "@/hook/useAttributes";
 import { useTypes } from "@/hook/useTypes";
+import WarehouseInput from "./WarehouseInput";
+import { useWarehouses } from "@/hook/useWarehouses";
 
 const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
   const { updateProduct } = useProductStore();
@@ -35,6 +37,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
   const { colors: defaultColors } = useColors();
   const { attributes: defaultAttributes } = useAttributes();
   const { types: defaultTypes } = useTypes();
+  const { warehouses: defaultWarehouses, fetchWarehouseLoading } = useWarehouses();
   const [subCategory, setSubCategory] = useState(product.categoryId);
   const [category, setCategory] = useState(product.category?.parent?.id || "");
   const [productType, setProductType] = useState(product.productType);
@@ -45,6 +48,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
   const [colors, setColors] = useState<IColor[]>(product.colors);
   const [attributes, setAttributes] = useState<IProductAttribute[]>(product.attributes);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
+  const [warehouses, setWarehouses] = useState<{ id: string; quantity: number; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
@@ -83,6 +87,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       attributes,
       images: files,
       categoryId: subCategory,
+      warehouses: warehouses,
     };
 
     const response = await updateProductDB(product.id || "", data);
@@ -96,12 +101,17 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
     setLoading(false);
     updateProduct(product.id || "", data);
     setProductType("");
+    setWarehouses([]);
     router.replace(path);
   };
 
   const validateData = () => {
     if (!files.length) return error("Please add some images");
     if (colors.length * 5 !== files.length) return error("Please add all the images");
+    if (!warehouses.length) return error("Please add a warehouse");
+    for (const item of warehouses) {
+      if (!item.quantity) return error("Please fill all the warehouse quantity");
+    }
     if (!category) return error("Please select the product category");
     if (!subCategory) return error("Please select the product sub category");
     if (!sizes.length) return error("Please select the product sizes");
@@ -119,15 +129,17 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
   }, [category]);
 
   useEffect(() => {
-    setSubCategory(product.categoryId);
-    setCategory(product.category?.parent?.id || "");
-    setProductType(product.productType);
-    setSizeCatgory(product.sizeCategory);
-    setGenders(product.genders);
-    setSizes(product.sizes);
-    setFiles(product.images);
-    setColors(product.colors);
-    setAttributes(product.attributes);
+    // setSubCategory(product.categoryId);
+    // setCategory(product.category?.parent?.id || "");
+    // setProductType(product.productType);
+    // setSizeCatgory(product.sizeCategory);
+    // setGenders(product.genders);
+    // setSizes(product.sizes);
+    // setFiles(product.images);
+    // setColors(product.colors);
+    // setAttributes(product.attributes);
+    // @ts-ignore
+    setWarehouses([...product.warehouses.map((k) => ({ id: k.warehouseId, quantity: k.quantity, name: k.name }))]);
   }, [product]);
 
   return (
@@ -148,13 +160,21 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             <InputField control={form.control} name="price" label="Price" type="number" />
             <InputField control={form.control} name="mrp" label="MRP" type="number" />
           </div>
-          <SelectProductType
-            value={productType}
-            onChange={setProductType}
-            isLoading={false}
-            data={defaultTypes}
-            label="Product Type"
-          />
+          <div className="flex flex-col mobile:flex-row gap-3">
+            <WarehouseInput
+              label="Warehouse"
+              warehouses={warehouses}
+              setWarehouses={setWarehouses}
+              defaultWarehouses={defaultWarehouses}
+            />
+            <SelectProductType
+              value={productType}
+              onChange={setProductType}
+              isLoading={false}
+              data={defaultTypes}
+              label="Product Type"
+            />
+          </div>
           <div className="flex gap-3">
             <SelectFields value={category} onChange={setCategory} data={categories} label="Category" />
             <SelectFields value={subCategory} onChange={setSubCategory} data={subCategories} label="Sub Category" />

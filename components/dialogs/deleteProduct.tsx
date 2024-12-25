@@ -28,8 +28,8 @@ export function DeleteProduct({ id }: { id: string }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="px-2 text-red-500 w-full">
-        <div className="font-semibold flex justify-start" onClick={() => setOpen(true)}>
+      <DialogTrigger className="text-red-500 w-full">
+        <div className="font-semibold flex justify-start hover:bg-red-100 px-2 py-1" onClick={() => setOpen(true)}>
           Delete
         </div>
       </DialogTrigger>

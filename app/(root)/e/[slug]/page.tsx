@@ -1,37 +1,41 @@
-"use client";
-
-import EditProduct from "@/components/forms/EditProduct";
-import { fetcher, fetchOpt } from "@/lib/utils";
-import { useCategoryStore } from "@/stores/category";
-import { useEffect } from "react";
-import useSWR from "swr";
+import { PackageOpen } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import EditProductPage from "@/screens/edit-product/EditProductPage";
 
 const Page = ({ params, searchParams }: { params: { slug: string }; searchParams: any }) => {
-  const product = useSWR(`/api/products/${params.slug}`, fetcher, {
-    ...fetchOpt,
-    revalidateOnMount: true,
-  });
-  const { mutate: fetchCategories, isLoading: fetchCategoriesLoading } = useSWR("/api/categories", fetcher, fetchOpt);
-  const { categories, setCategories } = useCategoryStore();
-
-  useEffect(() => {
-    const fetch = async () => {
-      if (!categories.length) {
-        const res = await fetchCategories();
-        setCategories(res?.data || []);
-      }
-    };
-    fetch();
-  }, []);
-
-  if (product.isLoading) return <div className="text-center text-xl text-light-3">Loading...</div>;
-
   return (
-    <div>
-      <h2 className="head-text py-8">Edit Product</h2>
+    <main>
+      <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">
+        <div className="flex flex-col">
+          <div className="head-text flex gap-3">
+            <PackageOpen className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6" />
+            <h2>Edit Product</h2>
+          </div>
+          <p className="text-xs sm:text-sm text-gray-500">Edit existing product</p>
+        </div>
 
-      <EditProduct categories={categories || []} product={product?.data?.data} path={searchParams.path} />
-    </div>
+        <Breadcrumb className="w-fit flex-1 mt-1">
+          <BreadcrumbList className="justify-end text-xs sm:text-sm gap-[2px]">
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Edit Product</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
+
+      <EditProductPage params={params} searchParams={searchParams} />
+    </main>
   );
 };
 

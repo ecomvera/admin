@@ -44,7 +44,7 @@ const AddProductPage = () => {
   const [genders, setGenders] = useState<string[]>([]);
   const [sizeCategory, setSizeCatgory] = useState<string>("");
   const [sizes, setSizes] = useState<IProductSize[]>([]);
-  const [warehouses, setWarehouses] = useState<{ id: string; quantity: number }[]>([]);
+  const [warehouses, setWarehouses] = useState<{ id: string; quantity: number; name: string }[]>([]);
   const [productType, setProductType] = useState("");
   const [category, setCategory] = useState("");
   const [subCategory, setSubCategory] = useState("");

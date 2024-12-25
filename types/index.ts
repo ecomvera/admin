@@ -65,6 +65,7 @@ export interface IProduct {
   warehouses: {
     id: string;
     quantity: number;
+    name: string;
   }[];
   productType: string;
   sizeCategory: string;

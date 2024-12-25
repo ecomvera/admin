@@ -10,12 +10,14 @@ interface Props {
   warehouses: {
     id: string;
     quantity: number;
+    name: string;
   }[];
   setWarehouses: Dispatch<
     SetStateAction<
       {
         id: string;
         quantity: number;
+        name: string;
       }[]
     >
   >;
@@ -23,11 +25,11 @@ interface Props {
 }
 
 const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }: Props) => {
-  const [selectedWarehouses, setSelectedWarehouses] = useState<{ id: string; name: string }[]>([]);
+  const [selectedWarehouses, setSelectedWarehouses] = useState<{ id: string; quantity: number; name: string }[]>([]);
 
-  // useEffect(() => {
-  //   if (warehouses.length === 0) setSelectedWarehouses([]);
-  // }, [warehouses]);
+  useEffect(() => {
+    setSelectedWarehouses(warehouses.map((k) => ({ id: k.id, quantity: k.quantity, name: k.name })));
+  }, [warehouses]);
 
   return (
     <FormItem className="flex w-full flex-col">
@@ -46,6 +48,7 @@ const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }:
               const obj = {
                 id: item.id,
                 quantity: Number(e.target.value),
+                name: item.name,
               };
               setWarehouses([...warehouses.slice(0, objIndex), obj, ...warehouses.slice(objIndex + 1)]);
             }}
@@ -69,11 +72,9 @@ const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }:
       {defaultWarehouses.length !== selectedWarehouses.length && (
         <Select
           onValueChange={(field) => {
-            setWarehouses([...warehouses, { id: field, quantity: 0 }]);
-            setSelectedWarehouses([
-              ...selectedWarehouses,
-              { id: field, name: defaultWarehouses.find((w) => w.id === field)?.name ?? "" },
-            ]);
+            const name = defaultWarehouses.find((w) => w.id === field)?.name ?? "";
+            setWarehouses([...warehouses, { id: field, quantity: 0, name }]);
+            setSelectedWarehouses([...selectedWarehouses, { id: field, name, quantity: 0 }]);
           }}
           value=""
         >
