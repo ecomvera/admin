@@ -22,6 +22,7 @@ import { useWarehouses } from "@/hook/useWarehouses";
 import { createProduct } from "@/lib/actions/product.action";
 import { error, success } from "@/lib/utils";
 import { productValidation } from "@/lib/validations/product";
+import { addProductState } from "@/stores/add-product-state";
 import { useFileStore, useProductStore } from "@/stores/product";
 import { ICategory, IProduct, IProductAttribute, IProductSize } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -40,34 +41,40 @@ const AddProductPage = () => {
   const { types: defaultTypes, fetchingTypes } = useTypes();
   const { files, setFiles, colors, setColors } = useFileStore();
   const { addProduct } = useProductStore();
+  const { formData: fcs, setFormData } = addProductState();
+  // fcs -> form control state
 
-  const [genders, setGenders] = useState<string[]>([]);
-  const [sizeCategory, setSizeCatgory] = useState<string>("");
-  const [sizes, setSizes] = useState<IProductSize[]>([]);
-  const [warehouses, setWarehouses] = useState<{ id: string; quantity: number; name: string }[]>([]);
-  const [productType, setProductType] = useState("");
-  const [category, setCategory] = useState("");
-  const [subCategory, setSubCategory] = useState("");
+  const [genders, setGenders] = useState<string[]>(fcs.genders || []);
+  const [sizeCategory, setSizeCatgory] = useState<string>(fcs.sizeCategory || "");
+  const [sizes, setSizes] = useState<IProductSize[]>(fcs.sizes || []);
+  const [warehouses, setWarehouses] = useState<{ id: string; quantity: number; name: string }[]>(fcs.warehouses || []);
+  const [productType, setProductType] = useState(fcs.productType || "");
+  const [category, setCategory] = useState(fcs.category || "");
+  const [subCategory, setSubCategory] = useState(fcs.subCategory || "");
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
-  const [attributes, setAttributes] = useState<IProductAttribute[]>([]);
+  const [attributes, setAttributes] = useState<IProductAttribute[]>(fcs.attributes || []);
   const [loading, setLoading] = useState(false);
 
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
-    defaultValues: {
-      name: "",
-      description: "",
-      price: "",
-      mrp: "",
-      material: "",
-      inStock: false,
-      isNewArrival: false,
-    },
+    defaultValues: fcs,
   });
 
-  // const formData = form.watch();
-  // // useRef to store previous formData to avoid infinite loop
-  // const prevFormData = useRef(formData);
+  // storing form current state
+  const formData = form.watch();
+  const prevFormData = useRef(formData); // useRef to store previous formData to avoid infinite loop
+  useEffect(() => {
+    if (!isEqual(prevFormData.current, formData)) {
+      // @ts-ignore
+      setFormData(formData);
+      prevFormData.current = formData;
+    }
+  }, [formData]);
+  useEffect(() => {
+    // @ts-ignore
+    setFormData({ ...formData, genders, sizeCategory, sizes, warehouses, productType, category, subCategory, attributes });
+  }, [genders, sizeCategory, sizes, warehouses, productType, category, subCategory, attributes]);
+  // end
 
   const onSubmit = async (values: z.infer<typeof productValidation>) => {
     const res = validateData();
@@ -152,14 +159,6 @@ const AddProductPage = () => {
       setSubCategories(categories.find((item) => item.id === category)?.children || []);
     }
   }, [category]);
-
-  // useEffect(() => {
-  //   if (!isEqual(prevFormData.current, formData)) {
-  //     console.log(formData);
-  //     // setProduct(formData);
-  //     prevFormData.current = formData;
-  //   }
-  // }, [formData]);
 
   return (
     <div className="p-2">
