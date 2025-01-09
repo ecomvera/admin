@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
           shippingId: body?.shippingId as string,
           billingId: body?.billingId as string,
           status: body?.status as "PENDING",
-          totalPrice: body?.totalPrice as number,
+          totalAmount: body?.totalPrice as number,
         },
       });
 
