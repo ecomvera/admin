@@ -1,4 +1,4 @@
-export function formatDate(isoDate: string) {
+export function formatDate(isoDate: Date) {
   const date = new Date(isoDate);
   const day = date.getDate().toString().padStart(2, "0"); // Day with leading zero
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];

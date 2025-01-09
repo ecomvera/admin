@@ -284,7 +284,7 @@ model Order {
   billingAddress  Address       @relation("billing", fields: [billingId], references: [id], onDelete: Cascade)
   shippingAddress Address       @relation("shipping", fields: [shippingId], references: [id], onDelete: Cascade)
   items           OrderedItem[]
-  status          OrderStatus
+  status          String        @default("PENDING")
   totalAmount     Float
   paymentId       String?       @db.ObjectId
   createdAt       DateTime      @default(now())
@@ -306,19 +306,4 @@ model OrderedItem {
   totalPrice Float
 
   @@map("orderedItems")
-}
-
-enum OrderStatus {
-  PENDING
-  CONFIRMED
-  PROCESSING
-  PICKED_UP
-  SHIPPED
-  OUT_FOR_DELIVERY
-  DELIVERED
-  CANCELLED
-  FAILED
-  RETURN_REQUESTED
-  RETURNED
-  REFUNDED
 }

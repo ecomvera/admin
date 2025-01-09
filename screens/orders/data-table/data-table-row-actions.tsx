@@ -21,12 +21,16 @@ import {
 import { Copy, Eye, MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { status_options } from "@/constants";
+import { updateOrderStatusDB } from "@/lib/actions/order.action";
+import { useOrderStore } from "@/stores/orders";
+import { formatDate } from "@/lib/date";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
 
 export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<any>) {
+  const { updateOrderStatus } = useOrderStore();
   // const [dialogContent, setDialogContent] = React.useState<React.ReactNode | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = React.useState<boolean>(false);
   const order = row.original;
@@ -34,6 +38,13 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<any
   // const handleEditClick = () => {
   //   setDialogContent(<EditDialog task={task} />);
   // };
+
+  const hadleChangeStatus = async (status: string) => {
+    const res = await updateOrderStatusDB(order.id, status);
+    if (res) {
+      updateOrderStatus(order.id, status, formatDate(res.updatedAt));
+    }
+  };
 
   return (
     <Dialog>
@@ -73,7 +84,11 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<any
             <DropdownMenuSubContent>
               <DropdownMenuRadioGroup value={order.status}>
                 {status_options.map((status) => (
-                  <DropdownMenuRadioItem key={status.value} value={status.value}>
+                  <DropdownMenuRadioItem
+                    key={status.value}
+                    value={status.value}
+                    onClick={() => hadleChangeStatus(status.value)}
+                  >
                     <status.icon className="w-4 h-4 mr-2" />
                     {status.label}
                   </DropdownMenuRadioItem>
