@@ -8,6 +8,22 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export async function getData(url: string) {
+  try {
+    const res = await fetch(`${process.env.SERVER_URL}${url}`, { cache: "no-store" }).then((res) => res.json());
+    if (!res.ok) {
+      console.log("error -", res.error);
+      return null;
+    }
+
+    const data = res.data;
+    return data;
+  } catch (error) {
+    console.log("error -", error);
+    return null;
+  }
+}
+
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export const fetchOpt = {
   revalidateOnFocus: false,

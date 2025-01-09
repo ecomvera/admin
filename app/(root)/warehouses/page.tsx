@@ -8,8 +8,11 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import WarehousesPage from "@/screens/warehouses/WarehousesPage";
+import { getData } from "@/lib/utils";
 
-const Page = () => {
+const Page = async () => {
+  const data = await getData("/api/warehouse");
+
   return (
     <main>
       <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">
@@ -34,7 +37,7 @@ const Page = () => {
         </Breadcrumb>
       </div>
 
-      <WarehousesPage />
+      {!data ? <div>failed to load</div> : <WarehousesPage data={data} />}
     </main>
   );
 };

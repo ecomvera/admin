@@ -6,28 +6,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { formatDate } from "@/lib/date";
+import { getData } from "@/lib/utils";
 import OrdersPage from "@/screens/orders/OrdersPage";
 import { Package } from "lucide-react";
 
-async function getData() {
-  const res = await fetch("http://localhost:3001/api/orders", { cache: "no-store" }).then((res) => res.json());
-  if (!res.ok) {
-    console.log("error -", res.error);
-    return null;
-  }
-
-  const data = res.data.map((task: any) => {
-    task.createdAt = formatDate(task.createdAt);
-    task.updatedAt = formatDate(task.updatedAt);
-    return task;
-  });
-
-  return data;
-}
-
 const page = async () => {
-  const data = await getData();
+  const data = await getData("/api/orders");
 
   return (
     <main>

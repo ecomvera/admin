@@ -1,14 +1,10 @@
 "use client";
 
-import { fetcher, fetchOpt } from "@/lib/utils";
 import _ from "lodash";
 import { Plus, Warehouse } from "lucide-react";
 import Link from "next/link";
-import useSWR from "swr";
 
-const WarehousesPage = () => {
-  const warehouses = useSWR("/api/warehouse", fetcher, fetchOpt);
-
+const WarehousesPage = ({ data }: { data: any[] }) => {
   return (
     <div className="flex gap-2">
       <Link href="/warehouses/create">
@@ -18,7 +14,7 @@ const WarehousesPage = () => {
         </div>
       </Link>
 
-      {_.map(warehouses?.data?.data, (warehouse) => (
+      {_.map(data, (warehouse) => (
         <Link href={`/warehouses/${warehouse.id}`} key={warehouse.id}>
           <div className="border rounded p-2 w-40 max-h-24 cursor-pointer overflow-hidden">
             <Warehouse className="h-6 w-6" />
@@ -26,7 +22,6 @@ const WarehousesPage = () => {
           </div>
         </Link>
       ))}
-      {warehouses?.isLoading && <p>Loading...</p>}
     </div>
   );
 };

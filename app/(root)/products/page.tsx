@@ -8,8 +8,12 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import ProductsPage from "@/screens/products/ProductsPage";
+import { getData } from "@/lib/utils";
 
-const Page = () => {
+const Page = async () => {
+  const categories = await getData("/api/categories");
+  const products = await getData("/api/products?table-data");
+
   return (
     <main>
       <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">
@@ -34,7 +38,7 @@ const Page = () => {
         </Breadcrumb>
       </div>
 
-      <ProductsPage />
+      {!products ? <div>failed to load</div> : <ProductsPage products={products} categories={categories} />}
     </main>
   );
 };
