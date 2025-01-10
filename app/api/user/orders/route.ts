@@ -1,3 +1,4 @@
+import { status_options } from "@/constants";
 import { authenticate } from "@/lib/middleware/auth";
 import { prisma } from "@/lib/prisma";
 import { IOrderItem, IProduct } from "@/types";
@@ -12,16 +13,13 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Authentication error" });
   }
 
-  console.log(authCheck.user?.userId);
-
   const orders = await prisma.order.findMany({
     where: { userId: authCheck.user?.userId },
     include: { items: { include: { item: { select: { name: true, slug: true, images: true } } } } },
     orderBy: { createdAt: "desc" },
   });
 
-  console.log(orders);
-  return NextResponse.json({ ok: true, data: orders });
+  return NextResponse.json({ ok: true, data: orders, orderStatus: status_options });
 }
 
 export async function POST(req: NextRequest) {
@@ -85,7 +83,7 @@ export async function POST(req: NextRequest) {
           userId: body?.userId as string,
           shippingId: body?.shippingId as string,
           billingId: body?.billingId as string,
-          status: body?.status as "PENDING",
+          status: body?.status,
           totalAmount: body?.totalPrice as number,
         },
       });

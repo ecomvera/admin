@@ -116,8 +116,8 @@ model Product {
   name         String
   slug         String   @unique
   description  String
-  price        Float
-  mrp          Float
+  price        Int
+  mrp          Int
   material     String
   inStock      Boolean
   isNewArrival Boolean
@@ -275,20 +275,21 @@ model WishList {
 }
 
 model Order {
-  id              String        @id @default(auto()) @map("_id") @db.ObjectId
-  orderNumber     String        @unique
-  userId          String        @db.ObjectId
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  billingId       String        @db.ObjectId
-  shippingId      String        @db.ObjectId
-  billingAddress  Address       @relation("billing", fields: [billingId], references: [id], onDelete: Cascade)
-  shippingAddress Address       @relation("shipping", fields: [shippingId], references: [id], onDelete: Cascade)
+  id              String           @id @default(auto()) @map("_id") @db.ObjectId
+  orderNumber     String           @unique
+  userId          String           @db.ObjectId
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  billingId       String           @db.ObjectId
+  shippingId      String           @db.ObjectId
+  billingAddress  Address          @relation("billing", fields: [billingId], references: [id], onDelete: Cascade)
+  shippingAddress Address          @relation("shipping", fields: [shippingId], references: [id], onDelete: Cascade)
   items           OrderedItem[]
-  status          String        @default("PENDING")
+  status          String           @default("PENDING")
   totalAmount     Float
-  paymentId       String?       @db.ObjectId
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
+  paymentId       String?          @db.ObjectId
+  payment         RazorpayPayment?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 
   @@map("orders")
 }
@@ -306,4 +307,17 @@ model OrderedItem {
   totalPrice Float
 
   @@map("orderedItems")
+}
+
+model RazorpayPayment {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  orderId           String   @unique @db.ObjectId
+  Order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  razorpayOrderId   String
+  razorpayPaymentId String
+  razorpaySignature String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@map("razorpayPayments")
 }
