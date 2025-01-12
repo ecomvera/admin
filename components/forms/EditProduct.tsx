@@ -59,6 +59,8 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       price: product.price.toString(),
       mrp: product.mrp.toString(),
       material: product.material,
+      weight: product.weight.toString(),
+      hasDeliveryFee: product.hasDeliveryFee,
       inStock: product.inStock,
       isNewArrival: product.isNewArrival,
     },
@@ -77,6 +79,8 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       price: Number(values.price),
       mrp: Number(values.mrp),
       material: capitalize(values.material),
+      weight: Number(values.weight),
+      hasDeliveryFee: values.hasDeliveryFee,
       productType: productType,
       sizeCategory: sizeCategory,
       inStock: values.inStock,
@@ -154,11 +158,17 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
 
       <Form {...form}>
         <form className="flex flex-col justify-start gap-3 p-2" onSubmit={form.handleSubmit(onSubmit)}>
-          <InputField control={form.control} name="name" label="Product Name" />
-          <InputField control={form.control} name="description" label="Product Description" textarea />
+          <InputField control={form.control} name="name" label="Product Name" placeholder="Product Name" />
+          <InputField
+            control={form.control}
+            name="description"
+            label="Product Description"
+            placeholder="Product Description"
+            textarea
+          />
           <div className="flex gap-3">
-            <InputField control={form.control} name="price" label="Price" type="number" />
-            <InputField control={form.control} name="mrp" label="MRP" type="number" />
+            <InputField control={form.control} name="price" label="Price" type="number" placeholder="Price in INR" />
+            <InputField control={form.control} name="mrp" label="MRP" type="number" placeholder="MRP in INR" />
           </div>
           <div className="flex flex-col mobile:flex-row gap-3">
             <WarehouseInput
@@ -199,17 +209,25 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
             <div className="flex gap-3 w-full">
-              <InputField control={form.control} name="material" label="Material" />
+              <InputField control={form.control} name="material" label="Material" placeholder="Enter product material" />
               <GenderInput genders={genders} setGenders={setGenders} />
+              <InputField
+                control={form.control}
+                name="weight"
+                type="number"
+                label="Product Weight (in grams)"
+                placeholder="Enter weight in grams"
+              />
             </div>
-            <AttributesInput
-              label="Attributes"
-              attributes={attributes}
-              setAttributes={setAttributes}
-              defaultAttributes={defaultAttributes}
-            />
           </div>
+          <AttributesInput
+            label="Attributes"
+            attributes={attributes}
+            setAttributes={setAttributes}
+            defaultAttributes={defaultAttributes}
+          />
           <div className="w-full flex gap-5">
+            <SwitchField control={form.control} name="hasDeliveryFee" label="Delivery Fee" />
             <SwitchField control={form.control} name="inStock" label="In Stock" />
             <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>

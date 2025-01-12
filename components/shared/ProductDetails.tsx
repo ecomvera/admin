@@ -91,7 +91,13 @@ const ProductDetail = ({
   const [showMore, setShowMore] = useState(false);
 
   return (
-    <div className="w-full px-2 mt-2 tablet:mt-0 laptop:px-5">
+    <div className="relative w-full px-2 mt-2 tablet:mt-0 laptop:px-5">
+      {!data.inStock && (
+        <div className="absolute top-0 right-[-70px] rotate-45 w-[200px] text-center bg-red-500 px-2 py-1 rounded text-white text-xs">
+          <p>Out of stock</p>
+        </div>
+      )}
+
       <div className="text-sm font-semibold text-light-3 mb-5">
         {data.category?.parent?.name} / {data.category?.name}
       </div>
@@ -117,6 +123,14 @@ const ProductDetail = ({
       <span className="text-sm font-normal text-light-3">incl. of all taxes</span>
       <div className="border w-fit border-light-3 px-3 my-5">
         <p className="text-base font-semibold text-light-3">{data.material}</p>
+      </div>
+      <div>
+        <p className="text-base font-semibold">
+          Weight: <span className="text-sm">{data.weight} grams</span>
+        </p>
+        <p className="text-base font-semibold">
+          Delivery: <span className="text-sm">{data.hasDeliveryFee ? "Yes" : "No"}</span>
+        </p>
       </div>
       <p className="text-base mobile:text-lg font-semibold text-dark-3 uppercase mt-5">Colors</p>
       <div className="flex gap-1 items-center">

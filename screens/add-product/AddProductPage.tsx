@@ -52,17 +52,17 @@ const AddProductPage = () => {
   });
 
   // Debounced update function to reduce frequent updates
-  const updateFormData = debounce((data) => {
-    setFormData(data);
-  }, 300);
+  // const updateFormData = debounce((data) => {
+  //   setFormData(data);
+  // }, 300);
 
-  useEffect(() => {
-    const subscription = form.watch((value) => {
-      updateFormData(value); // Update Zustand on form changes
-    });
+  // useEffect(() => {
+  //   const subscription = form.watch((value) => {
+  //     updateFormData(value); // Update Zustand on form changes
+  //   });
 
-    return () => subscription.unsubscribe(); // Cleanup subscription
-  }, [form.watch]);
+  //   return () => subscription.unsubscribe(); // Cleanup subscription
+  // }, [form.watch]);
 
   const onSubmit = async (values: z.infer<typeof productValidation>) => {
     const res = validateData();
@@ -77,6 +77,8 @@ const AddProductPage = () => {
       price: Number(values.price),
       mrp: Number(values.mrp),
       material: capitalize(values.material),
+      weight: Number(values.weight),
+      hasDeliveryFee: values.hasDeliveryFee,
       inStock: values.inStock,
       isNewArrival: values.isNewArrival,
       genders: formData.genders,
@@ -155,11 +157,17 @@ const AddProductPage = () => {
 
       <Form {...form}>
         <form className="flex flex-col justify-start gap-3 mt-5" onSubmit={form.handleSubmit(onSubmit)}>
-          <InputField control={form.control} name="name" label="Product Name" />
-          <InputField control={form.control} name="description" label="Product Description" textarea />
+          <InputField control={form.control} name="name" label="Product Name" placeholder="Enter product name" />
+          <InputField
+            control={form.control}
+            name="description"
+            label="Product Description"
+            placeholder="Enter product description"
+            textarea
+          />
           <div className="flex gap-3">
-            <InputField control={form.control} name="price" label="Price" type="number" />
-            <InputField control={form.control} name="mrp" label="MRP" type="number" />
+            <InputField control={form.control} name="price" label="Price" type="number" placeholder="Enter price (Rs.)" />
+            <InputField control={form.control} name="mrp" label="MRP" type="number" placeholder="Enter MRP (Rs.)" />
           </div>
           <div className="flex flex-col mobile:flex-row gap-3">
             <WarehouseInput
@@ -212,20 +220,28 @@ const AddProductPage = () => {
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
             <div className="flex gap-3 w-full">
-              <InputField control={form.control} name="material" label="Material" />
+              <InputField control={form.control} name="material" label="Material" placeholder="Enter product material" />
               <GenderInput
                 genders={formData.genders}
                 setGenders={(data: any) => setFormData({ ...formData, genders: data })}
               />
+              <InputField
+                control={form.control}
+                name="weight"
+                type="number"
+                label="Product Weight (in grams)"
+                placeholder="Enter weight in grams"
+              />
             </div>
-            <AttributesInput
-              label="Attributes"
-              attributes={formData.attributes}
-              setAttributes={(data: any) => setFormData({ ...formData, attributes: data })}
-              defaultAttributes={defaultAttributes}
-            />
           </div>
+          <AttributesInput
+            label="Attributes"
+            attributes={formData.attributes}
+            setAttributes={(data: any) => setFormData({ ...formData, attributes: data })}
+            defaultAttributes={defaultAttributes}
+          />
           <div className="w-full flex gap-5">
+            <SwitchField control={form.control} name="hasDeliveryFee" label="Delivery Fee" />
             <SwitchField control={form.control} name="inStock" label="In Stock" />
             <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>

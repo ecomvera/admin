@@ -112,19 +112,21 @@ model Category {
 }
 
 model Product {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  name         String
-  slug         String   @unique
-  description  String
-  price        Int
-  mrp          Int
-  material     String
-  inStock      Boolean
-  isNewArrival Boolean
-  isBestSeller Boolean
-  genders      String[]
-  sizeCategory String
-  productType  String
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  slug           String   @unique
+  description    String
+  price          Int
+  mrp            Int
+  material       String
+  inStock        Boolean
+  isNewArrival   Boolean
+  isBestSeller   Boolean
+  genders        String[]
+  sizeCategory   String
+  productType    String
+  weight         Float
+  hasDeliveryFee Boolean
 
   colors     ProductColors[]
   sizes      ProductSizes[]

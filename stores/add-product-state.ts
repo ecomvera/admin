@@ -7,6 +7,8 @@ interface IFormData {
   price: string;
   mrp: string;
   material: string;
+  weight: string;
+  hasDeliveryFee: boolean;
   inStock: boolean;
   isNewArrival: boolean;
   genders: string[];
@@ -30,6 +32,8 @@ const formData = {
   price: "",
   mrp: "",
   material: "",
+  weight: "",
+  hasDeliveryFee: false,
   inStock: false,
   isNewArrival: false,
   genders: [],

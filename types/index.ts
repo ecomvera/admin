@@ -58,6 +58,8 @@ export interface IProduct {
   price: number;
   mrp: number;
   material: string;
+  weight: number;
+  hasDeliveryFee: boolean;
   inStock: boolean;
   isNewArrival: boolean;
   isBestSeller?: boolean;
