@@ -1,3 +1,14 @@
+export interface ICourier {
+  platform: string;
+  courier_id: string;
+  courier_name: string;
+  courier_charge: number;
+  is_surface: boolean;
+  zone: string;
+  deliveryTime: string;
+  deliveryDate: string;
+}
+
 export interface IAttribute {
   id?: string;
   key: string;

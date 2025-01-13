@@ -18,7 +18,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         images: true,
         attributes: true,
         sizes: true,
-        warehouses: true,
+        warehouses: { select: { id: true, warehouse: { select: { pincode: true } } } },
       },
     });
     const duration = Date.now() - start;
