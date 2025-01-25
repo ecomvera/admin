@@ -2,6 +2,7 @@ import * as z from "zod";
 
 export const productValidation = z
   .object({
+    sku: z.string().min(3, { message: "Minimum 3 characters." }),
     name: z.string().min(3, { message: "Minimum 3 characters." }),
     description: z.string().min(3, { message: "Minimum 3 characters." }),
     price: z
@@ -21,14 +22,6 @@ export const productValidation = z
         message: "MRP must be a whole number. No decimals allowed.",
       }),
     material: z.string().nonempty({ message: "Please enter the material." }),
-    weight: z
-      .string()
-      .nonempty({ message: "Please enter the weight." })
-      .refine((value) => !isNaN(Number(value)), {
-        message: "Weight must be a valid number.",
-      })
-      .refine((value) => Number(value) > 0, { message: "Weight should be greater than 0." }),
-    hasDeliveryFee: z.boolean(),
     inStock: z.boolean(),
     isNewArrival: z.boolean(),
   })

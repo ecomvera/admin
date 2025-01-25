@@ -81,6 +81,12 @@ export const status_options = [
     color: "#10B981",
   },
   {
+    value: "OUT_FOR_PICKUP",
+    label: "Out for pickup",
+    icon: RefreshCcwDot,
+    color: "#10B981",
+  },
+  {
     value: "PICKED_UP",
     label: "Picked Up",
     icon: CheckCheck,
@@ -90,6 +96,18 @@ export const status_options = [
     value: "SHIPPED",
     label: "Shipped",
     icon: Ship,
+    color: "#10B981",
+  },
+  {
+    value: "IN_TRANSIT",
+    label: "In Transit",
+    icon: Truck,
+    color: "#10B981",
+  },
+  {
+    value: "REACHED_AT_DESTINATION",
+    label: "Reached at destination",
+    icon: Truck,
     color: "#10B981",
   },
   {

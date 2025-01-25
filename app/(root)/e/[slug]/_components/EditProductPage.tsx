@@ -1,10 +1,13 @@
 "use client";
 
 import * as z from "zod";
+import useSWR from "swr";
+import { fetcher, fetchOpt } from "@/lib/utils";
+import { useCategoryStore } from "@/stores/category";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { productValidation } from "@/lib/validations/product";
 import { useEffect, useState } from "react";
 import { ICategory, IColor, IImageFile, IProduct, IProductAttribute, IProductSize } from "@/types";
@@ -15,22 +18,25 @@ import AttributesInput from "@/components/forms/AttributesInput";
 import InputField from "@/components/forms/InputField";
 import SelectFields from "@/components/forms/SelectField";
 import SwitchField from "@/components/forms/SwitchField";
-import ImageContainer from "./ImageContainer";
+import ImageContainer from "@/components/forms/ImageContainer";
 import { useProductStore } from "@/stores/product";
 import { error, success } from "@/lib/utils";
-import GenderInput from "./GenderInput";
+import GenderInput from "@/components/forms/GenderInput";
 import { capitalize } from "lodash";
-import SizeCategory from "./SizeCategory";
+import SizeCategory from "@/components/forms/SizeCategory";
 import { sizeCategories } from "@/constants";
-import SelectProductType from "./SelectProductType";
+import SelectProductType from "@/components/forms/SelectProductType";
 import { useSizes } from "@/hook/useSizes";
 import { useColors } from "@/hook/useColors";
 import { useAttributes } from "@/hook/useAttributes";
 import { useTypes } from "@/hook/useTypes";
-import WarehouseInput from "./WarehouseInput";
+import WarehouseInput from "@/components/forms/WarehouseInput";
 import { useWarehouses } from "@/hook/useWarehouses";
 
-const EditProduct = ({ categories, product, path }: { categories: ICategory[]; product: IProduct; path: string }) => {
+const EditProductPage = ({ product, searchParams }: { product: IProduct; searchParams: any }) => {
+  const { mutate: fetchCategories } = useSWR("/api/categories", fetcher, fetchOpt);
+  const { categories, setCategories } = useCategoryStore();
+
   const { updateProduct } = useProductStore();
   const router = useRouter();
   const { sizes: defaultSizes } = useSizes();
@@ -59,8 +65,6 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
       price: product.price.toString(),
       mrp: product.mrp.toString(),
       material: product.material,
-      weight: product.weight.toString(),
-      hasDeliveryFee: product.hasDeliveryFee,
       inStock: product.inStock,
       isNewArrival: product.isNewArrival,
     },
@@ -74,13 +78,12 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
     setLoading(true);
     const data: IProduct = {
       name: capitalize(values.name.trim()),
+      sku: product.sku,
       slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
       description: values.description,
       price: Number(values.price),
       mrp: Number(values.mrp),
       material: capitalize(values.material),
-      weight: Number(values.weight),
-      hasDeliveryFee: values.hasDeliveryFee,
       productType: productType,
       sizeCategory: sizeCategory,
       inStock: values.inStock,
@@ -106,7 +109,7 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
     updateProduct(product.id || "", data);
     setProductType("");
     setWarehouses([]);
-    router.replace(path);
+    router.replace(searchParams.path);
   };
 
   const validateData = () => {
@@ -145,6 +148,16 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
     // @ts-ignore
     setWarehouses([...product.warehouses.map((k) => ({ id: k.warehouseId, quantity: k.quantity, name: k.name }))]);
   }, [product]);
+
+  useEffect(() => {
+    const fetch = async () => {
+      if (!categories.length) {
+        const res = await fetchCategories();
+        setCategories(res?.data || []);
+      }
+    };
+    fetch();
+  }, []);
 
   return (
     <>
@@ -211,13 +224,6 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             <div className="flex gap-3 w-full">
               <InputField control={form.control} name="material" label="Material" placeholder="Enter product material" />
               <GenderInput genders={genders} setGenders={setGenders} />
-              <InputField
-                control={form.control}
-                name="weight"
-                type="number"
-                label="Product Weight (in grams)"
-                placeholder="Enter weight in grams"
-              />
             </div>
           </div>
           <AttributesInput
@@ -227,7 +233,6 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
             defaultAttributes={defaultAttributes}
           />
           <div className="w-full flex gap-5">
-            <SwitchField control={form.control} name="hasDeliveryFee" label="Delivery Fee" />
             <SwitchField control={form.control} name="inStock" label="In Stock" />
             <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
           </div>
@@ -244,4 +249,4 @@ const EditProduct = ({ categories, product, path }: { categories: ICategory[]; p
   );
 };
 
-export default EditProduct;
+export default EditProductPage;

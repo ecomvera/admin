@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import AddProductPage from "@/screens/add-product/AddProductPage";
+import AddProductPage from "@/app/(root)/add-product/_components/AddProductPage";
 
 const Page = () => {
   return (

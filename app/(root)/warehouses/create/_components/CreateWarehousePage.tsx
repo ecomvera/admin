@@ -10,11 +10,16 @@ import { error, success } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 const formSchema = Yup.object({
-  name: Yup.string().min(3, { message: "Name must be at least 3 characters long" }).required("Name is required"),
-  mobile: Yup.string()
+  contactPersonName: Yup.string()
+    .min(3, { message: "Name must be at least 3 characters long" })
+    .required("Contact Person Name is required"),
+  contactPersonMobile: Yup.string()
     .length(10, { message: "Mobile number must be at least 10 digits long" })
     .required("Mobile number is required"),
-  email: Yup.string().email({ message: "Invalid email address" }).required("Email is required"),
+  contactPersonEmail: Yup.string().email({ message: "Invalid email address" }).required("Email is required"),
+  warehouseName: Yup.string()
+    .min(3, { message: "Name must be at least 3 characters long" })
+    .required("Warehouse Name is required"),
   address: Yup.string().min(3, { message: "Address must be at least 3 characters long" }).required("Address is required"),
   city: Yup.string().min(3, { message: "City must be at least 3 characters long" }).required("City is required"),
   state: Yup.string().min(3, { message: "State must be at least 3 characters long" }).required("State is required"),
@@ -26,14 +31,15 @@ const CreateWarehousePage = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      name: "",
-      mobile: "",
-      email: "",
+      contactPersonName: "",
+      contactPersonMobile: "",
+      contactPersonEmail: "",
+      warehouseName: "",
       address: "",
-      pincode: "",
       city: "",
       state: "",
       country: "",
+      pincode: "",
     },
     validationSchema: formSchema,
     onSubmit: async (values) => {
@@ -45,35 +51,47 @@ const CreateWarehousePage = () => {
           return;
         }
 
-        formik.isSubmitting = false;
         formik.resetForm();
         success("Warehouse added successfully");
         router.push("/warehouses");
       } catch (err) {
         console.error(err);
         error("Something went wrong");
+      } finally {
+        formik.isSubmitting = false;
       }
     },
   });
 
-  console.log(formik.errors);
-
   return (
     <div className="laptop:px-4 max-w-mobile mt-5 sm:mt-2">
       <form onSubmit={formik.handleSubmit} className="space-y-3 mt-0">
-        <InputField formik={formik} name="Name" placeholder="Warehouse Name" />
-        <InputField formik={formik} name="Mobile" placeholder="Mobile Number" type="number" />
-        <InputField formik={formik} name="Email" placeholder="Email" />
-        <InputField formik={formik} name="Address" placeholder="Address" />
+        <InputField formik={formik} label="Contact Person Name" name="contactPersonName" placeholder="Name" />
+        <InputField
+          formik={formik}
+          label="Contact Person Mobile"
+          name="contactPersonMobile"
+          placeholder="Mobile"
+          type="number"
+        />
+        <InputField formik={formik} label="Contact Person Email" name="contactPersonEmail" placeholder="Email" />
+        <InputField formik={formik} label="Address" placeholder="Address" />
         <div className="flex gap-4">
-          <InputField formik={formik} name="City" placeholder="City" />
-          <InputField formik={formik} name="State" placeholder="State" />
+          <InputField formik={formik} label="City" placeholder="City" />
+          <InputField formik={formik} label="State" placeholder="State" />
         </div>
         <div className="flex gap-4">
-          <InputField formik={formik} name="Country" placeholder="Country" />
-          <InputField formik={formik} name="Pincode" placeholder="Pincode" type="number" />
+          <InputField formik={formik} label="Country" placeholder="Country" />
+          <InputField formik={formik} label="Pincode" placeholder="Pincode" type="number" />
         </div>
-        <Button type="submit" className="mt-10 rounded" disabled={formik.isSubmitting}>
+        <InputField
+          formik={formik}
+          onChange={(e) => formik.setFieldValue("warehouseName", e.target.value.split(" ").join("-").toLowerCase())}
+          label="Warehouse Name"
+          name="warehouseName"
+          placeholder="Warehouse Name"
+        />
+        <Button type="submit" className="rounded" disabled={formik.isSubmitting}>
           {formik.isSubmitting ? "adding..." : "Add Warehouse"}
         </Button>
       </form>

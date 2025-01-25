@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import ProductsPage from "@/screens/products/ProductsPage";
+import ProductsPage from "@/app/(root)/products/_components/ProductsPage";
 import { getData } from "@/lib/utils";
 
 const Page = async () => {

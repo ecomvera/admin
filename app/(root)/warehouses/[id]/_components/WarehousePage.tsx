@@ -5,8 +5,6 @@ import { fetcher, fetchOpt } from "@/lib/utils";
 import useSWR from "swr";
 import Settings from "./Settings";
 import ProductTable from "./ProductTable";
-import { useProductStore } from "@/stores/product";
-import { useEffect } from "react";
 
 const WarehousePage = ({ id }: { id: string }) => {
   const warehouse = useSWR(`/api/warehouse/${id}`, fetcher, fetchOpt);

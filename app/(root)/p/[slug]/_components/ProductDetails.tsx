@@ -3,10 +3,9 @@
 import Image from "next/legacy/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { IProduct, IProductSize } from "@/types";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { AspectRatio } from "../ui/aspect-ratio";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { boldNumbersInString, getDiscount } from "@/lib/utils";
 
 const ProductDetails = ({ data }: { data: IProduct }) => {
@@ -108,7 +107,11 @@ const ProductDetail = ({
         </Button>
       </Link>
 
-      <h2 className="text-xl font-bold mt-5">{data.name}</h2>
+      <div className="flex items-center gap-2 mt-5">
+        <p>SKU: {data.sku}</p>
+      </div>
+
+      <h2 className="text-xl font-bold">{data.name}</h2>
       <div>
         <p className={`${!showMore && "line-clamp-3"}`}>{data.description}</p>
         <span onClick={() => setShowMore(!showMore)} className="text-sm font-semibold text-blue-700 cursor-pointer">

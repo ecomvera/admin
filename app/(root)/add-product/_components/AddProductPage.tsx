@@ -46,6 +46,8 @@ const AddProductPage = () => {
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(false);
 
+  console.log(defaultWarehouses);
+
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
     defaultValues: formData,
@@ -72,15 +74,12 @@ const AddProductPage = () => {
     setLoading(true);
     const data: IProduct = {
       name: capitalize(values.name),
+      sku: values.sku,
       slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
       description: values.description,
       price: Number(values.price),
       mrp: Number(values.mrp),
       material: capitalize(values.material),
-      weight: Number(values.weight),
-      hasDeliveryFee: values.hasDeliveryFee,
-      inStock: values.inStock,
-      isNewArrival: values.isNewArrival,
       genders: formData.genders,
       colors: colors,
       warehouses: formData.warehouses,
@@ -225,25 +224,16 @@ const AddProductPage = () => {
                 genders={formData.genders}
                 setGenders={(data: any) => setFormData({ ...formData, genders: data })}
               />
-              <InputField
-                control={form.control}
-                name="weight"
-                type="number"
-                label="Product Weight (in grams)"
-                placeholder="Enter weight in grams"
-              />
             </div>
           </div>
-          <AttributesInput
-            label="Attributes"
-            attributes={formData.attributes}
-            setAttributes={(data: any) => setFormData({ ...formData, attributes: data })}
-            defaultAttributes={defaultAttributes}
-          />
-          <div className="w-full flex gap-5">
-            <SwitchField control={form.control} name="hasDeliveryFee" label="Delivery Fee" />
-            <SwitchField control={form.control} name="inStock" label="In Stock" />
-            <SwitchField control={form.control} name="isNewArrival" label="New Arrival" />
+          <div className="flex gap-3 flex-col tablet:flex-row">
+            <AttributesInput
+              label="Attributes"
+              attributes={formData.attributes}
+              setAttributes={(data: any) => setFormData({ ...formData, attributes: data })}
+              defaultAttributes={defaultAttributes}
+            />
+            <InputField control={form.control} name="sku" label="SKU (Stock kepping unit)" placeholder="Enter product sku" />
           </div>
 
           <Button

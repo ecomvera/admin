@@ -24,15 +24,17 @@ import { status_options } from "@/constants";
 import { updateOrderStatusDB } from "@/lib/actions/order.action";
 import { useOrderStore } from "@/stores/orders";
 import { formatDate } from "@/lib/date";
+import { useRouter } from "next/navigation";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
 }
 
 export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<any>) {
+  const router = useRouter();
   const { updateOrderStatus } = useOrderStore();
   // const [dialogContent, setDialogContent] = React.useState<React.ReactNode | null>(null);
-  const [showDeleteDialog, setShowDeleteDialog] = React.useState<boolean>(false);
+  const [showCancelDialog, setShowCancelDialog] = React.useState<boolean>(false);
   const order = row.original;
 
   // const handleEditClick = () => {
@@ -62,21 +64,15 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<any
             Copy Order Number
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DialogTrigger asChild onClick={() => {}}>
+          <DialogTrigger asChild onClick={() => router.push(`/orders/${order.orderNumber}`)}>
             <DropdownMenuItem className="cursor-pointer">
               <Eye className="mr-2 h-4 w-4" />
               View Details
             </DropdownMenuItem>
           </DialogTrigger>
-          <DialogTrigger asChild onClick={() => {}}>
-            <DropdownMenuItem>
-              <Pencil className="mr-2 h-4 w-4" />
-              Edit Details
-            </DropdownMenuItem>
-          </DialogTrigger>
-          <DropdownMenuItem onSelect={() => setShowDeleteDialog(true)} className="text-red-600">
+          <DropdownMenuItem onSelect={() => setShowCancelDialog(true)} className="text-red-600">
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete Details
+            Cancel Order
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuSub>
@@ -89,7 +85,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<any
                     value={status.value}
                     onClick={() => hadleChangeStatus(status.value)}
                   >
-                    <status.icon className="w-4 h-4 mr-2" />
+                    <status.icon className="w-4 h-4 mr-2" style={{ color: status.color }} />
                     {status.label}
                   </DropdownMenuRadioItem>
                 ))}
@@ -99,10 +95,10 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<any
         </DropdownMenuContent>
       </DropdownMenu>
       {/* {dialogContent && <DialogContent>{dialogContent}</DialogContent>}
-      <DeleteDialog
+      <CancelDialog
         task={task}
-        isOpen={showDeleteDialog}
-        showActionToggle={setShowDeleteDialog}
+        isOpen={showCancelDialog}
+        showActionToggle={setShowCancelDialog}
       /> */}
     </Dialog>
   );

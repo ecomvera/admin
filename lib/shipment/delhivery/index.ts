@@ -59,4 +59,20 @@ export class Delhivery {
       return [];
     }
   }
+
+  // create shipment order method
+  async createShipment(shipment: any, courier: any): Promise<any> {
+    return {
+      platform: this.platform,
+    };
+  }
+
+  // cancel courier
+  async cancelCourier(): Promise<any> {}
+
+  // cancel order
+  async cancelOrder(): Promise<any> {}
+
+  // track shipment
+  async trackCourier(): Promise<any> {}
 }

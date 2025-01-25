@@ -79,4 +79,22 @@ export class Bigship {
       return [];
     }
   }
+
+  // create shipment order method
+  async createShipment(shipment: any, courier: any): Promise<any> {
+    await this.ensureToken();
+
+    if (!Bigship.token) {
+      return [];
+    }
+  }
+
+  // cancel courier
+  async cancelCourier(): Promise<any> {}
+
+  // cancel order
+  async cancelOrder(): Promise<any> {}
+
+  // track shipment
+  async trackCourier(): Promise<any> {}
 }

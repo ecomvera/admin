@@ -1,3 +1,17 @@
+export interface IAddress {
+  name: string;
+  line1: string;
+  line2: string;
+  landmark: string;
+  city: string;
+  state: string;
+  country: string;
+  pincode: string;
+  phone: string;
+  email: string;
+  residenceType?: string;
+}
+
 export interface ICourier {
   platform: string;
   courier_id: string;
@@ -40,9 +54,10 @@ export interface ICategory {
 
 export interface IWarehouse {
   id: string;
-  name: string;
-  email: string;
-  mobile: string;
+  contactPersonName: string;
+  contactPersonEmail: string;
+  contactPersonMobile: number;
+  warehouseName: string;
   address: string;
   city: string;
   state: string;
@@ -63,16 +78,15 @@ export interface ICollection {
 
 export interface IProduct {
   id?: string;
+  sku: string;
   name: string;
   slug: string;
   description: string;
   price: number;
   mrp: number;
   material: string;
-  weight: number;
-  hasDeliveryFee: boolean;
-  inStock: boolean;
-  isNewArrival: boolean;
+  inStock?: boolean;
+  isNewArrival?: boolean;
   isBestSeller?: boolean;
   colors: IColor[];
   genders: string[];
@@ -119,9 +133,31 @@ export interface IProductAttribute {
   productId?: string;
 }
 
+export interface IOrder {
+  id: string;
+  orderNumber: string;
+  userId: string;
+  shippingId: string;
+  shippingAddress: IAddress;
+  items: IOrderItem[];
+  status: string;
+  totalAmount: number;
+  deliveryCharge: number;
+  giftWrapCharge: number;
+  subTotal: number;
+  paymentId: string;
+  createdAt: string;
+  updatedAt: string;
+  shipment: any;
+  cancelledAt?: string;
+  cancelledBy?: string;
+}
+
 export interface IOrderItem {
   id: string;
   orderId: string;
+  productId: string;
+  product: IProduct;
   color: string;
   size: string;
   quantity: number;

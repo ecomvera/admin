@@ -15,7 +15,7 @@ export async function GET(req: NextRequest) {
 
   const orders = await prisma.order.findMany({
     where: { userId: authCheck.user?.userId },
-    include: { items: { include: { item: { select: { name: true, slug: true, images: true } } } } },
+    include: { items: { include: { product: { select: { name: true, slug: true, images: true } } } } },
     orderBy: { createdAt: "desc" },
   });
 
@@ -38,7 +38,15 @@ export async function POST(req: NextRequest) {
   if (!body.items || !Array.isArray(body.items) || !body.items.length) {
     return NextResponse.json({ ok: false, error: "Missing items" });
   }
-  if (!body.userId || !body.shippingId || !body.billingId || !body.status || !body.totalPrice) {
+
+  if (
+    !body.userId ||
+    !body.deliveryId ||
+    !body.status ||
+    !body.deliveryCharge === undefined ||
+    body.giftWrapCharge === undefined ||
+    !body.subTotal
+  ) {
     return NextResponse.json({ ok: false, error: "Missing required fields" });
   }
 
@@ -81,17 +89,19 @@ export async function POST(req: NextRequest) {
         data: {
           orderNumber: body?.orderNumber as string,
           userId: body?.userId as string,
-          shippingId: body?.shippingId as string,
-          billingId: body?.billingId as string,
+          shippingId: body?.deliveryId as string,
           status: body?.status,
-          totalAmount: body?.totalPrice as number,
+          totalAmount: body?.totalAmount as number,
+          deliveryCharge: body?.deliveryCharge as number,
+          giftWrapCharge: body?.giftWrapCharge as number,
+          subTotal: body?.subTotal as number,
         },
       });
 
       await prisma.orderedItem.createMany({
         data: body?.items?.map((item: IOrderItem) => ({
           orderId: order.id,
-          itemId: item.id,
+          productId: item.id,
           quantity: item.quantity,
           color: item.color,
           size: item.size,

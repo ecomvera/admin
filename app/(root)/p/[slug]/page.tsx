@@ -1,18 +1,11 @@
-"use client";
+import ProductDetails from "@/app/(root)/p/[slug]/_components/ProductDetails";
+import { getData } from "@/lib/utils";
 
-import ProductDetails from "@/components/shared/ProductDetails";
-import { fetcher, fetchOpt } from "@/lib/utils";
-import useSWR from "swr";
+const Page = async ({ params }: { params: { slug: string } }) => {
+  const data = await getData(`/api/products/${params.slug}`);
 
-const Page = ({ params }: { params: { slug: string } }) => {
-  const product = useSWR(`/api/products/${params.slug}`, fetcher, {
-    ...fetchOpt,
-    revalidateOnMount: true,
-  });
-
-  if (product.isLoading) return <div className="text-center text-xl text-light-3">Loading...</div>;
-
-  return <ProductDetails data={product?.data?.data} />;
+  if (!data) return <p>Product not found</p>;
+  return <ProductDetails data={data} />;
 };
 
 export default Page;

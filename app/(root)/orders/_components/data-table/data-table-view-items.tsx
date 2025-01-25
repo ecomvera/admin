@@ -35,7 +35,7 @@ export function DataTableViewItems<TData>({ row }: DataTableViewItemsProps<any>)
           {/** @ts-ignore */}
           {row.getValue("items")?.map((item, i) => (
             <DropdownMenuItem key={i} className="cursor-pointer">
-              <span className="mr-2">{item.quantity}x</span> <span className="line-clamp-2">{item.item.name}</span>
+              <span className="mr-2">{item.quantity}x</span> <span className="line-clamp-2">{item.product.name}</span>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

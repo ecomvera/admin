@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import WarehousePage from "@/screens/warehouses/View/WarehousePage";
+import WarehousePage from "@/app/(root)/warehouses/[id]/_components/WarehousePage";
 
 const Page = ({ params }: { params: { id: string } }) => {
   return (

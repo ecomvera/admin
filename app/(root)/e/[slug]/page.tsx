@@ -7,9 +7,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import EditProductPage from "@/screens/edit-product/EditProductPage";
+import EditProductPage from "@/app/(root)/e/[slug]/_components/EditProductPage";
+import { getData } from "@/lib/utils";
 
-const Page = ({ params, searchParams }: { params: { slug: string }; searchParams: any }) => {
+const Page = async ({ params, searchParams }: { params: { slug: string }; searchParams: any }) => {
+  const data = await getData(`/api/products/${params.slug}`);
+
   return (
     <main>
       <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">
@@ -34,7 +37,7 @@ const Page = ({ params, searchParams }: { params: { slug: string }; searchParams
         </Breadcrumb>
       </div>
 
-      <EditProductPage params={params} searchParams={searchParams} />
+      <EditProductPage product={data} searchParams={searchParams} />
     </main>
   );
 };

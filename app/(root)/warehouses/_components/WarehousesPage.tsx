@@ -15,11 +15,16 @@ const WarehousesPage = ({ data }: { data: any[] }) => {
       </Link>
 
       {_.map(data, (warehouse) => (
-        <Link href={`/warehouses/${warehouse.id}`} key={warehouse.id}>
-          <div className="border rounded p-2 w-40 max-h-24 cursor-pointer overflow-hidden">
+        <Link
+          className="border rounded p-2 w-40 max-h-24 cursor-pointer overflow-hidden"
+          href={`/warehouses/${warehouse.id}`}
+          key={warehouse.id}
+        >
+          <div className="flex gap-2 items-center">
             <Warehouse className="h-6 w-6" />
-            <p className="mt-4 line-clamp-2 text-sm">{warehouse.name}</p>
+            <p className="text-sm">{warehouse.warehouseName}</p>
           </div>
+          <p className="mt-4 text-sm">{warehouse.contactPersonName}</p>
         </Link>
       ))}
     </div>

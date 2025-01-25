@@ -15,9 +15,10 @@ const Settings = ({ data, refetch }: { data: IWarehouse; refetch: any }) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [editField, setEditField] = useState(null as string | null);
   const [editData, setEditData] = useState({
-    name: data.name,
-    email: data.email,
-    mobile: data.mobile,
+    contactPersonName: data.contactPersonName,
+    contactPersonEmail: data.contactPersonEmail,
+    contactPersonMobile: data.contactPersonMobile,
+    warehouseName: data.warehouseName,
     address: data.address,
     city: data.city,
     state: data.state,
@@ -33,7 +34,12 @@ const Settings = ({ data, refetch }: { data: IWarehouse; refetch: any }) => {
     if (!field) return;
 
     setIsEditing(true);
-    const response = await updateWareHouse(data.id, { [field]: editData[field as keyof typeof editData] });
+    const response = await updateWareHouse(data.id, {
+      [field]:
+        field === "contactPersonMobile"
+          ? Number(editData[field as keyof typeof editData])
+          : editData[field as keyof typeof editData],
+    });
     setIsEditing(false);
 
     if (!response?.ok) {
@@ -43,7 +49,6 @@ const Settings = ({ data, refetch }: { data: IWarehouse; refetch: any }) => {
 
     refetch();
     setEditField(null);
-    console.log(response);
   };
 
   const handleEdit = (field: string | null) => {
@@ -68,33 +73,44 @@ const Settings = ({ data, refetch }: { data: IWarehouse; refetch: any }) => {
       <h2 className="text-lg font-semibold">Update Details</h2>
       <>
         <EditableField
-          id="name"
-          label="Name"
-          value={editData.name}
+          id="contactPersonName"
+          label="Contact Person Name"
+          value={editData.contactPersonName}
           editField={editField}
           onEdit={handleEdit}
           onUpdate={handleUpdate}
-          onChange={(value: string) => handleChange("name", value)}
+          onChange={(value: string) => handleChange("contactPersonName", value)}
           isEditing={isEditing}
         />
         <EditableField
-          id="email"
-          label="Email"
-          value={editData.email}
+          id="contactPersonEmail"
+          label="Contact Person Email"
+          value={editData.contactPersonEmail}
           editField={editField}
           onEdit={handleEdit}
           onUpdate={handleUpdate}
-          onChange={(value: string) => handleChange("email", value)}
+          onChange={(value: string) => handleChange("contactPersonEmail", value)}
           isEditing={isEditing}
         />
         <EditableField
-          id="mobile"
-          label="Mobile"
-          value={editData.mobile}
+          id="contactPersonMobile"
+          label="Contact Person Mobile"
+          type="number"
+          value={editData.contactPersonMobile}
           editField={editField}
           onEdit={handleEdit}
           onUpdate={handleUpdate}
-          onChange={(value: string) => handleChange("mobile", value)}
+          onChange={(value: string) => handleChange("contactPersonMobile", value)}
+          isEditing={isEditing}
+        />
+        <EditableField
+          id="warehouseName"
+          label="Warehouse Name"
+          value={editData.warehouseName}
+          editField={editField}
+          onEdit={handleEdit}
+          onUpdate={handleUpdate}
+          onChange={(value: string) => handleChange("warehouseName", value)}
           isEditing={isEditing}
         />
         <EditableField
@@ -158,7 +174,7 @@ const Settings = ({ data, refetch }: { data: IWarehouse; refetch: any }) => {
         </p>
         <div className="flex items-center gap-2 mt-2">
           <Popover>
-            <PopoverTrigger>
+            <PopoverTrigger asChild>
               <Button variant={"destructive"} className="rounded" size={"sm"} disabled={isDeleting}>
                 Delete
               </Button>
@@ -178,14 +194,14 @@ const Settings = ({ data, refetch }: { data: IWarehouse; refetch: any }) => {
   );
 };
 
-const EditableField = ({ id, label, value, editField, onEdit, onUpdate, onChange, isEditing }: any) => {
+const EditableField = ({ id, label, value, editField, onEdit, onUpdate, onChange, isEditing, type = "text" }: any) => {
   const activeField = editField === id;
 
   return (
     <div className="space-y-1">
       <Label htmlFor={id}>{label}</Label>
       <div className="flex items-center gap-2 pr-4" aria-disabled={isEditing}>
-        <Input id={id} value={value} disabled={!activeField} onChange={(e) => onChange(e.target.value)} />
+        <Input type={type} id={id} value={value} disabled={!activeField} onChange={(e) => onChange(e.target.value)} />
         {activeField ? (
           isEditing ? (
             <>

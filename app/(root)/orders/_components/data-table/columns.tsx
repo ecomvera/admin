@@ -9,6 +9,8 @@ import { DataTableColumnHeader } from "./data-table-column-header";
 import { DataTableRowActions } from "./data-table-row-actions";
 import { status_options } from "@/constants";
 import { DataTableViewItems } from "./data-table-view-items";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const columns: ColumnDef<any>[] = [
   // {
@@ -35,7 +37,11 @@ export const columns: ColumnDef<any>[] = [
   {
     accessorKey: "orderNumber",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Order No." />,
-    cell: ({ row }) => <div className="w-[80px]">{row.getValue("orderNumber")}</div>,
+    cell: ({ row }) => (
+      <Link href={`/orders/${row.getValue("orderNumber")}`}>
+        <div className="w-[80px]">{row.getValue("orderNumber")}</div>
+      </Link>
+    ),
     enableSorting: false,
     enableHiding: false,
   },
@@ -60,10 +66,10 @@ export const columns: ColumnDef<any>[] = [
       }
 
       return (
-        <div className="flex w-[100px] items-center">
+        <Button className="rounded h-7 cursor-auto" size={"sm"} style={{ backgroundColor: status.color }}>
           {status.icon && <status.icon className="mr-2 h-4 w-4 text-muted-foreground" />}
           <span>{status.label}</span>
-        </div>
+        </Button>
       );
     },
     filterFn: (row, id, value) => {

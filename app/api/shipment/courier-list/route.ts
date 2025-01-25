@@ -27,9 +27,20 @@ export async function GET(req: NextRequest) {
     });
 
     const results = await Promise.all(courierPromises);
-    const courierList: ICourier[] = results.flat().sort((a, b) => a.courier_charge - b.courier_charge);
+    const courierList: ICourier[] = results.flat();
 
-    const response = NextResponse.json({ ok: true, total: courierList.length, data: courierList });
+    const groupedCourierList = courierList.reduce((acc, courier) => {
+      const key = courier.is_surface ? "surface" : "air";
+      acc[key] = acc[key] || [];
+      acc[key].push(courier);
+      return acc;
+    }, {} as Record<string, ICourier[]>);
+
+    Object.keys(groupedCourierList).forEach((key) =>
+      groupedCourierList[key].sort((a, b) => a.courier_charge - b.courier_charge)
+    );
+
+    const response = NextResponse.json({ ok: true, total: courierList.length, data: groupedCourierList });
     response.headers.set("Cache-Control", "no-store");
     return response;
   } catch (error: any) {

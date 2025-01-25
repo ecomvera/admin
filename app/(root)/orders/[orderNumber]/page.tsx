@@ -1,4 +1,3 @@
-import { Warehouse } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -7,18 +6,23 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import CreateWarehousePage from "@/app/(root)/warehouses/create/_components/CreateWarehousePage";
+import { getData } from "@/lib/utils";
+import OrderDetails from "@/app/(root)/orders/[orderNumber]/_components/OrderDetails";
+import { Package } from "lucide-react";
 
-const Page = () => {
+const page = async ({ params }: { params: { orderNumber: string } }) => {
+  const data = await getData("/api/orders/" + params.orderNumber);
+  const pickupLocations = await getData("/api/warehouse");
+
   return (
     <main>
       <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">
         <div className="flex flex-col">
           <div className="head-text flex gap-3">
-            <Warehouse className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6" />
-            <h2>New Warehouse</h2>
+            <Package className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6" />
+            <h2>Order #{params.orderNumber}</h2>
           </div>
-          <p className="text-xs sm:text-sm text-gray-500">Add new warehouse</p>
+          <p className="text-xs sm:text-sm text-gray-500">View and manage order</p>
         </div>
 
         <Breadcrumb className="w-fit flex-1 mt-1">
@@ -28,19 +32,19 @@ const Page = () => {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/warehouses">Warehouses</BreadcrumbLink>
+              <BreadcrumbLink href="/orders">Orders</BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage>Create</BreadcrumbPage>
+              <BreadcrumbPage>#{params.orderNumber}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
       </div>
 
-      <CreateWarehousePage />
+      {!data ? <div>failed to load</div> : <OrderDetails order={data} pickupLocations={pickupLocations} />}
     </main>
   );
 };
 
-export default Page;
+export default page;

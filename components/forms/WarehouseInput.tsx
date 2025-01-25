@@ -72,7 +72,7 @@ const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }:
       {defaultWarehouses.length !== selectedWarehouses.length && (
         <Select
           onValueChange={(field) => {
-            const name = defaultWarehouses.find((w) => w.id === field)?.name ?? "";
+            const name = defaultWarehouses.find((w) => w.id === field)?.warehouseName ?? "";
             setWarehouses([...warehouses, { id: field, quantity: 0, name }]);
             setSelectedWarehouses([...selectedWarehouses, { id: field, name, quantity: 0 }]);
           }}
@@ -86,7 +86,7 @@ const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }:
               ?.filter((dw) => !selectedWarehouses.some((w) => w.id === dw.id))
               .map((item) => (
                 <SelectItem key={item.id} value={item.id}>
-                  {item.name}
+                  {item.warehouseName}
                 </SelectItem>
               ))}
           </SelectContent>

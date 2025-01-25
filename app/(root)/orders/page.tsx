@@ -7,7 +7,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { getData } from "@/lib/utils";
-import OrdersPage from "@/screens/orders/OrdersPage";
+import OrdersPage from "@/app/(root)/orders/_components/OrdersPage";
 import { Package } from "lucide-react";
 
 const page = async () => {
