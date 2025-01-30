@@ -9,12 +9,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model WareHouse {
-  id                  String              @id @default(auto()) @map("_id") @db.ObjectId
+  id                  String              @id @default(uuid()) @map("_id")
   contactPersonName   String
   contactPersonMobile Int
   contactPersonEmail  String
@@ -25,29 +25,26 @@ model WareHouse {
   country             String
   pincode             Int
   products            WareHouseProducts[]
-
-  orders Order[]
+  orders              Order[]
 
   @@map("warehouses")
 }
 
 model WareHouseProducts {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  productId String  @db.ObjectId
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  warehouseId String    @db.ObjectId
+  id          String    @id @default(uuid()) @map("_id")
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  warehouseId String
   warehouse   WareHouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
 
   @@unique([productId, warehouseId])
 }
 
 model Attribute {
-  id    String   @id @default(auto()) @map("_id") @db.ObjectId
-  key   String
-  value String[]
-
-  productTypeId String       @db.ObjectId
+  id            String       @id @default(uuid()) @map("_id")
+  key           String
+  value         String[]
+  productTypeId String
   productType   ProductTypes @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
 
   @@unique([key, productTypeId])
@@ -55,7 +52,7 @@ model Attribute {
 }
 
 model Color {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  id   String @id @default(uuid()) @map("_id")
   name String @unique
   hex  String
 
@@ -63,7 +60,7 @@ model Color {
 }
 
 model Size {
-  id    String   @id @default(auto()) @map("_id") @db.ObjectId
+  id    String   @id @default(uuid()) @map("_id")
   type  String   @unique
   value String[]
 
@@ -71,168 +68,146 @@ model Size {
 }
 
 model Collection {
-  id     String @id @default(auto()) @map("_id") @db.ObjectId
-  name   String
-  slug   String @unique
-  image  String
-  banner String
-
-  products CollectionProducts[]
-
-  isActive  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String               @id @default(uuid()) @map("_id")
+  name      String
+  slug      String               @unique
+  image     String
+  banner    String
+  products  CollectionProducts[]
+  isActive  Boolean              @default(false)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
 
   @@map("collections")
 }
 
 model CollectionProducts {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
-  productId String  @db.ObjectId
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  collectionId String     @db.ObjectId
+  id           String     @id @default(uuid()) @map("_id")
+  productId    String
+  product      Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  collectionId String
   collection   Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
   @@unique([productId, collectionId])
-  @@map("collectionProducts")
+  @@map("collection_products")
 }
 
 model Category {
-  id       String  @id @default(auto()) @map("_id") @db.ObjectId
-  name     String
-  slug     String  @unique
-  wearType String?
-
-  parent   Category? @relation("subCategory", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  parentId String?   @db.ObjectId
-
-  children Category[] @relation("subCategory")
-  products Product[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String     @id @default(uuid()) @map("_id")
+  name      String
+  slug      String     @unique
+  wearType  String?
+  parent    Category?  @relation("subCategory", fields: [parentId], references: [id])
+  parentId  String?
+  children  Category[] @relation("subCategory")
+  products  Product[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@map("categories")
 }
 
 model Product {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  sku          String   @unique
-  name         String
-  slug         String   @unique
-  description  String
-  price        Int
-  mrp          Int
-  material     String
-  sizeCategory String
-  genders      String[]
-
-  inStock      Boolean @default(true)
-  isActive     Boolean @default(true)
-  isNewArrival Boolean @default(false)
-  isBestSeller Boolean @default(false)
-
-  colors     ProductColors[]
-  sizes      ProductSizes[]
-  images     ProductImages[]
-  attributes ProductAttributes[]
-
-  productTypeId String       @db.ObjectId
-  productType   ProductTypes @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
-
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId String   @db.ObjectId
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  CartItem Cart[]
-  WishList WishList[]
-
-  collections CollectionProducts[]
-  orders      OrderedItem[]
-
-  warehouses WareHouseProducts[]
+  id            String               @id @default(uuid()) @map("_id")
+  sku           String               @unique
+  name          String
+  slug          String               @unique
+  description   String
+  price         Int
+  mrp           Int
+  material      String
+  sizeCategory  String
+  genders       String[]
+  inStock       Boolean              @default(true)
+  isActive      Boolean              @default(true)
+  isNewArrival  Boolean              @default(false)
+  isBestSeller  Boolean              @default(false)
+  colors        ProductColors[]
+  sizes         ProductSizes[]
+  images        ProductImages[]
+  attributes    ProductAttributes[]
+  productTypeId String
+  productType   ProductTypes         @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
+  categoryId    String
+  category      Category             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
+  CartItem      Cart[]
+  WishList      WishList[]
+  collections   CollectionProducts[]
+  orders        OrderedItem[]
+  warehouses    WareHouseProducts[]
 
   @@index([sku, slug])
   @@map("products")
 }
 
 model ProductTypes {
-  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  id         String      @id @default(uuid()) @map("_id")
   name       String      @unique
   attributes Attribute[]
+  products   Product[]
 
-  products Product[]
-
-  @@map("productTypes")
+  @@map("product_types")
 }
 
 model ProductColors {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String
-  hex  String
-
-  Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String?  @db.ObjectId
+  id        String   @id @default(uuid()) @map("_id")
+  name      String
+  hex       String
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String?
 }
 
 model ProductAttributes {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  key   String
-  value String
-
-  Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String?  @db.ObjectId
+  id        String   @id @default(uuid()) @map("_id")
+  key       String
+  value     String
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String?
 }
 
 model ProductSizes {
-  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  id           String   @id @default(uuid()) @map("_id")
   key          String
   value        String
   quantity     Int
   productColor String
-
-  Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String?  @db.ObjectId
+  product      Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId    String?
 
   @@unique([key, productId, productColor])
 }
 
 model ProductImages {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  key      String
-  color    String
-  url      String
-  publicId String
-
-  Product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId String?  @db.ObjectId
+  id        String   @id @default(uuid()) @map("_id")
+  key       String
+  color     String
+  url       String
+  publicId  String
+  product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId String?
 }
 
-// user
 model User {
-  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  id        String     @id @default(uuid()) @map("_id")
   name      String?
-  email     String? @unique
-  phone     String  @unique
+  email     String?    @unique
+  phone     String     @unique
   gender    String?
-  onBoarded Boolean @default(false)
-
+  onBoarded Boolean    @default(false)
   addresses Address[]
   orders    Order[]
   cart      Cart[]
   wishlist  WishList[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
 
   @@map("users")
 }
 
-model otp {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+model Otp {
+  id       String   @id @default(uuid()) @map("_id")
   phone    String   @unique
   otp      String
   expireAt DateTime
@@ -241,7 +216,7 @@ model otp {
 }
 
 model Address {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  id            String   @id @default(uuid()) @map("_id")
   name          String
   line1         String
   line2         String
@@ -253,79 +228,73 @@ model Address {
   phone         String
   email         String
   residenceType String
-
-  userId String  @db.ObjectId
-  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  orders Order[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders        Order[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("addresses")
 }
 
 model Cart {
-  id        String   @id @map("_id")
+  id        String   @id @default(uuid()) @map("_id")
   quantity  Int
   size      String
   color     String
-  productId String   @db.ObjectId
+  productId String
   product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  userId    String   @db.ObjectId
+  userId    String
   User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("carts")
 }
 
 model WishList {
-  id        String   @id @map("_id")
+  id        String   @id @default(uuid()) @map("_id")
   quantity  Int
   size      String?
   color     String
-  productId String   @db.ObjectId
+  productId String
   product   Product? @relation(fields: [productId], references: [id], onDelete: Cascade)
-  userId    String   @db.ObjectId
+  userId    String
   User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("wishlists")
 }
 
 model Order {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  orderNumber    String @unique
-  status         String @default("PENDING")
-  totalAmount    Int
-  deliveryCharge Int
-  giftWrapCharge Int
-  subTotal       Int
-
+  id              String           @id @default(uuid()) @map("_id")
+  orderNumber     String           @unique
+  status          String           @default("PENDING")
+  totalAmount     Int
+  deliveryCharge  Int
+  giftWrapCharge  Int
+  subTotal        Int
   items           OrderedItem[]
-  userId          String           @db.ObjectId
+  userId          String
   user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  shippingId      String           @db.ObjectId
+  shippingId      String
   shippingAddress Address          @relation(fields: [shippingId], references: [id], onDelete: Cascade)
-  pickupId        String?          @db.ObjectId
+  pickupId        String?
   pickupAddress   WareHouse?       @relation(fields: [pickupId], references: [id])
-  // courierId       String?          @db.ObjectId
-  // courier         Courier?         @relation(fields: [courierId], references: [id], onDelete: Cascade)
-  shipmentId      String?          @db.ObjectId
+  shipmentId      String?
   shipment        Shipment?
-  paymentId       String?          @db.ObjectId
+  paymentId       String?
   payment         RazorpayPayment?
-
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  cancelledAt DateTime?
-  cancelledBy String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  cancelledAt     DateTime?
+  cancelledBy     String?
 
   @@map("orders")
 }
 
 model OrderedItem {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  orderId    String  @db.ObjectId
+  id         String  @id @default(uuid()) @map("_id")
+  orderId    String
   Order      Order   @relation(fields: [orderId], references: [id])
-  productId  String  @db.ObjectId
+  productId  String
   product    Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   color      String
   size       String
@@ -333,23 +302,13 @@ model OrderedItem {
   price      Float
   totalPrice Float
 
-  @@map("orderedItems")
+  @@map("ordered_items")
 }
 
-// model Courier {
-//   id       String  @id @default(auto()) @map("_id") @db.ObjectId
-//   name     String  @unique
-//   isActive Boolean @default(false)
-
-//   orders Order[]
-
-//   @@map("couriers")
-// }
-
 model Shipment {
-  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(uuid()) @map("_id")
   platform    String
-  response    Json // Store the full API response from the courier service
+  response    Json
   pickupDate  DateTime?
   orderNumber String    @unique
   Order       Order     @relation(fields: [orderNumber], references: [orderNumber], onDelete: Cascade)
@@ -360,8 +319,8 @@ model Shipment {
 }
 
 model RazorpayPayment {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  orderId           String   @unique @db.ObjectId
+  id                String   @id @default(uuid()) @map("_id")
+  orderId           String   @unique
   Order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   razorpayOrderId   String
   razorpayPaymentId String
@@ -369,5 +328,5 @@ model RazorpayPayment {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  @@map("razorpayPayments")
+  @@map("razorpay_payments")
 }
