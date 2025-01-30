@@ -40,7 +40,7 @@ export const deleteWareHouse = async (id: string) => {
 
 export const addWarehouseProduct = async (productId: string, quantity: number, warehouseId: string, name: string) => {
   try {
-    const warehouse = await prisma.wareHouseProducts.create({ data: { productId, quantity, warehouseId, name } });
+    const warehouse = await prisma.wareHouseProducts.create({ data: { productId, warehouseId } });
     return { ok: true, data: warehouse };
   } catch (err: any) {
     if (err.code === "P2002") {

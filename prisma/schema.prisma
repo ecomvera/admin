@@ -16,7 +16,7 @@ datasource db {
 model WareHouse {
   id                  String              @id @default(uuid()) @map("_id")
   contactPersonName   String
-  contactPersonMobile Int
+  contactPersonMobile String
   contactPersonEmail  String
   warehouseName       String              @unique
   address             String

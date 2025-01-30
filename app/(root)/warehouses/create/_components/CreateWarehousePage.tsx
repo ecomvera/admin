@@ -45,6 +45,7 @@ const CreateWarehousePage = () => {
     onSubmit: async (values) => {
       try {
         formik.isSubmitting = true;
+        console.log({ values });
         const res = await addWareHouse(values);
         if (!res?.ok) {
           error(res?.error || "Something went wrong");
@@ -68,13 +69,7 @@ const CreateWarehousePage = () => {
     <div className="laptop:px-4 max-w-mobile mt-5 sm:mt-2">
       <form onSubmit={formik.handleSubmit} className="space-y-3 mt-0">
         <InputField formik={formik} label="Contact Person Name" name="contactPersonName" placeholder="Name" />
-        <InputField
-          formik={formik}
-          label="Contact Person Mobile"
-          name="contactPersonMobile"
-          placeholder="Mobile"
-          type="number"
-        />
+        <InputField formik={formik} label="Contact Person Mobile" name="contactPersonMobile" placeholder="Mobile" />
         <InputField formik={formik} label="Contact Person Email" name="contactPersonEmail" placeholder="Email" />
         <InputField formik={formik} label="Address" placeholder="Address" />
         <div className="flex gap-4">
