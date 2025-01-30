@@ -1,7 +1,7 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Dispatch, SetStateAction } from "react";
-import { ICategory } from "@/types";
+import { ICategory, IType } from "@/types";
 
 const SelectProductType = ({
   value,
@@ -12,7 +12,7 @@ const SelectProductType = ({
 }: {
   value: string;
   onChange: Dispatch<SetStateAction<string>>;
-  data: string[];
+  data: IType[];
   label: string;
   isLoading?: boolean;
 }) => {
@@ -25,8 +25,8 @@ const SelectProductType = ({
         </SelectTrigger>
         <SelectContent>
           {data?.map((item) => (
-            <SelectItem key={item} value={item}>
-              {item}
+            <SelectItem key={item.id} value={item.id}>
+              {item.name}
             </SelectItem>
           ))}
         </SelectContent>

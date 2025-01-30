@@ -20,7 +20,7 @@ const SizeCategory = ({
   isLoading?: boolean;
 }) => {
   return (
-    <FormItem className="flex w-[200px] flex-col">
+    <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
       <Select
         onValueChange={(v) => {

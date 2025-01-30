@@ -4,11 +4,11 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { ICategory } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import React from "react";
-import { DeleteCategory } from "../dialogs/deleteCategory";
-import { Skeleton } from "../ui/skeleton";
+import { DeleteCategory } from "@/components/dialogs/deleteCategory";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CircleIcon, Cross2Icon, Pencil2Icon } from "@radix-ui/react-icons";
 import { IoCheckmark } from "react-icons/io5";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import { createSlug, error } from "@/lib/utils";
 import { updateCategoryNameDB } from "@/lib/actions/category.action";
 import { useCategoryStore } from "@/stores/category";

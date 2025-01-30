@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useRef, useState } from "react";
 import { error, success } from "@/lib/utils";
 import { ISize } from "@/types";
 import { createSizeDB } from "@/lib/actions/size.action";
-import { DeleteSize } from "../dialogs/deleteSize";
+import { DeleteSize } from "@/components/dialogs/deleteSize";
 import { useEnumsStore } from "@/stores/enums";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { capitalize } from "lodash";

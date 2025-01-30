@@ -13,7 +13,7 @@ export const useTypes = () => {
 
   useEffect(() => {
     if (data?.data && !types.length) {
-      setTypes(data.data.map((type: any) => type.name) || []);
+      setTypes(data.data || []);
     }
   }, [data, mutate, setTypes]);
   return { types, fetchingTypes };

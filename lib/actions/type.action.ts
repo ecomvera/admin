@@ -19,10 +19,27 @@ export const createProductTypeDB = async (name: string) => {
   }
 };
 
-export const deleteProductTypeDB = async (name: string) => {
+export const updateProductTypeDB = async (id: string, name: string) => {
+  try {
+    await prisma.productTypes.update({
+      where: { id },
+      data: { name },
+    });
+
+    return { ok: true };
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      return { ok: false, error: "Product type already exists" };
+    }
+    console.error(error);
+    return { ok: false, error: error.message };
+  }
+};
+
+export const deleteProductTypeDB = async (id: string) => {
   try {
     await prisma.productTypes.delete({
-      where: { name },
+      where: { id },
     });
 
     return { ok: true };

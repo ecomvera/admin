@@ -65,7 +65,8 @@ const Settings = ({ data, refetch }: { data: IWarehouse; refetch: any }) => {
       return;
     }
 
-    navigate.replace("/warehouses");
+    // navigate.replace("/warehouses");
+    window.location.href = "/warehouses";
   };
 
   return (

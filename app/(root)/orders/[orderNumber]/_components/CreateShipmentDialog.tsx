@@ -265,7 +265,7 @@ const CourierCard = ({ cp, sd, onSelect, isCreating }: { cp: any; sd: any; onSel
     <div className="border rounded p-2 group relative">
       <span className="flex justify-between">
         <h4 className="text-xs font-semibold border rounded-xl px-2 border-purple-600 w-fit">{cp.platform}</h4>
-        <h3 className="text-lg h-fit font-bold text-green-500 leading-none">{cp.courier_charge}</h3>
+        <h3 className="text-lg h-fit font-bold text-green-500 leading-none">{cp.courier_charge.toFixed(2)}</h3>
       </span>
       <h5 className="text-sm font-semibold mt-1">{cp.courier_name}</h5>
       <div className="mt-2 text-xs grid grid-cols-2 gap-1">

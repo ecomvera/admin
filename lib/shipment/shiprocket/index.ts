@@ -36,7 +36,7 @@ export class Shiprocket {
       const res = await fetch(
         `${api.checkCourierServiceability}?pickup_postcode=${obj.p_pin}&delivery_postcode=${obj.d_pin}&weight=${
           parseInt(obj.w) / 1000
-        }&cod=${obj.pm === "pre-paid" ? 0 : 1}&length=${obj.bl}&breadth=${obj.bw}&height=${obj.bh}`,
+        }&cod=${obj.pm === "pre-paid" ? 0 : 1}&length=${obj.bl}&breadth=${obj.bw}&height=${obj.bh}&declared_value=${obj.sv}`,
         {
           method: "GET",
           headers: {
@@ -56,7 +56,7 @@ export class Shiprocket {
         platform: this.platform,
         courier_id: item.courier_company_id,
         courier_name: item.courier_name,
-        courier_charge: item.freight_charge,
+        courier_charge: item.freight_charge + item.coverage_charges,
         is_surface: item.is_surface,
         zone: item.zone,
         deliveryTime: item.estimated_delivery_days,
@@ -105,7 +105,7 @@ export class Shiprocket {
         body: JSON.stringify({ shipment_id: orderRes.shipment_id, courier_id: courier.courier_id }),
       }).then((res) => res.json());
 
-      if (awbRes.awb_assign_status === 0) {
+      if (awbRes.awb_assign_status === 0 || awbRes.status_code === 500) {
         console.log(`Order id - ${shipment.orderNumber} - Error generating AWB number:`, awbRes);
         return {
           data: null,
@@ -119,6 +119,7 @@ export class Shiprocket {
           platform,
           response: awbRes.response.data,
           orderNumber: shipment.orderNumber,
+          pickupDate: awbRes.response.data.pickup_scheduled_date || null,
         },
       });
 
@@ -249,6 +250,51 @@ export class Shiprocket {
       return { data: awbRes };
     } catch (error) {
       console.log("[trackCourier] - error -", error);
+      return { data: null, error: "something went wrong!" };
+    }
+  }
+
+  // schedule pickup
+  async schedulePickup(date: string, shipmentId: string, orderNumber: string): Promise<any> {
+    try {
+      await this.ensureToken();
+
+      if (!Shiprocket.token) {
+        console.log("Shiprocket token not found");
+        return null;
+      }
+
+      const res = await fetch(`${api.schedulePickup}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${Shiprocket.token}`,
+        },
+        body: JSON.stringify({
+          shipment_id: [shipmentId],
+          pickup_date: [date],
+        }),
+      }).then((res) => res.json());
+
+      console.log({ schedulePickup: res });
+
+      if (res.Message || res.pickup_status) {
+        // update shipment
+        await prisma.shipment.update({
+          where: {
+            orderNumber,
+          },
+          data: {
+            pickupDate: res.Booked_date || res?.response?.pickup_scheduled_date || null,
+          },
+        });
+
+        return { data: {}, message: res.Message || res?.response?.data || "Schedule pickup failed" };
+      }
+
+      return { data: null, error: res.Message || "Schedule pickup failed" };
+    } catch (error) {
+      console.log("[schedulePickup] - error -", error);
       return { data: null, error: "something went wrong!" };
     }
   }

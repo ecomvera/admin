@@ -102,6 +102,7 @@ export async function GET(req: NextApiRequest) {
         attributes: true,
         colors: true,
         category: { select: { name: true, slug: true } },
+        productType: { include: { attributes: true } },
       },
     });
 
@@ -109,7 +110,7 @@ export async function GET(req: NextApiRequest) {
     console.log("\x1b[32m%s\x1b[0m", `Search - Database query time: ${duration} ms`);
 
     // set unique sub categories
-    const productTypes = [...new Set(result.map((item) => item.productType))];
+    const productTypes = [...new Set(result.map((item) => item.productType.name))];
 
     // set unique product sizes
     const productSizes = [...new Set(result.map((item) => item.sizeCategory))];

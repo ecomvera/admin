@@ -62,7 +62,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       where: {
         AND: conditionsArr,
       },
-      include: { images: true, sizes: true, attributes: true, colors: true },
+      include: { images: true, sizes: true, attributes: true, colors: true, productType: { include: { attributes: true } } },
     },
   };
 
@@ -79,9 +79,13 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       where: { slug: slug },
       include: {
         children: {
-          select: { name: true, slug: true, products: { select: { sizeCategory: true, genders: true, productType: true } } },
+          select: {
+            name: true,
+            slug: true,
+            products: { select: { sizeCategory: true, genders: true, productType: { include: { attributes: true } } } },
+          },
         },
-        products: { select: { sizeCategory: true, genders: true, productType: true } },
+        products: { select: { sizeCategory: true, genders: true, productType: { include: { attributes: true } } } },
       },
     });
 
@@ -121,6 +125,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
               attributes: true,
               colors: true,
               category: { select: { name: true, slug: true } },
+              productType: { include: { attributes: true } },
             },
           },
         },
@@ -130,14 +135,14 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         where: { collectionId: category?.id },
         select: {
           product: {
-            include: { category: { select: { name: true, slug: true } } },
+            include: { category: { select: { name: true, slug: true } }, productType: { include: { attributes: true } } },
           },
         },
       });
       products = productsData.map((item) => item.product);
 
       // set unique sub categories
-      productTypes = [...new Set(subcategoriesData.map((item) => item.product.productType))];
+      productTypes = [...new Set(subcategoriesData.map((item) => item.product.productType.name))];
 
       // set unique product sizes
       productSizes = [...new Set(subcategoriesData.map((item) => item.product.sizeCategory))];

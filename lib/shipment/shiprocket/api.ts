@@ -6,4 +6,5 @@ export const api = {
   cancelAWB: "https://apiv2.shiprocket.in/v1/external/orders/cancel/shipment/awbs",
   cancelOrder: "https://apiv2.shiprocket.in/v1/external/orders/cancel",
   trackAWB: "https://apiv2.shiprocket.in/v1/external/courier/track/awb",
+  schedulePickup: "https://apiv2.shiprocket.in/v1/external/courier/generate/pickup",
 };

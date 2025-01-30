@@ -31,6 +31,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Order not found" });
     }
 
+    console.log(order.userId, authCheck.user?.userId);
+
     if (order.userId !== authCheck.user?.userId) {
       return NextResponse.json({ ok: false, error: "Unauthorized" });
     }

@@ -14,7 +14,17 @@ import { MdDeleteOutline } from "react-icons/md";
 import { deleteAttributeDB, deleteAttributeValueDB } from "@/lib/actions/attribute.action";
 import { useEnumsStore } from "@/stores/enums";
 
-export function DeleteAttribute({ id, type, values }: { id: string; type: "key" | "value"; values?: string[] }) {
+export function DeleteAttribute({
+  id,
+  type,
+  values,
+  productTypeId,
+}: {
+  id: string;
+  type: "key" | "value";
+  values?: string[];
+  productTypeId: string;
+}) {
   const { removeAttributeKey, removeAttributeValue } = useEnumsStore();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -25,11 +35,11 @@ export function DeleteAttribute({ id, type, values }: { id: string; type: "key" 
     let res;
     if (type === "key") {
       res = await deleteAttributeDB(id);
-      if (res.ok) removeAttributeKey(id);
+      if (res.ok) removeAttributeKey(id, productTypeId);
     }
     if (type === "value") {
       res = await deleteAttributeValueDB(id, values || []);
-      if (res.ok) removeAttributeValue(id, values || []);
+      if (res.ok) removeAttributeValue(id, values || [], productTypeId);
     }
     setOpen(false);
     setIsDeleting(false);

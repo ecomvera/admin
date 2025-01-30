@@ -24,7 +24,7 @@ import { error, success } from "@/lib/utils";
 import { productValidation } from "@/lib/validations/product";
 import { addProductState } from "@/stores/add-product-state";
 import { useFileStore, useProductStore } from "@/stores/product";
-import { ICategory, IProduct, IProductAttribute, IProductSize } from "@/types";
+import { IAttribute, ICategory, IProduct, IProductAttribute, IProductSize } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { capitalize, debounce, isEqual, set } from "lodash";
 import Link from "next/link";
@@ -37,7 +37,8 @@ const AddProductPage = () => {
   const { categories, fetchCategoriesLoading } = useCategories();
   const { sizes: defaultSizes, fetchingSizes } = useSizes();
   const { colors: defaultColors, fetchingColors } = useColors();
-  const { attributes: defaultAttributes, fetchingAttributes } = useAttributes();
+  // const { attributes: defaultAttributes, fetchingAttributes } = { attributes: [], fetchingAttributes: false };
+  const [defaultAttributes, setDefaultAttributes] = useState<IAttribute[]>([]);
   const { types: defaultTypes, fetchingTypes } = useTypes();
   const { files, setFiles, colors, setColors } = useFileStore();
   const { addProduct } = useProductStore();
@@ -45,8 +46,6 @@ const AddProductPage = () => {
   const { formData, setFormData } = addProductState();
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
   const [loading, setLoading] = useState(false);
-
-  console.log(defaultWarehouses);
 
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
@@ -121,9 +120,6 @@ const AddProductPage = () => {
     if (!files.length) return error("Please add some images");
     if (colors.length * 5 !== files.length) return error("Please add all the images");
     if (!formData.warehouses.length) return error("Please add a warehouse");
-    for (const item of formData.warehouses) {
-      if (!item.quantity) return error("Please fill all the warehouse quantity");
-    }
     if (!formData.category) return error("Please select the product category");
     if (!formData.subCategory) return error("Please select the product sub category");
     if (!formData.sizes.length) return error("Please select the product sizes");
@@ -143,6 +139,13 @@ const AddProductPage = () => {
       setSubCategories(categories.find((item) => item.id === formData.category)?.children || []);
     }
   }, [formData.category]);
+
+  useEffect(() => {
+    if (formData.productType) {
+      setFormData({ ...formData, attributes: [] });
+      setDefaultAttributes(defaultTypes.find((item) => item.id === formData.productType)?.attributes || []);
+    }
+  }, [formData.productType]);
 
   return (
     <div className="p-2">
@@ -169,21 +172,6 @@ const AddProductPage = () => {
             <InputField control={form.control} name="mrp" label="MRP" type="number" placeholder="Enter MRP (Rs.)" />
           </div>
           <div className="flex flex-col mobile:flex-row gap-3">
-            <WarehouseInput
-              label="Warehouse"
-              warehouses={formData.warehouses}
-              setWarehouses={(data: any) => setFormData({ ...formData, warehouses: data })}
-              defaultWarehouses={defaultWarehouses}
-            />
-            <SelectProductType
-              value={formData.productType}
-              onChange={(data: any) => setFormData({ ...formData, productType: data })}
-              isLoading={fetchingTypes}
-              data={defaultTypes}
-              label="Product Type"
-            />
-          </div>
-          <div className="flex flex-col mobile:flex-row gap-3">
             <SelectFields
               value={formData.category}
               onChange={(data: any) => setFormData({ ...formData, category: data })}
@@ -199,14 +187,37 @@ const AddProductPage = () => {
               label="Sub Category"
             />
           </div>
+          <div className="flex flex-col mobile:flex-row gap-3">
+            <div className="flex w-full gap-2">
+              <SelectProductType
+                value={formData.productType}
+                onChange={(data: any) => setFormData({ ...formData, productType: data })}
+                isLoading={fetchingTypes}
+                data={defaultTypes}
+                label="Product Type"
+              />
+              <SizeCategory
+                value={formData.sizeCategory}
+                onChange={(data: any) => setFormData({ ...formData, sizeCategory: data })}
+                setSizes={(data: any) => setFormData({ ...formData, sizes: data })}
+                isLoading={fetchCategoriesLoading}
+                data={sizeCategories}
+                label="Size Category"
+              />
+            </div>
+            <AttributesInput
+              label="Attributes"
+              attributes={formData.attributes}
+              setAttributes={(data: any) => setFormData({ ...formData, attributes: data })}
+              defaultAttributes={defaultAttributes}
+            />
+          </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <SizeCategory
-              value={formData.sizeCategory}
-              onChange={(data: any) => setFormData({ ...formData, sizeCategory: data })}
-              setSizes={(data: any) => setFormData({ ...formData, sizes: data })}
-              isLoading={fetchCategoriesLoading}
-              data={sizeCategories}
-              label="Size Category"
+            <WarehouseInput
+              label="Warehouse"
+              warehouses={formData.warehouses}
+              setWarehouses={(data: any) => setFormData({ ...formData, warehouses: data })}
+              defaultWarehouses={defaultWarehouses}
             />
             <SizeDetails
               label="Size Details"
@@ -227,12 +238,6 @@ const AddProductPage = () => {
             </div>
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">
-            <AttributesInput
-              label="Attributes"
-              attributes={formData.attributes}
-              setAttributes={(data: any) => setFormData({ ...formData, attributes: data })}
-              defaultAttributes={defaultAttributes}
-            />
             <InputField control={form.control} name="sku" label="SKU (Stock kepping unit)" placeholder="Enter product sku" />
           </div>
 

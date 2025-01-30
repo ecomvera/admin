@@ -2,10 +2,10 @@
 
 import { prisma } from "../prisma";
 
-export const createAttribute = async (key: string) => {
+export const createAttribute = async (key: string, productTypeId: string) => {
   try {
     const attribute = await prisma.attribute.create({
-      data: { key, value: [] },
+      data: { key, value: [], productTypeId },
     });
 
     return { ok: true, data: attribute };
@@ -19,10 +19,10 @@ export const createAttribute = async (key: string) => {
   }
 };
 
-export const addAttributeValueDB = async (key: string, value: string) => {
+export const addAttributeValueDB = async (id: string, value: string) => {
   try {
     await prisma.attribute.update({
-      where: { key },
+      where: { id },
       data: {
         value: { push: value },
       },

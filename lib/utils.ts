@@ -70,7 +70,7 @@ export const verifyHash = (str: string, hash: string) => {
 };
 
 export const getDiscount = (mrp: number, price: number) => {
-  return ((mrp - price / mrp) / 100).toFixed(2);
+  return (((mrp - price) / mrp) * 100).toFixed(2);
 };
 
 export function boldNumbersInString(str: string) {

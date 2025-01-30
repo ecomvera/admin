@@ -13,22 +13,22 @@ import { MdDeleteOutline } from "react-icons/md";
 import { useEnumsStore } from "@/stores/enums";
 import { deleteProductTypeDB } from "@/lib/actions/type.action";
 
-export function DeleteType({ name }: { name: string }) {
+export function DeleteType({ id }: { id: string }) {
   const { removeType } = useEnumsStore();
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    let res = await deleteProductTypeDB(name);
-    if (res.ok) removeType(name);
+    let res = await deleteProductTypeDB(id);
+    if (res.ok) removeType(id);
     setOpen(false);
     setIsDeleting(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger className="">
+      <DialogTrigger className="hidden group-hover:inline">
         <MdDeleteOutline className="text-lg cursor-pointer" fill="red" onClick={() => setOpen(true)} />
       </DialogTrigger>
       <DialogContent>

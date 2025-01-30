@@ -121,19 +121,11 @@ const ProductDetail = ({
       <div className="flex mt-5 items-end gap-2">
         <p className="text-xl font-semibold">Rs. {data.price}</p>
         <p className="text-sm font-normal text-light-3 line-through">MRP {data.mrp}</p>
-        <p className="text-lg text-green-600 font-semibold">{getDiscount(data.price, data.mrp)}% off</p>
+        <p className="text-lg text-green-600 font-semibold">{getDiscount(data.mrp, data.price)}% off</p>
       </div>
       <span className="text-sm font-normal text-light-3">incl. of all taxes</span>
       <div className="border w-fit border-light-3 px-3 my-5">
         <p className="text-base font-semibold text-light-3">{data.material}</p>
-      </div>
-      <div>
-        <p className="text-base font-semibold">
-          Weight: <span className="text-sm">{data.weight} grams</span>
-        </p>
-        <p className="text-base font-semibold">
-          Delivery: <span className="text-sm">{data.hasDeliveryFee ? "Yes" : "No"}</span>
-        </p>
       </div>
       <p className="text-base mobile:text-lg font-semibold text-dark-3 uppercase mt-5">Colors</p>
       <div className="flex gap-1 items-center">

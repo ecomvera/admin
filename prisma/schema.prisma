@@ -35,8 +35,6 @@ model WareHouseProducts {
   id        String  @id @default(auto()) @map("_id") @db.ObjectId
   productId String  @db.ObjectId
   product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  quantity  Int
-  name      String
 
   warehouseId String    @db.ObjectId
   warehouse   WareHouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
@@ -46,9 +44,13 @@ model WareHouseProducts {
 
 model Attribute {
   id    String   @id @default(auto()) @map("_id") @db.ObjectId
-  key   String   @unique
+  key   String
   value String[]
 
+  productTypeId String       @db.ObjectId
+  productType   ProductTypes @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([key, productTypeId])
   @@map("attributes")
 }
 
@@ -123,17 +125,21 @@ model Product {
   price        Int
   mrp          Int
   material     String
-  inStock      Boolean  @default(true)
-  isNewArrival Boolean  @default(false)
-  isBestSeller Boolean  @default(false)
-  genders      String[]
   sizeCategory String
-  productType  String
+  genders      String[]
+
+  inStock      Boolean @default(true)
+  isActive     Boolean @default(true)
+  isNewArrival Boolean @default(false)
+  isBestSeller Boolean @default(false)
 
   colors     ProductColors[]
   sizes      ProductSizes[]
   images     ProductImages[]
   attributes ProductAttributes[]
+
+  productTypeId String       @db.ObjectId
+  productType   ProductTypes @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
 
   category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   categoryId String   @db.ObjectId
@@ -154,8 +160,13 @@ model Product {
 }
 
 model ProductTypes {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  name String @unique
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  name       String      @unique
+  attributes Attribute[]
+
+  products Product[]
+
+  @@map("productTypes")
 }
 
 model ProductColors {
@@ -294,7 +305,7 @@ model Order {
   shippingId      String           @db.ObjectId
   shippingAddress Address          @relation(fields: [shippingId], references: [id], onDelete: Cascade)
   pickupId        String?          @db.ObjectId
-  pickupAddress   WareHouse?       @relation(fields: [pickupId], references: [id], onDelete: Cascade)
+  pickupAddress   WareHouse?       @relation(fields: [pickupId], references: [id])
   // courierId       String?          @db.ObjectId
   // courier         Courier?         @relation(fields: [courierId], references: [id], onDelete: Cascade)
   shipmentId      String?          @db.ObjectId
@@ -336,13 +347,14 @@ model OrderedItem {
 // }
 
 model Shipment {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
   platform    String
   response    Json // Store the full API response from the courier service
-  orderNumber String   @unique
-  Order       Order    @relation(fields: [orderNumber], references: [orderNumber], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  pickupDate  DateTime?
+  orderNumber String    @unique
+  Order       Order     @relation(fields: [orderNumber], references: [orderNumber], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@map("shipments")
 }

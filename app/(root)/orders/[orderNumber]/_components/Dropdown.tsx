@@ -61,7 +61,7 @@ const Dropdown = ({ shipment }: { shipment: IShipment | null }) => {
               <DropdownMenuSeparator />
             </>
           )}
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             className="text-red-600"
             onClick={() => {
               setOpenCancelOrderAlert(true);
@@ -69,7 +69,7 @@ const Dropdown = ({ shipment }: { shipment: IShipment | null }) => {
             }}
           >
             Cancel Order
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </DropdownMenuContent>
       </DropdownMenu>
       <CancelCourier open={openCancelCourierAlert} setOpen={setOpenCancelCourierAlert} shipment={shipment} />

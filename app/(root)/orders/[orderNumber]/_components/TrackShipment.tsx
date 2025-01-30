@@ -24,7 +24,7 @@ const TrackShipment = ({ awb, platform }: { awb: string; platform: string }) => 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="ml-4 rounded " size={"sm"} onClick={fetchActivities}>
+        <Button className="rounded " size={"sm"} onClick={fetchActivities}>
           Track
         </Button>
       </DialogTrigger>

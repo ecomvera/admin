@@ -1,4 +1,4 @@
-import { IAttribute, IColor, ISize } from "@/types";
+import { IAttribute, IColor, ISize, IType } from "@/types";
 import { create } from "zustand";
 
 const attributes: IAttribute[] = [];
@@ -6,13 +6,8 @@ const sizes: ISize[] = [];
 const colors: IColor[] = [];
 
 interface IEnumsStore {
-  attributes: IAttribute[];
-  setAttributes: (attributes: IAttribute[]) => void;
-  addAttributeKey: (attribute: IAttribute) => void;
-  addAttributeValue: (key: string, value: string) => void;
-  removeAttributeKey: (id: string) => void;
-  removeAttributeValue: (id: string, values: string[]) => void;
-  updateAttributeKey: (id: string, key: string) => void;
+  // attributes: IAttribute[];
+  // setAttributes: (attributes: IAttribute[]) => void;
 
   // sizes
   sizes: ISize[];
@@ -27,34 +22,21 @@ interface IEnumsStore {
   removeColor: (value: string) => void;
 
   // types
-  types: string[];
-  setTypes: (value: string[]) => void;
-  addType: (value: string) => void;
+  types: IType[];
+  setTypes: (value: IType[]) => void;
+  addType: (id: string, value: string) => void;
+  updateType: (id: string, value: string) => void;
   removeType: (value: string) => void;
+  addAttributeKey: (attribute: IAttribute, id: string) => void;
+  addAttributeValue: (id: string, value: string, typeId: string) => void;
+  updateAttributeKey: (id: string, key: string, typeId: string) => void;
+  removeAttributeKey: (id: string, typeId: string) => void;
+  removeAttributeValue: (id: string, values: string[], typeId: string) => void;
 }
 
 export const useEnumsStore = create<IEnumsStore>((set) => ({
-  attributes: attributes,
-  setAttributes: (attributes: IAttribute[]) => set({ attributes }),
-  addAttributeKey: (attribute: IAttribute) => set((state) => ({ attributes: [...state.attributes, attribute] })),
-  addAttributeValue: (key: string, value: string) =>
-    set((state) => ({
-      attributes: state.attributes.map((item) => {
-        if (item.key === key) {
-          return { ...item, value: [...item.value, value] };
-        }
-        return item;
-      }),
-    })),
-  removeAttributeKey: (id: string) => set((state) => ({ attributes: state.attributes.filter((item) => item.id !== id) })),
-  removeAttributeValue: (id: string, values: string[]) =>
-    set((state) => {
-      const attribute = state.attributes.find((item) => item.id === id);
-      if (attribute) attribute.value = values;
-      return { attributes: state.attributes };
-    }),
-  updateAttributeKey: (id: string, key: string) =>
-    set((state) => ({ attributes: state.attributes.map((item) => (item.id === id ? { ...item, key } : item)) })),
+  // attributes: attributes,
+  // setAttributes: (attributes: IAttribute[]) => set({ attributes }),
 
   // sizes
   sizes: sizes,
@@ -72,7 +54,44 @@ export const useEnumsStore = create<IEnumsStore>((set) => ({
 
   // types
   types: [],
-  setTypes: (value: string[]) => set({ types: value }),
-  addType: (value: string) => set((state) => ({ types: [...state.types, value] })),
-  removeType: (value: string) => set((state) => ({ types: state.types.filter((s) => s !== value) })),
+  setTypes: (value: IType[]) => set({ types: value }),
+  addType: (id: string, value: string) => set((state) => ({ types: [...state.types, { id, name: value }] })),
+  updateType: (id: string, value: string) =>
+    set((state) => ({ types: state.types.map((s) => (s.id === id ? { ...s, name: value } : s)) })),
+  removeType: (id: string) => set((state) => ({ types: state.types.filter((s) => s.id !== id) })),
+  addAttributeKey: (attribute: IAttribute, id: string) =>
+    set((state) => ({
+      types: state.types.map((s) =>
+        s.id === id ? { ...s, attributes: s.attributes ? [...s.attributes, attribute] : [attribute] } : s
+      ),
+    })),
+  addAttributeValue: (id: string, value: string, typeId: string) =>
+    set((state) => ({
+      types: state.types.map((s) =>
+        s.id === typeId
+          ? { ...s, attributes: s.attributes?.map((a) => (a.id === id ? { ...a, value: [...a.value, value] } : a)) }
+          : s
+      ),
+    })),
+  updateAttributeKey: (id: string, key: string, typeId: string) =>
+    set((state) => ({
+      types: state.types.map((s) =>
+        s.id === typeId ? { ...s, attributes: s.attributes?.map((a) => (a.id === id ? { ...a, key } : a)) } : s
+      ),
+    })),
+  removeAttributeKey: (id: string, typeId: string) =>
+    set((state) => ({
+      types: state.types.map((s) => (s.id === typeId ? { ...s, attributes: s.attributes?.filter((a) => a.id !== id) } : s)),
+    })),
+  removeAttributeValue: (id: string, values: string[], typeId: string) =>
+    set((state) => ({
+      types: state.types.map((s) =>
+        s.id === typeId
+          ? {
+              ...s,
+              attributes: s.attributes?.map((a) => (a.id === id ? { ...a, value: values } : a)),
+            }
+          : s
+      ),
+    })),
 }));

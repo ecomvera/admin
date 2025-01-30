@@ -41,7 +41,7 @@ const EditProductPage = ({ product, searchParams }: { product: IProduct; searchP
   const router = useRouter();
   const { sizes: defaultSizes } = useSizes();
   const { colors: defaultColors } = useColors();
-  const { attributes: defaultAttributes } = useAttributes();
+  const { attributes: defaultAttributes } = { attributes: [] };
   const { types: defaultTypes } = useTypes();
   const { warehouses: defaultWarehouses, fetchWarehouseLoading } = useWarehouses();
   const [subCategory, setSubCategory] = useState(product.categoryId);
@@ -54,8 +54,10 @@ const EditProductPage = ({ product, searchParams }: { product: IProduct; searchP
   const [colors, setColors] = useState<IColor[]>(product.colors);
   const [attributes, setAttributes] = useState<IProductAttribute[]>(product.attributes);
   const [subCategories, setSubCategories] = useState<ICategory[]>([]);
-  const [warehouses, setWarehouses] = useState<{ id: string; quantity: number; name: string }[]>([]);
+  const [warehouses, setWarehouses] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
+
+  console.log(defaultTypes);
 
   const form = useForm<z.infer<typeof productValidation>>({
     resolver: zodResolver(productValidation),
@@ -116,9 +118,6 @@ const EditProductPage = ({ product, searchParams }: { product: IProduct; searchP
     if (!files.length) return error("Please add some images");
     if (colors.length * 5 !== files.length) return error("Please add all the images");
     if (!warehouses.length) return error("Please add a warehouse");
-    for (const item of warehouses) {
-      if (!item.quantity) return error("Please fill all the warehouse quantity");
-    }
     if (!category) return error("Please select the product category");
     if (!subCategory) return error("Please select the product sub category");
     if (!sizes.length) return error("Please select the product sizes");
@@ -146,7 +145,7 @@ const EditProductPage = ({ product, searchParams }: { product: IProduct; searchP
     // setColors(product.colors);
     // setAttributes(product.attributes);
     // @ts-ignore
-    setWarehouses([...product.warehouses.map((k) => ({ id: k.warehouseId, quantity: k.quantity, name: k.name }))]);
+    setWarehouses([...product.warehouses.map((k) => ({ id: k.warehouseId, name: k.name }))]);
   }, [product]);
 
   useEffect(() => {

@@ -23,6 +23,8 @@ const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
 
+      {defaultAttributes.length === 0 && <span className="text-sm text-red-600">Please select the product type.</span>}
+
       {selectedSize?.map((item, index) => (
         <div className="flex gap-3 py-[1px]" key={index}>
           <Input value={item} aria-checked className="text-sm font-semibold" readOnly />

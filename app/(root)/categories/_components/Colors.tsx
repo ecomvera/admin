@@ -1,13 +1,13 @@
 "use client";
 
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { error, success } from "@/lib/utils";
 import { IColor } from "@/types";
 import { useEnumsStore } from "@/stores/enums";
-import { DeleteColor } from "../dialogs/deleteColor";
+import { DeleteColor } from "@/components/dialogs/deleteColor";
 import { createColorDB } from "@/lib/actions/color.action";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import tinyColor from "tinycolor2";
 import { SliderPicker } from "react-color";
 import { capitalize } from "lodash";

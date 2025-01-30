@@ -24,9 +24,10 @@ export interface ICourier {
 }
 
 export interface IAttribute {
-  id?: string;
+  id: string;
   key: string;
   value: string[];
+  productTypeId?: string;
 }
 
 export interface ISize {
@@ -39,6 +40,12 @@ export interface IColor {
   id: string;
   name: string;
   hex: string;
+}
+
+export interface IType {
+  id: string;
+  name: string;
+  attributes?: IAttribute[];
 }
 
 export interface ICategory {
@@ -92,7 +99,6 @@ export interface IProduct {
   genders: string[];
   warehouses: {
     id: string;
-    quantity: number;
     name: string;
   }[];
   productType: string;

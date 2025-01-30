@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AddSubCategory from "../forms/AddSubCategory";
-import AddCategory from "../forms/AddCategory";
+import AddSubCategory from "@/components/forms/AddSubCategory";
+import AddCategory from "@/components/forms/AddCategory";
 import { ICategory } from "@/types";
 
 const CategoryTabs = ({ isLoading, parentCategories }: { isLoading: boolean; parentCategories: ICategory[] }) => {

@@ -3,20 +3,18 @@ import { FormItem, FormLabel } from "@/components/ui/form";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { IAttribute, IWarehouse } from "@/types";
+import { IWarehouse } from "@/types";
 
 interface Props {
   label: string;
   warehouses: {
     id: string;
-    quantity: number;
     name: string;
   }[];
   setWarehouses: Dispatch<
     SetStateAction<
       {
         id: string;
-        quantity: number;
         name: string;
       }[]
     >
@@ -25,34 +23,21 @@ interface Props {
 }
 
 const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }: Props) => {
-  const [selectedWarehouses, setSelectedWarehouses] = useState<{ id: string; quantity: number; name: string }[]>([]);
+  const [selectedWarehouses, setSelectedWarehouses] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
-    setSelectedWarehouses(warehouses.map((k) => ({ id: k.id, quantity: k.quantity, name: k.name })));
+    setSelectedWarehouses(warehouses.map((k) => ({ id: k.id, name: k.name })));
   }, [warehouses]);
 
   return (
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
 
+      {defaultWarehouses?.length === 0 && <div className="text-sm text-red-500">No warehouses found</div>}
+
       {selectedWarehouses?.map((item, index) => (
         <div className="flex gap-2 py-[1px]" key={index}>
           <Input value={item.name} aria-checked className="text-sm font-semibold" readOnly />
-          <Input
-            type="number"
-            className="text-sm w-16 placeholder:text-sm p-1"
-            placeholder="Qnt."
-            value={warehouses[index]?.quantity === 0 ? "" : warehouses[index]?.quantity}
-            onChange={(e) => {
-              const objIndex = warehouses.findIndex((k) => k.id === item.id);
-              const obj = {
-                id: item.id,
-                quantity: Number(e.target.value),
-                name: item.name,
-              };
-              setWarehouses([...warehouses.slice(0, objIndex), obj, ...warehouses.slice(objIndex + 1)]);
-            }}
-          />
           <Button
             type="button"
             variant={"outline"}
@@ -73,8 +58,8 @@ const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }:
         <Select
           onValueChange={(field) => {
             const name = defaultWarehouses.find((w) => w.id === field)?.warehouseName ?? "";
-            setWarehouses([...warehouses, { id: field, quantity: 0, name }]);
-            setSelectedWarehouses([...selectedWarehouses, { id: field, name, quantity: 0 }]);
+            setWarehouses([...warehouses, { id: field, name }]);
+            setSelectedWarehouses([...selectedWarehouses, { id: field, name }]);
           }}
           value=""
         >

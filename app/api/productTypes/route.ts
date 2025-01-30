@@ -6,7 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET() {
   try {
     console.log("\x1b[32m%s\x1b[0m", "Product types api called!");
-    const data = await prisma.productTypes.findMany();
+    const data = await prisma.productTypes.findMany({ include: { attributes: true } });
 
     const response = NextResponse.json({
       ok: true,

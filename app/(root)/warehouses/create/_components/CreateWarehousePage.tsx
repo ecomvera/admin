@@ -53,7 +53,8 @@ const CreateWarehousePage = () => {
 
         formik.resetForm();
         success("Warehouse added successfully");
-        router.push("/warehouses");
+        // router.push("/warehouses");
+        window.location.href = "/warehouses";
       } catch (err) {
         console.error(err);
         error("Something went wrong");

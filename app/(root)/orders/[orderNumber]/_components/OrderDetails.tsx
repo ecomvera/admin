@@ -13,11 +13,13 @@ import { CreateShipmentDialog } from "./CreateShipmentDialog";
 import Dropdown from "./Dropdown";
 import { useEffect, useState } from "react";
 import TrackShipment from "./TrackShipment";
+import SchedulePickup from "./SchedulePickup";
 
 interface IShipment {
   platform: string;
   awb: string;
-  shipmentId?: string;
+  pickupDate?: string;
+  shipmentId: string;
   orderId?: string;
   orderNumber: string;
 }
@@ -34,6 +36,7 @@ const OrderDetails = ({ order, pickupLocations }: { order: IOrder; pickupLocatio
         shipmentId: order.shipment.response.shipment_id,
         orderId: order.shipment.response.order_id,
         orderNumber: order.orderNumber,
+        pickupDate: order.shipment.response.pickup_scheduled_date,
       });
     }
   }, []);
@@ -41,18 +44,22 @@ const OrderDetails = ({ order, pickupLocations }: { order: IOrder; pickupLocatio
   return (
     <div>
       {!order.cancelledAt ? (
-        <div className="flex gap-2 justify-end min-h-8">
-          {shipment &&
-            (!shipment?.awb ? (
-              <CreateShipmentDialog order={order} pickupLocations={pickupLocations} />
-            ) : (
-              <div className="flex items-center">
-                <h2>
-                  <span className="font-semibold">AWB:</span> {shipment.awb}
-                </h2>
-                <TrackShipment awb={shipment.awb} platform={shipment.platform} />
+        <div className="flex gap-2 items-center justify-end min-h-8">
+          {!shipment?.awb ? (
+            <CreateShipmentDialog order={order} pickupLocations={pickupLocations} />
+          ) : (
+            <div className="flex items-center gap-2">
+              <div className="flex flex-col">
+                <h2 className="font-semibold leading-5">AWB: {shipment.awb}</h2>
+                {shipment.pickupDate && <p className="text-xs">Pickup Date: {shipment.pickupDate.slice(0, 16)}</p>}
               </div>
-            ))}
+              {!shipment.pickupDate ? (
+                <SchedulePickup shipmentId={shipment.shipmentId} platform={shipment.platform} />
+              ) : (
+                <TrackShipment awb={shipment.awb} platform={shipment.platform} />
+              )}
+            </div>
+          )}
           <Dropdown shipment={shipment} />
         </div>
       ) : (

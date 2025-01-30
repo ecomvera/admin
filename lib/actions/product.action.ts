@@ -20,20 +20,30 @@ export const createProduct = async (product: IProduct) => {
           price: product.price,
           mrp: product.mrp,
           material: product.material,
-          productType: product.productType,
+          productTypeId: product.productType,
           sizeCategory: product.sizeCategory,
           genders: product.genders,
           categoryId: product.categoryId,
+          isNewArrival: true,
         },
+      });
+
+      console.log(product.attributes);
+
+      // create product attributes
+      await prisma.productAttributes.createMany({
+        data: product.attributes.map((attribute) => ({
+          key: attribute.key,
+          value: attribute.value,
+          productId: data.id,
+        })),
       });
 
       // add product to warehouseproducts
       await prisma.wareHouseProducts.createMany({
         data: product.warehouses.map((warehouse) => ({
           productId: data.id,
-          quantity: warehouse.quantity,
           warehouseId: warehouse.id,
-          name: warehouse.name,
         })),
       });
 
@@ -69,14 +79,14 @@ export const createProduct = async (product: IProduct) => {
         })),
       });
 
-      // create product attributes
-      await prisma.productAttributes.createMany({
-        data: product.attributes.map((attribute) => ({
-          key: attribute.key,
-          value: attribute.value,
-          productId: data.id,
-        })),
-      });
+      // // create product attributes
+      // await prisma.productAttributes.createMany({
+      //   data: product.attributes.map((attribute) => ({
+      //     key: attribute.key,
+      //     value: attribute.value,
+      //     productId: data.id,
+      //   })),
+      // });
 
       return data;
     });
@@ -115,7 +125,7 @@ export const updateProductDB = async (id: string, data: IProduct) => {
           price: data.price,
           mrp: data.mrp,
           material: data.material,
-          productType: data.productType,
+          productTypeId: data.productType,
           sizeCategory: data.sizeCategory,
           inStock: data.inStock,
           isNewArrival: data.isNewArrival,
@@ -130,9 +140,7 @@ export const updateProductDB = async (id: string, data: IProduct) => {
       await prisma.wareHouseProducts.createMany({
         data: data.warehouses.map((warehouse) => ({
           productId: id,
-          quantity: warehouse.quantity,
           warehouseId: warehouse.id,
-          name: warehouse.name,
         })),
       });
 
@@ -171,15 +179,15 @@ export const updateProductDB = async (id: string, data: IProduct) => {
         })),
       });
 
-      // update product attributes
-      await prisma.productAttributes.deleteMany({ where: { productId: id } });
-      await prisma.productAttributes.createMany({
-        data: data.attributes.map((attribute) => ({
-          key: attribute.key,
-          value: attribute.value,
-          productId: id,
-        })),
-      });
+      // // update product attributes
+      // await prisma.productAttributes.deleteMany({ where: { productId: id } });
+      // await prisma.productAttributes.createMany({
+      //   data: data.attributes.map((attribute) => ({
+      //     key: attribute.key,
+      //     value: attribute.value,
+      //     productId: id,
+      //   })),
+      // });
     });
 
     return { ok: true };

@@ -97,4 +97,7 @@ export class Bigship {
 
   // track shipment
   async trackCourier(): Promise<any> {}
+
+  // schedule pickup
+  async schedulePickup(): Promise<any> {}
 }
