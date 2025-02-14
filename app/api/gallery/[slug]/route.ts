@@ -2,27 +2,26 @@ import { prisma } from "@/lib/prisma";
 import type { NextApiRequest } from "next";
 import { NextRequest, NextResponse } from "next/server";
 
-// admin api
-export async function GET(req: NextApiRequest, { params }: { params: { id: string } }) {
-  console.log("fetchApi called - group category");
+export async function GET(req: NextApiRequest, { params }: { params: { slug: string } }) {
+  console.log("fetchApi called - gallery collection");
 
-  const { id } = params;
+  const { slug } = params;
   try {
     const start = Date.now();
     const data = await prisma.collection.findUnique({
-      where: { id },
+      where: { slug, isActive: true },
     });
 
     if (!data) {
       return NextResponse.json({
         ok: false,
-        error: "no category found!",
+        error: "no data found!",
       });
     }
 
     const res = await prisma.collectionProducts.findMany({
       where: { collectionId: data?.id },
-      select: { product: { select: { id: true, name: true, slug: true } } },
+      select: { product: { include: { images: true } } },
     });
     const products = res.map((item) => item.product);
 
@@ -36,7 +35,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { id: strin
 
     return response;
   } catch (error: any) {
-    console.error("ERROR:", "<fetch group category>", error);
+    console.error("ERROR:", "<fetch gallery collection>", error);
     const errorResponse = NextResponse.json({
       ok: false,
       error: error.message,

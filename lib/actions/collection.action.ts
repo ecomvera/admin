@@ -12,9 +12,16 @@ export const isCollectionExist = async (slug: string) => {
   }
 };
 
-export const createCollectionDB = async (name: string, slug: string, image: string, banner: string) => {
+export const createCollectionDB = async (
+  name: string,
+  slug: string,
+  isGallery: boolean,
+  icon: string,
+  image: string,
+  banner: string
+) => {
   try {
-    const gCategory = await prisma.collection.create({ data: { name, slug, image, banner } });
+    const gCategory = await prisma.collection.create({ data: { name, slug, isGallery, icon, image, banner } });
     return { ok: true, data: gCategory };
   } catch (error: any) {
     if (error.code === "P2002") {
@@ -28,13 +35,14 @@ export const createCollectionDB = async (name: string, slug: string, image: stri
 
 export const updateCollectionDB = async ({
   id,
-  data: { name, slug, isActive, image, banner },
+  data: { name, slug, isActive, icon, image, banner },
 }: {
   id: string;
   data: {
     name?: string;
     slug?: string;
     isActive?: boolean;
+    icon?: string;
     image?: string;
     banner?: string;
   };
@@ -42,7 +50,7 @@ export const updateCollectionDB = async ({
   try {
     await prisma.collection.update({
       where: { id },
-      data: { name, slug, isActive, image, banner },
+      data: { name, slug, isActive, icon, image, banner },
     });
 
     return { ok: true };

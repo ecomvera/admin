@@ -77,6 +77,8 @@ export interface ICollection {
   id: string;
   name: string;
   slug: string;
+  isGallery: boolean;
+  icon: string;
   image: string;
   banner: string;
   isActive: boolean;

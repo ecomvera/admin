@@ -25,7 +25,7 @@ export function DeleteGroupCategory({ collection }: { collection: ICollection })
     const res = await deleteCollectionDB(collection.id);
     if (res.ok) {
       deleteCollection(collection.id); // delete from store
-      const imagesPublicIds = `${getPublicId(collection.image)},${getPublicId(collection.banner)}`;
+      const imagesPublicIds = `${getPublicId(collection.image || collection.icon)},${getPublicId(collection.banner)}`;
       await fetch(`/api/image?public_ids=${imagesPublicIds}`, { method: "DELETE" });
     } else {
       error("Something went wrong");

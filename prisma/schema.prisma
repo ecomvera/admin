@@ -71,8 +71,10 @@ model Collection {
   id        String               @id @default(uuid()) @map("_id")
   name      String
   slug      String               @unique
-  image     String
+  image     String?
+  icon      String?
   banner    String
+  isGallery Boolean              @default(false)
   products  CollectionProducts[]
   isActive  Boolean              @default(false)
   createdAt DateTime             @default(now())
