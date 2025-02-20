@@ -10,6 +10,17 @@ const VideoContainer = ({ video, setVideo }: { video: string; setVideo: (url: st
   const [uploading, setUploading] = useState(false);
 
   const handleUploadVideo = async (file: File) => {
+    console.log(file.size / 1024 / 1024);
+    if (file.size / 1024 / 1024 > 100) {
+      toast({
+        title: "Error",
+        description: "Video size should be less than 100MB",
+      });
+      setFile(null);
+      setVideo("");
+      return;
+    }
+
     setUploading(true);
     const formData = new FormData();
     formData.append("file", file);
@@ -30,6 +41,7 @@ const VideoContainer = ({ video, setVideo }: { video: string; setVideo: (url: st
           description: data.error || "Video upload failed",
         });
         setFile(null);
+        setVideo("");
       }
     } catch (error) {
       console.error("Upload error:", error);
@@ -38,6 +50,7 @@ const VideoContainer = ({ video, setVideo }: { video: string; setVideo: (url: st
         description: "Video upload failed",
       });
       setFile(null);
+      setVideo("");
     } finally {
       setUploading(false);
     }
