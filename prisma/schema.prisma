@@ -110,38 +110,61 @@ model Category {
 }
 
 model Product {
-  id            String               @id @default(uuid()) @map("_id")
-  sku           String               @unique
-  name          String
-  slug          String               @unique
-  description   String
-  price         Int
-  mrp           Int
-  material      String
-  sizeCategory  String
-  genders       String[]
-  inStock       Boolean              @default(true)
-  isActive      Boolean              @default(true)
-  isNewArrival  Boolean              @default(false)
-  isBestSeller  Boolean              @default(false)
-  colors        ProductColors[]
-  sizes         ProductSizes[]
-  images        ProductImages[]
-  attributes    ProductAttributes[]
-  productTypeId String
-  productType   ProductTypes         @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
-  categoryId    String
-  category      Category             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  CartItem      Cart[]
-  WishList      WishList[]
-  collections   CollectionProducts[]
-  orders        OrderedItem[]
-  warehouses    WareHouseProducts[]
+  id             String               @id @default(uuid()) @map("_id")
+  sku            String               @unique
+  name           String
+  slug           String               @unique
+  description    String
+  price          Int
+  mrp            Int
+  material       String
+  sizeCategory   String
+  genders        String[]
+  inStock        Boolean              @default(true)
+  isActive       Boolean              @default(true)
+  isNewArrival   Boolean              @default(false)
+  isBestSeller   Boolean              @default(false)
+  colors         ProductColors[]
+  sizes          ProductSizes[]
+  images         ProductImages[]
+  attributes     ProductAttributes[]
+  video          String
+  productTypeId  String
+  productType    ProductTypes         @relation(fields: [productTypeId], references: [id], onDelete: Cascade)
+  categoryId     String
+  category       Category             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  CartItem       Cart[]
+  WishList       WishList[]
+  collections    CollectionProducts[]
+  orders         OrderedItem[]
+  warehouses     WareHouseProducts[]
+  ProductReviews ProductReviews[]
+
+  search_vector Unsupported("tsvector")?
 
   @@index([sku, slug])
   @@map("products")
+}
+
+model ProductReviews {
+  id        String   @id @default(uuid()) @map("_id")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  rating    Float
+  comment   String
+  images    String[]
+  isDeleted Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId, orderId])
+  @@map("product_reviews")
 }
 
 model ProductTypes {
@@ -192,18 +215,19 @@ model ProductImages {
 }
 
 model User {
-  id        String     @id @default(uuid()) @map("_id")
-  name      String?
-  email     String?    @unique
-  phone     String     @unique
-  gender    String?
-  onBoarded Boolean    @default(false)
-  addresses Address[]
-  orders    Order[]
-  cart      Cart[]
-  wishlist  WishList[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id             String           @id @default(uuid()) @map("_id")
+  name           String?
+  email          String?          @unique
+  phone          String           @unique
+  gender         String?
+  onBoarded      Boolean          @default(false)
+  addresses      Address[]
+  orders         Order[]
+  cart           Cart[]
+  wishlist       WishList[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  ProductReviews ProductReviews[]
 
   @@map("users")
 }
@@ -288,6 +312,7 @@ model Order {
   updatedAt       DateTime         @updatedAt
   cancelledAt     DateTime?
   cancelledBy     String?
+  ProductReviews  ProductReviews[]
 
   @@map("orders")
 }

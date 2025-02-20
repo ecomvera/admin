@@ -9,11 +9,11 @@ import SelectProductType from "@/components/forms/SelectProductType";
 import SizeCategory from "@/components/forms/SizeCategory";
 import SizeDetails from "@/components/forms/SizeDetails";
 import SwitchField from "@/components/forms/SwitchField";
+import VideoContainer from "@/components/forms/VideoContainer";
 import WarehouseInput from "@/components/forms/WarehouseInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { sizeCategories } from "@/constants";
-import { useAttributes } from "@/hook/useAttributes";
 import { useCategories } from "@/hook/useCategories";
 import { useColors } from "@/hook/useColors";
 import { useSizes } from "@/hook/useSizes";
@@ -40,7 +40,7 @@ const AddProductPage = () => {
   // const { attributes: defaultAttributes, fetchingAttributes } = { attributes: [], fetchingAttributes: false };
   const [defaultAttributes, setDefaultAttributes] = useState<IAttribute[]>([]);
   const { types: defaultTypes, fetchingTypes } = useTypes();
-  const { files, setFiles, colors, setColors } = useFileStore();
+  const { files, setFiles, colors, setColors, video, setVideo } = useFileStore();
   const { addProduct } = useProductStore();
 
   const { formData, setFormData } = addProductState();
@@ -86,6 +86,7 @@ const AddProductPage = () => {
       sizeCategory: formData.sizeCategory,
       sizes: formData.sizes,
       images: files,
+      video: video,
       attributes: formData.attributes,
       categoryId: formData.subCategory,
     };
@@ -114,6 +115,7 @@ const AddProductPage = () => {
     setSubCategories([]);
     setFiles([]);
     setColors([]);
+    setVideo("");
   };
 
   const validateData = () => {
@@ -149,13 +151,8 @@ const AddProductPage = () => {
 
   return (
     <div className="p-2">
-      <ImageContainer
-        files={files}
-        setFiles={setFiles}
-        colors={colors}
-        setColors={setColors}
-        defaultColors={defaultColors}
-      />
+      <ImageContainer colors={colors} setColors={setColors} defaultColors={defaultColors} />
+      <VideoContainer video={video} setVideo={setVideo} />
 
       <Form {...form}>
         <form className="flex flex-col justify-start gap-3 mt-5" onSubmit={form.handleSubmit(onSubmit)}>
@@ -210,6 +207,7 @@ const AddProductPage = () => {
               attributes={formData.attributes}
               setAttributes={(data: any) => setFormData({ ...formData, attributes: data })}
               defaultAttributes={defaultAttributes}
+              productType={formData.productType}
             />
           </div>
           <div className="flex gap-3 flex-col tablet:flex-row">

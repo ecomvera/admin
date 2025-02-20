@@ -10,9 +10,10 @@ interface Props {
   attributes: IProductAttribute[];
   setAttributes: Dispatch<SetStateAction<IProductAttribute[]>>;
   defaultAttributes: IAttribute[];
+  productType: string;
 }
 
-const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }: Props) => {
+const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes, productType }: Props) => {
   const [selectedSize, setSelectedSize] = useState<string[]>([...attributes.map((i) => i.key)]);
 
   useEffect(() => {
@@ -23,7 +24,10 @@ const AttributesInput = ({ label, attributes, setAttributes, defaultAttributes }
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
 
-      {defaultAttributes.length === 0 && <span className="text-sm text-red-600">Please select the product type.</span>}
+      {defaultAttributes.length === 0 && !productType && (
+        <span className="text-sm text-red-600">Please select the product type.</span>
+      )}
+      {defaultAttributes.length === 0 && productType && <span className="text-sm">No attributes available</span>}
 
       {selectedSize?.map((item, index) => (
         <div className="flex gap-3 py-[1px]" key={index}>

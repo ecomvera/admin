@@ -19,6 +19,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         attributes: true,
         sizes: true,
         warehouses: { select: { id: true, warehouse: { select: { pincode: true } } } },
+        ProductReviews: { include: { user: { select: { name: true } } } },
       },
     });
     const duration = Date.now() - start;

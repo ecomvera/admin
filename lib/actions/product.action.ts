@@ -24,11 +24,10 @@ export const createProduct = async (product: IProduct) => {
           sizeCategory: product.sizeCategory,
           genders: product.genders,
           categoryId: product.categoryId,
+          video: product.video,
           isNewArrival: true,
         },
       });
-
-      console.log(product.attributes);
 
       // create product attributes
       await prisma.productAttributes.createMany({

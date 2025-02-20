@@ -9,6 +9,8 @@ interface IFiles {
   setFiles: (files: IImageFile[]) => void;
   colors: IColor[];
   setColors: (colors: IColor[]) => void;
+  video: string;
+  setVideo: (url: string) => void;
 }
 
 export const useFileStore = create<IFiles>((set) => ({
@@ -16,6 +18,8 @@ export const useFileStore = create<IFiles>((set) => ({
   setFiles: (files) => set({ files: files }),
   colors: colors,
   setColors: (colors) => set({ colors: colors }),
+  video: "",
+  setVideo: (url) => set({ video: url }),
 }));
 
 const products: IProduct[] = [];

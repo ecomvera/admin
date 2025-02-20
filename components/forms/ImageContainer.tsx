@@ -4,16 +4,15 @@ import { Button } from "@/components/ui/button";
 import { TwitterPicker } from "react-color";
 import { IColor, IImageFile } from "@/types";
 import { error } from "@/lib/utils";
+import { useFileStore } from "@/stores/product";
 
 interface Props {
   colors: IColor[];
-  files: IImageFile[];
-  setFiles: (files: IImageFile[]) => void;
   setColors: (colors: IColor[]) => void;
   defaultColors: IColor[];
 }
 
-const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: Props) => {
+const ImageContainer = ({ colors, setColors, defaultColors }: Props) => {
   const [currentColor, setCurrentColor] = useState();
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
@@ -57,8 +56,6 @@ const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: P
         <ColorContainer
           key={color.id}
           color={color.hex}
-          files={files}
-          setFiles={setFiles}
           colors={colors}
           setColors={setColors}
           defaultColors={defaultColors}
@@ -70,19 +67,16 @@ const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: P
 
 const ColorContainer = ({
   color,
-  files,
-  setFiles,
   colors,
   setColors,
   defaultColors,
 }: {
   color: string;
   colors: IColor[];
-  files: IImageFile[];
-  setFiles: (files: IImageFile[]) => void;
   setColors: (colors: IColor[]) => void;
   defaultColors: IColor[];
 }) => {
+  const { files, setFiles } = useFileStore();
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const updateColor = (newColor: any) => {

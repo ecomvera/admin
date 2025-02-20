@@ -14,42 +14,68 @@ const ProductDetails = ({ data }: { data: IProduct }) => {
   return (
     <div className="mobile:py-5">
       <div className="flex flex-col tablet:flex-row">
-        <LeftGallaryView images={data.images} currentColor={currentColor} />
+        <LeftGallaryView images={data.images} currentColor={currentColor} video={data.video} />
         <ProductDetail data={data} currentColor={currentColor} setCurrentColor={setCurrentColor} />
       </div>
     </div>
   );
 };
 
-const LeftGallaryView = ({ images, currentColor }: { images: IProduct["images"]; currentColor: string }) => {
-  const [currentSlide, setCurrentSlide] = useState(images.filter((image) => image.color === currentColor)[0].url);
+const LeftGallaryView = ({
+  images,
+  currentColor,
+  video,
+}: {
+  images: IProduct["images"];
+  currentColor: string;
+  video: string;
+}) => {
+  const [currentSlide, setCurrentSlide] = useState({
+    type: "image",
+    url: images.filter((image) => image.color === currentColor)[0].url,
+  });
 
-  const handleSlideChange = (url: string) => {
-    setCurrentSlide(url);
+  const handleSlideChange = (type: string, url: string) => {
+    setCurrentSlide({ type, url });
   };
 
   useEffect(() => {
-    setCurrentSlide(images.filter((image) => image.color === currentColor)[0].url);
+    setCurrentSlide({
+      type: "image",
+      url: images.filter((image) => image.color === currentColor)[0].url,
+    });
   }, [currentColor]);
 
   return (
     <div className="w-full tablet:w-auto flex flex-col justify-center gap-1 mobile:flex-row-reverse">
       <div className="relative w-full mobile:w-[500px] tablet:w-[350px] laptop:w-[500px] transition-all">
         <AspectRatio ratio={0.8 / 1} className="border rounded-md relative">
-          <Image
-            priority
-            src={currentSlide}
-            quality={100}
-            className="w-full h-full object-cover rounded-md"
-            alt="product"
-            width={0}
-            height={0}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
+          {currentSlide.type === "image" ? (
+            <Image
+              priority
+              src={currentSlide.url}
+              quality={100}
+              className="w-full h-full object-cover rounded-md"
+              alt="product"
+              width={0}
+              height={0}
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            />
+          ) : (
+            <video
+              controls
+              controlsList="nodownload nofullscreen noremoteplayback noplaybackrate "
+              autoPlay
+              muted
+              className="w-full h-full"
+            >
+              <source src={video} type="video/mp4" />
+            </video>
+          )}
         </AspectRatio>
       </div>
 
-      <div className="flex justify-between w-full h-fit mobile:flex-col mobile:w-[100px] tablet:w-[70px] laptop:w-[100px] transition-all">
+      <div className="flex justify-between w-full h-[300px] mobile:flex-col mobile:w-[100px] tablet:w-[70px] laptop:w-[100px] transition-all overflow-y-scroll no-scrollbar">
         {images
           .filter((image) => image.color === currentColor)
           .map((image, index) => (
@@ -65,13 +91,28 @@ const LeftGallaryView = ({ images, currentColor }: { images: IProduct["images"];
                   height={0}
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   onMouseEnter={() => {
-                    if (currentSlide === image.url) return;
-                    handleSlideChange(image.url);
+                    if (currentSlide.url === image.url) return;
+                    handleSlideChange("image", image.url);
                   }}
                 />
               </AspectRatio>
             </div>
           ))}
+        {video && (
+          <div className={`cursor-pointer w-full`}>
+            <AspectRatio ratio={0.8 / 1} className="border rounded-md">
+              <video
+                className="w-full h-full"
+                onMouseEnter={() => {
+                  if (currentSlide.url === video) return;
+                  handleSlideChange("video", video);
+                }}
+              >
+                <source src={video} type="video/mp4" />
+              </video>
+            </AspectRatio>
+          </div>
+        )}
       </div>
     </div>
   );

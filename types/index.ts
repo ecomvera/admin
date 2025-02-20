@@ -107,6 +107,7 @@ export interface IProduct {
   sizeCategory: string;
   sizes: IProductSize[];
   images: IImageFile[];
+  video: string;
   attributes: IProductAttribute[];
 
   category?: ICategory;
