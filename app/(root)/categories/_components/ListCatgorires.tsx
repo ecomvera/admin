@@ -15,6 +15,7 @@ import { useCategoryStore } from "@/stores/category";
 import { capitalize } from "lodash";
 
 const ListCatgorires = ({ isLoading, allCategories }: { isLoading: boolean; allCategories: ICategory[] }) => {
+  const { categories } = useCategoryStore();
   return (
     <Command className="h-full max-h-[400px]">
       <div className="flex gap-3">
@@ -33,7 +34,7 @@ const ListCatgorires = ({ isLoading, allCategories }: { isLoading: boolean; allC
           <CommandEmpty>No sub-category found.</CommandEmpty>
         )}
         <CommandGroup>
-          {allCategories?.map((category) => (
+          {categories?.map((category) => (
             <div key={category.id}>
               <Item category={category} />
               {category?.children?.map((child) => (

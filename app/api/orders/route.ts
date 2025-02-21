@@ -7,7 +7,7 @@ export async function GET() {
     const orders = await prisma.order.findMany({
       include: { items: { select: { quantity: true, product: { select: { id: true, name: true, slug: true } } } } },
     });
-    console.log(orders.map((o) => ({ id: o.id, userId: o.userId, items: o.items.map((i) => i.product.id) })));
+    // console.log(orders.map((o) => ({ id: o.id, userId: o.userId, items: o.items.map((i) => i.product.id) })));
     return NextResponse.json({ ok: true, data: orders });
   } catch (error) {
     console.log("error -", error);

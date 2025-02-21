@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { error, success } from "@/lib/utils";
 import { IColor } from "@/types";
 import { useEnumsStore } from "@/stores/enums";
@@ -12,8 +12,8 @@ import tinyColor from "tinycolor2";
 import { SliderPicker } from "react-color";
 import { capitalize } from "lodash";
 
-const Colors = ({ colors, isLoading }: { colors: IColor[]; isLoading: boolean }) => {
-  const { addColor } = useEnumsStore();
+const Colors = ({ colors: data, isLoading }: { colors: IColor[]; isLoading: boolean }) => {
+  const { colors, addColor, setColors } = useEnumsStore();
   const [name, setName] = useState("");
   const [hex, setHex] = useState("");
   const [loading, setLoading] = useState(false);
@@ -37,6 +37,10 @@ const Colors = ({ colors, isLoading }: { colors: IColor[]; isLoading: boolean })
     const color = tinyColor(e.target.value);
     setHex(color.toHexString());
   };
+
+  useEffect(() => {
+    if (colors.length === 0) setColors(data);
+  }, []);
 
   return (
     <div className="px-2 flex flex-col gap-2 pt-[1px]">

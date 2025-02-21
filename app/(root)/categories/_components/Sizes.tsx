@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { error, success } from "@/lib/utils";
 import { ISize } from "@/types";
 import { createSizeDB } from "@/lib/actions/size.action";
@@ -12,8 +12,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/u
 import { capitalize } from "lodash";
 import { CheckIcon, CircleIcon, Cross1Icon, PlusIcon } from "@radix-ui/react-icons";
 
-const Sizes = ({ sizes, sizeCategories, isLoading }: { sizes: ISize[]; sizeCategories: string[]; isLoading: boolean }) => {
-  const { setsizes } = useEnumsStore();
+const Sizes = ({
+  sizes: data,
+  sizeCategories,
+  isLoading,
+}: {
+  sizes: ISize[];
+  sizeCategories: string[];
+  isLoading: boolean;
+}) => {
+  const { setsizes, sizes } = useEnumsStore();
+
+  useEffect(() => {
+    if (sizes.length === 0) setsizes(data || []);
+  }, []);
 
   return (
     <div className="px-2 flex flex-col gap-2 pt-[1px]">

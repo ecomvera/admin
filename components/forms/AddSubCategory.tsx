@@ -2,7 +2,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Label } from "../ui/label";
 import { createSubCategoryDB } from "@/lib/actions/category.action";
 import { ICategory } from "@/types";
@@ -11,8 +11,8 @@ import { useCategoryStore } from "@/stores/category";
 import { capitalize } from "lodash";
 import { error, success } from "@/lib/utils";
 
-const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICategory[]; isLoading: boolean }) => {
-  const { addCategory } = useCategoryStore();
+const AddSubCategory = ({ parentCategories: data, isLoading }: { parentCategories: ICategory[]; isLoading: boolean }) => {
+  const { addCategory, categories, setCategories } = useCategoryStore();
   const [name, setName] = useState("");
   const [autoGen, setAutoGen] = useState(true);
   const [slug, setSlug] = useState("");
@@ -47,6 +47,10 @@ const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICa
     }
   };
 
+  useEffect(() => {
+    if (categories.length === 0) setCategories(data);
+  }, []);
+
   return (
     <form className="flex flex-col justify-start gap-5 border p-2" onSubmit={onSubmit}>
       <Select onValueChange={(v) => setParentId(v)} value={parentId}>
@@ -54,7 +58,7 @@ const AddSubCategory = ({ parentCategories, isLoading }: { parentCategories: ICa
           <SelectValue placeholder={isLoading ? "Loading..." : "Select the category"} />
         </SelectTrigger>
         <SelectContent>
-          {parentCategories.map((category) => (
+          {categories.map((category) => (
             <SelectItem key={category.id} value={category.id}>
               {category.name}
             </SelectItem>

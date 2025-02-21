@@ -1,5 +1,3 @@
-"use client";
-
 import CategoryTabs from "@/app/(root)/categories/_components/CategoryTabs";
 import ListCatgorires from "@/app/(root)/categories/_components/ListCatgorires";
 // import Attributes from "@/app/(root)/categories/_components/Attributes";
@@ -13,11 +11,15 @@ import { useCategories } from "@/hook/useCategories";
 import { useSizes } from "@/hook/useSizes";
 import { useColors } from "@/hook/useColors";
 import { useTypes } from "@/hook/useTypes";
+import { getData } from "@/lib/utils";
 
-const Page = () => {
-  const { sizes, fetchingSizes } = useSizes();
-  const { colors, fetchingColors } = useColors();
-  const { categories, fetchCategoriesLoading } = useCategories();
+const Page = async () => {
+  // const { sizes, fetchingSizes } = useSizes();
+  // const { colors, fetchingColors } = useColors();
+  // const { categories, fetchCategoriesLoading } = useCategories();
+  const colors = await getData("/api/colors");
+  const sizes = await getData("/api/sizes");
+  const categories = await getData("/api/categories");
 
   return (
     <div className="flex py-3 flex-col gap-5 tablet:flex-row">
@@ -28,7 +30,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Add Category</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <CategoryTabs parentCategories={categories || []} isLoading={fetchCategoriesLoading} />
+              <CategoryTabs parentCategories={categories || []} isLoading={false} />
             </AccordionContent>
           </AccordionItem>
 
@@ -53,7 +55,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Sizes</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <Sizes sizes={sizes} sizeCategories={sizeCategories} isLoading={fetchingSizes} />
+              <Sizes sizes={sizes} sizeCategories={sizeCategories} isLoading={false} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -65,7 +67,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Categories</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <ListCatgorires isLoading={fetchCategoriesLoading} allCategories={categories || []} />
+              <ListCatgorires isLoading={false} allCategories={categories || []} />
             </AccordionContent>
           </AccordionItem>
 
@@ -82,7 +84,7 @@ const Page = () => {
               <h2 className="text-lg font-semibold text-dark-3">Colors</h2>
             </AccordionTrigger>
             <AccordionContent>
-              <Colors colors={colors} isLoading={fetchingColors} />
+              <Colors colors={colors} isLoading={false} />
             </AccordionContent>
           </AccordionItem>
         </Accordion>

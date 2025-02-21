@@ -26,7 +26,7 @@ export async function getData(url: string) {
 
 export const fetcher = (url: string) => fetch(url).then((res) => res.json());
 export const fetchOpt = {
-  revalidateOnFocus: false,
+  revalidateOnFocus: true,
   // dedupingInterval: 60000,
   revalidateOnMount: true,
 };
