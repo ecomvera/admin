@@ -48,47 +48,47 @@ export const columns: ColumnDef<IProduct>[] = [
       return <div className="capitalize">{data?.name}</div>;
     },
   },
-  // {
-  //   accessorKey: "sizes",
-  //   header: "Quantity",
-  //   cell: ({ row }) => {
-  //     const data: { quantity: number }[] = row.getValue("sizes");
-  //     const totalQuantity = data.reduce((acc, item) => acc + item.quantity, 0);
-  //     return <div className="capitalize">{totalQuantity || 0}</div>;
-  //   },
-  // },
-  // {
-  //   accessorKey: "price",
-  //   header: ({ column }) => {
-  //     return (
-  //       <div className="flex justify-end" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-  //         Amount <LuArrowUpDown className="ml-2 h-4 w-4" />
-  //       </div>
-  //     );
-  //   },
-  //   cell: ({ row }) => {
-  //     const price = parseFloat(row.getValue("price"));
-  //     // Format the price as a dollar price
-  //     const formatted = new Intl.NumberFormat("en-IN", {
-  //       style: "currency",
-  //       currency: "INR",
-  //     }).format(price);
-  //     return <div className="text-right font-medium">{formatted}</div>;
-  //   },
-  // },
-  // {
-  //   accessorKey: "mrp",
-  //   header: () => <div className="text-right">MRP</div>,
-  //   cell: ({ row }) => {
-  //     const mrp = parseFloat(row.getValue("mrp"));
-  //     // Format the mrp as a dollar mrp
-  //     const formatted = new Intl.NumberFormat("en-IN", {
-  //       style: "currency",
-  //       currency: "INR",
-  //     }).format(mrp);
-  //     return <div className="text-right font-medium">{formatted}</div>;
-  //   },
-  // },
+  {
+    accessorKey: "sizes",
+    header: "Quantity",
+    cell: ({ row }) => {
+      const data: { quantity: number }[] = row.getValue("sizes");
+      const totalQuantity = data.reduce((acc, item) => acc + item.quantity, 0);
+      return <div className="capitalize">{totalQuantity || 0}</div>;
+    },
+  },
+  {
+    accessorKey: "price",
+    header: ({ column }) => {
+      return (
+        <div className="flex justify-end" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+          Amount <LuArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      );
+    },
+    cell: ({ row }) => {
+      const price = parseFloat(row.getValue("price"));
+      // Format the price as a dollar price
+      const formatted = new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(price);
+      return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "mrp",
+    header: () => <div className="text-right">MRP</div>,
+    cell: ({ row }) => {
+      const mrp = parseFloat(row.getValue("mrp"));
+      // Format the mrp as a dollar mrp
+      const formatted = new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+      }).format(mrp);
+      return <div className="text-right font-medium">{formatted}</div>;
+    },
+  },
   // {
   //   id: "actions",
   //   enableHiding: false,
