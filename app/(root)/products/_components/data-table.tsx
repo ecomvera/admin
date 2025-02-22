@@ -14,7 +14,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { LuChevronDown } from "react-icons/lu";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -73,14 +72,6 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
     }
   }, [category]);
 
-  // React.useEffect(() => {
-  //   table.getAllColumns().forEach((column) => {
-  //     if (column.id === "category" || column.id === "subCategory") {
-  //       column.toggleVisibility(false);
-  //     }
-  //   });
-  // }, []);
-
   return (
     <div className="w-full">
       <div className="flex items-center py-2">
@@ -116,51 +107,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      {/* <div className="w-full flex gap-5 pb-3">
-        <Select
-          value={(table.getColumn("category")?.getFilterValue() as string) ?? ""}
-          onValueChange={(value) => {
-            setCategory(value);
-            table.getColumn("category")?.parent?.setFilterValue(value === "all" ? "" : value);
-          }}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Filter by category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="all">All</SelectItem>
-              {categories?.map((item) => (
-                <SelectItem key={item.id} value={item.name}>
-                  {item.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
 
-        <Select
-          value={subCategory}
-          onValueChange={(value) => {
-            setSubCategory(value);
-            table.getColumn("subCategory")?.setFilterValue(value === "all" ? "" : value);
-          }}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Filter by sub-category" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectItem value="all">All</SelectItem>
-              {subCategories?.map((item) => (
-                <SelectItem key={item.id} value={item.name}>
-                  {item.name}
-                </SelectItem>
-              ))}
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div> */}
       {/* table here */}
       <div className="rounded-md border">
         <Table>
