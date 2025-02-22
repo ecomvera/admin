@@ -95,7 +95,11 @@ export const columns: ColumnDef<IProduct>[] = [
     cell: ({ row }) => {
       return (
         <DropdownMenu>
-          <DropdownMenuTrigger>open</DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
+            <button>
+              <LuMoreHorizontal className="h-4 w-4" />
+            </button>
+          </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <Link href={`/e/${row.original.slug}?path=/products`}>
