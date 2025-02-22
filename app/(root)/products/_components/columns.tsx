@@ -96,7 +96,12 @@ export const columns: ColumnDef<IProduct>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <LuMoreHorizontal className="h-4 w-4" />
+            {/* <Button variant="ghost" className="h-8 w-8 p-0"> */}
+            <span>
+              <LuMoreHorizontal className="h-4 w-4" />
+            </span>
+
+            {/* </Button> */}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
