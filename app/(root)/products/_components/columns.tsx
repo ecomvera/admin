@@ -96,11 +96,7 @@ export const columns: ColumnDef<IProduct>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger>
-            open
-            {/* <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <LuMoreHorizontal className="h-4 w-4" />
-            </Button> */}
+            <LuMoreHorizontal className="h-4 w-4" />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
@@ -114,7 +110,7 @@ export const columns: ColumnDef<IProduct>[] = [
               Mark as <code className="text-red-600 ml-2">outofstock</code>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            {/* <DeleteProduct id={row.original.id || ""} /> */}
+            <DeleteProduct id={row.original.id || ""} />
           </DropdownMenuContent>
         </DropdownMenu>
       );
