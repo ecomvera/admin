@@ -94,28 +94,29 @@ export const columns: ColumnDef<IProduct>[] = [
     enableHiding: false,
     cell: ({ row }) => {
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <LuMoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link href={`/e/${row.original.slug}?path=/products`}>
-              <DropdownMenuItem className="hover:cursor-pointer">Edit</DropdownMenuItem>
-            </Link>
-            <Link href={`/p/${row.original.slug}`}>
-              <DropdownMenuItem className="hover:cursor-pointer">View product details</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem onClick={() => {}} disabled className="hover:cursor-pointer">
-              Mark as <code className="text-red-600 ml-2">outofstock</code>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            {/* <DeleteProduct id={row.original.id || ""} /> */}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <></>
+        // <DropdownMenu>
+        //   <DropdownMenuTrigger asChild>
+        //     <Button variant="ghost" className="h-8 w-8 p-0">
+        //       <span className="sr-only">Open menu</span>
+        //       <LuMoreHorizontal className="h-4 w-4" />
+        //     </Button>
+        //   </DropdownMenuTrigger>
+        //   <DropdownMenuContent align="end" className="">
+        //     <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        //     <Link href={`/e/${row.original.slug}?path=/products`}>
+        //       <DropdownMenuItem className="hover:cursor-pointer">Edit</DropdownMenuItem>
+        //     </Link>
+        //     <Link href={`/p/${row.original.slug}`}>
+        //       <DropdownMenuItem className="hover:cursor-pointer">View product details</DropdownMenuItem>
+        //     </Link>
+        //     <DropdownMenuItem onClick={() => {}} disabled className="hover:cursor-pointer">
+        //       Mark as <code className="text-red-600 ml-2">outofstock</code>
+        //     </DropdownMenuItem>
+        //     <DropdownMenuSeparator />
+        //     {/* <DeleteProduct id={row.original.id || ""} /> */}
+        //   </DropdownMenuContent>
+        // </DropdownMenu>
       );
     },
   },
