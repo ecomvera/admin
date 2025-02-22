@@ -28,12 +28,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 interface DataTableProps<TData, TValue> {
   isLoading: boolean;
-  // columns: ColumnDef<TData, TValue>[];
+  columns: ColumnDef<TData, TValue>[];
   data: TData[];
   categories: ICategory[];
 }
 
-function DataTable<TData, TValue>({ isLoading, data, categories }: DataTableProps<TData, TValue>) {
+function DataTable<TData, TValue>({ isLoading, columns, data, categories }: DataTableProps<TData, TValue>) {
   const [category, setCategory] = React.useState("");
   const [subCategory, setSubCategory] = React.useState("");
   const [subCategories, setSubCategories] = React.useState<ICategory[]>([]);
@@ -44,7 +44,7 @@ function DataTable<TData, TValue>({ isLoading, data, categories }: DataTableProp
 
   const table = useReactTable({
     data,
-    columns: [],
+    columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
@@ -127,7 +127,7 @@ function DataTable<TData, TValue>({ isLoading, data, categories }: DataTableProp
           {isLoading ? (
             <TableBody>
               <TableRow>
-                {/* <TableCell colSpan={columns.length} className="h-24">
+                <TableCell colSpan={columns.length} className="h-24">
                   <div className="flex flex-col gap-5 h-full w-full items-center justify-center">
                     <Skeleton className="w-full h-[20px] rounded-full" />
                     <Skeleton className="w-full h-[20px] rounded-full" />
@@ -135,7 +135,7 @@ function DataTable<TData, TValue>({ isLoading, data, categories }: DataTableProp
                     <Skeleton className="w-full h-[20px] rounded-full" />
                     <Skeleton className="w-full h-[20px] rounded-full" />
                   </div>
-                </TableCell> */}
+                </TableCell>
               </TableRow>
             </TableBody>
           ) : (
@@ -150,9 +150,9 @@ function DataTable<TData, TValue>({ isLoading, data, categories }: DataTableProp
                 ))
               ) : (
                 <TableRow>
-                  {/* <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
                     No results.
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               )}
             </TableBody>
