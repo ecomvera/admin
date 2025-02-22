@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import _ from "lodash";
-import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 
 // const getProductIDs = async (query: string) => {
 //   const regexTerms = query.split(" ").map((term) => ({
@@ -90,7 +90,7 @@ interface ProductResult {
   // Add other fields you need from the product
 }
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: Request) {
   try {
     console.log("\x1b[32m%s\x1b[0m", "Search API called");
     const start = Date.now();

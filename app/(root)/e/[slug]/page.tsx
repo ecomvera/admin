@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import EditProductPage from "@/app/(root)/e/[slug]/_components/EditProductPage";
 import { getData } from "@/lib/utils";
+export const dynamic = "force-dynamic";
 
 const Page = async ({ params, searchParams }: { params: { slug: string }; searchParams: any }) => {
   const data = await getData(`/api/products/${params.slug}`);

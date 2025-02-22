@@ -2,6 +2,7 @@ import { courierClasses, fetchActiveCouriersFromDB } from "@/lib/shipment";
 import { courierListQuerySchema } from "@/lib/validations/courier";
 import { ICourier } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   try {

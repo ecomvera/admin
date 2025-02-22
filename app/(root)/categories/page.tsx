@@ -12,6 +12,7 @@ import { useSizes } from "@/hook/useSizes";
 import { useColors } from "@/hook/useColors";
 import { useTypes } from "@/hook/useTypes";
 import { getData } from "@/lib/utils";
+export const dynamic = "force-dynamic";
 
 const Page = async () => {
   // const { sizes, fetchingSizes } = useSizes();

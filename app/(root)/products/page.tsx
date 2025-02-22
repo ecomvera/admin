@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import ProductsPage from "@/app/(root)/products/_components/ProductsPage";
 import { getData } from "@/lib/utils";
+export const dynamic = "force-dynamic";
 
 const Page = async () => {
   const categories = await getData("/api/categories");
@@ -38,7 +39,7 @@ const Page = async () => {
         </Breadcrumb>
       </div>
 
-      {!products ? <div>failed to load</div> : <ProductsPage products={products} categories={categories} />}
+      {!products ? <div>failed to load</div> : <ProductsPage products={products} categories={categories || []} />}
     </main>
   );
 };

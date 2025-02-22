@@ -1,14 +1,11 @@
-"use server";
-
 import { delhiveryURL } from "@/constants/shipment_urls";
-import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
+export const dynamic = "force-dynamic";
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: Request) {
   try {
-    const url = new URL(req.url || "");
-    const searchParams = Object.fromEntries(url.searchParams.entries());
-    const { code } = searchParams;
+    const url = new URL(req.url);
+    const code = url.searchParams.get("code");
     if (!code) {
       return NextResponse.json({
         ok: false,
@@ -28,7 +25,7 @@ export async function GET(req: NextApiRequest) {
       });
     }
 
-    return NextResponse.json({ ok: true, message: "Delivery available", data: res.delivery_codes[0].postal_code });
+    return NextResponse.json({ ok: true, message: "Delivery available!", data: res.delivery_codes[0].postal_code });
   } catch (error: any) {
     console.log("error -", error);
     return NextResponse.json({

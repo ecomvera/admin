@@ -9,6 +9,7 @@ import {
 import { getData } from "@/lib/utils";
 import OrderDetails from "@/app/(root)/orders/[orderNumber]/_components/OrderDetails";
 import { Package } from "lucide-react";
+export const dynamic = "force-dynamic";
 
 const page = async ({ params }: { params: { orderNumber: string } }) => {
   const data = await getData("/api/orders/" + params.orderNumber);

@@ -10,14 +10,14 @@ export function cn(...inputs: ClassValue[]) {
 
 export async function getData(url: string) {
   try {
-    const res = await fetch(`${process.env.SERVER_URL}${url}`, { cache: "no-store" }).then((res) => res.json());
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}${url}`, { cache: "no-store" });
     if (!res.ok) {
-      console.log("error -", res.error);
+      console.log("error -", "failed to fetch data");
       return null;
     }
 
-    const data = res.data;
-    return data;
+    const data = await res.json();
+    return data.data;
   } catch (error) {
     console.log("error -", error);
     return null;

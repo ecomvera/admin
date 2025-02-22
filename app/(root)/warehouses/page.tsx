@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import WarehousesPage from "@/app/(root)/warehouses/_components/WarehousesPage";
 import { getData } from "@/lib/utils";
+export const dynamic = "force-dynamic";
 
 const Page = async () => {
   const data = await getData("/api/warehouse");
