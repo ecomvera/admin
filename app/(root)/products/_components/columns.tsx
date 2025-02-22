@@ -16,38 +16,38 @@ import Link from "next/link";
 import { DeleteProduct } from "@/components/dialogs/deleteProduct";
 
 export const columns: ColumnDef<IProduct>[] = [
-  {
-    accessorKey: "name",
-    header: ({ column }) => {
-      return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Name
-          <LuArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => (
-      <div className="lowercase ml-2 tablet:ml-4">
-        <Link href={`/p/${row.original.slug}`}>{row.getValue("name")}</Link>
-      </div>
-    ),
-  },
-  {
-    accessorKey: "category",
-    header: "Category",
-    cell: ({ row }) => {
-      const data: ICategory = row.getValue("category");
-      return <div className="capitalize">{data?.parent?.name}</div>;
-    },
-  },
-  {
-    accessorKey: "subCategory",
-    header: "Sub Category",
-    cell: ({ row }) => {
-      const data: { name: string } = row.getValue("category");
-      return <div className="capitalize">{data?.name}</div>;
-    },
-  },
+  // {
+  //   accessorKey: "name",
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+  //         Name
+  //         <LuArrowUpDown className="ml-2 h-4 w-4" />
+  //       </Button>
+  //     );
+  //   },
+  //   cell: ({ row }) => (
+  //     <div className="lowercase ml-2 tablet:ml-4">
+  //       <Link href={`/p/${row.original.slug}`}>{row.getValue("name")}</Link>
+  //     </div>
+  //   ),
+  // },
+  // {
+  //   accessorKey: "category",
+  //   header: "Category",
+  //   cell: ({ row }) => {
+  //     const data: ICategory = row.getValue("category");
+  //     return <div className="capitalize">{data?.parent?.name}</div>;
+  //   },
+  // },
+  // {
+  //   accessorKey: "subCategory",
+  //   header: "Sub Category",
+  //   cell: ({ row }) => {
+  //     const data: { name: string } = row.getValue("category");
+  //     return <div className="capitalize">{data?.name}</div>;
+  //   },
+  // },
   // {
   //   accessorKey: "sizes",
   //   header: "Quantity",
