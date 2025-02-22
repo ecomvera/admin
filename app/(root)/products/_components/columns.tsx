@@ -96,9 +96,7 @@ export const columns: ColumnDef<IProduct>[] = [
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button>
-              <LuMoreHorizontal className="h-4 w-4" />
-            </button>
+            <button>Open</button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
