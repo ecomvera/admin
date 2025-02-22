@@ -14,6 +14,7 @@ import {
 import { ICategory, IProduct } from "@/types";
 import Link from "next/link";
 import { DeleteProduct } from "@/components/dialogs/deleteProduct";
+import { MoreHorizontal } from "lucide-react";
 
 export const columns: ColumnDef<IProduct>[] = [
   {
@@ -97,7 +98,7 @@ export const columns: ColumnDef<IProduct>[] = [
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button>
-              <LuMoreHorizontal className="h-4 w-4" />
+              <MoreHorizontal className="h-4 w-4" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="">
