@@ -5,7 +5,7 @@ import { fetcher, fetchOpt } from "@/lib/utils";
 import useSWR from "swr";
 import { useEffect } from "react";
 import { useProductStore } from "@/stores/product";
-import DataTable from "./data-table";
+// import DataTable from "./data-table";
 import { columns } from "./columns";
 
 const ProductsPage = ({ products, categories }: { products: any[]; categories: any[] }) => {
@@ -31,13 +31,13 @@ const ProductsPage = ({ products, categories }: { products: any[]; categories: a
 
   return (
     <div>
-      <DataTable
+      {/* <DataTable
         // isLoading={fetchCategoriesLoading || fetchProductsLoading}
         isLoading={false}
         columns={columns}
         data={products || []}
         categories={categories || []}
-      />
+      /> */}
     </div>
   );
 };
