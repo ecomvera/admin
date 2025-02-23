@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, { params }: { params: { orderNumber: string } }) {
   try {
-    console.log("\x1b[32m%s\x1b[0m", "Order api called!");
+    console.log("\x1b[32m%s\x1b[0m", "Order {id} api called!");
     const { orderNumber } = params;
 
     if (!orderNumber) {

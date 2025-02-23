@@ -224,7 +224,7 @@ export const FileUploaderContent = forwardRef<HTMLDivElement, React.HTMLAttribut
     const containerRef = useRef<HTMLDivElement>(null);
 
     return (
-      <div className={cn("w-full px-1")} ref={containerRef} aria-description="content file holder">
+      <div className={cn("w-full px-1")} ref={containerRef}>
         <div
           {...props}
           ref={ref}
