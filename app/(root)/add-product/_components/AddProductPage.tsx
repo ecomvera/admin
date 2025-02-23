@@ -100,6 +100,33 @@ const AddProductPage = () => {
     }
 
     addProduct({ id: response.productId, ...data });
+
+    setLoading(false);
+    form.reset();
+    setFormData({
+      name: "",
+      description: "",
+      price: "",
+      mrp: "",
+      material: "",
+      weight: "",
+      hasDeliveryFee: false,
+      inStock: false,
+      isNewArrival: false,
+      genders: [],
+      sizeCategory: "",
+      sizes: [],
+      warehouses: [],
+      productType: "",
+      category: "",
+      subCategory: "",
+      attributes: [],
+    });
+    setSubCategories([]);
+    setFiles([]);
+    setColors([]);
+    setVideo("");
+
     success(
       "Product created successfully",
       "default",
@@ -109,14 +136,6 @@ const AddProductPage = () => {
         </Button>
       </Link>
     );
-
-    setLoading(false);
-    form.reset();
-    setFormData({});
-    setSubCategories([]);
-    setFiles([]);
-    setColors([]);
-    setVideo("");
   };
 
   const validateData = () => {
