@@ -18,7 +18,8 @@ const Colors = ({ colors: data, isLoading }: { colors: IColor[]; isLoading: bool
   const [hex, setHex] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const onSubmit = async () => {
+  const onSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     if (name === "" || hex === "") return error("Color is required");
 
     setLoading(true);
@@ -44,30 +45,32 @@ const Colors = ({ colors: data, isLoading }: { colors: IColor[]; isLoading: bool
 
   return (
     <div className="px-2 flex flex-col gap-2 pt-[1px]">
-      <div className="flex gap-2">
-        <Input type="text" placeholder="Color Name" value={name} onChange={handleName} />
-        <Input
-          type="text"
-          accept="hex"
-          placeholder="Color Hex - #fafafa"
-          value={hex}
-          onChange={(e) => setHex(e.target.value)}
-        />
-      </div>
-      {hex && (
-        <>
-          <div className={`border h-20`} style={{ backgroundColor: hex }}></div>
-          <SliderPicker color={hex} onChange={(color) => setHex(color.hex)} />
-        </>
-      )}
+      <form onSubmit={onSubmit} className="">
+        <div className="flex gap-2">
+          <Input type="text" placeholder="Color Name" value={name} onChange={handleName} />
+          <Input
+            type="text"
+            accept="hex"
+            placeholder="Color Hex - #fafafa"
+            value={hex}
+            onChange={(e) => setHex(e.target.value)}
+          />
+        </div>
+        {hex && (
+          <div className="mt-2">
+            <div className={`border h-20`} style={{ backgroundColor: hex }}></div>
+            <SliderPicker color={hex} onChange={(color) => setHex(color.hex)} />
+          </div>
+        )}
 
-      <Button
-        disabled={loading || name === "" || hex === ""}
-        className="bg-dark-3 w-[100px] rounded-xl mt-2"
-        onClick={onSubmit}
-      >
-        {loading ? "Adding..." : "Add"}
-      </Button>
+        <Button
+          disabled={loading || name === "" || hex === ""}
+          className="bg-dark-3 w-[100px] rounded-xl mt-2"
+          onClick={onSubmit}
+        >
+          {loading ? "Adding..." : "Add"}
+        </Button>
+      </form>
 
       <h2 className="text-dark-3 text-lg font-semibold">Current Colors</h2>
       <div className="flex flex-wrap gap-2">

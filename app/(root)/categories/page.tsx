@@ -12,6 +12,7 @@ import { useSizes } from "@/hook/useSizes";
 import { useColors } from "@/hook/useColors";
 import { useTypes } from "@/hook/useTypes";
 import { getData } from "@/lib/utils";
+
 export const dynamic = "force-dynamic";
 
 const Page = async () => {
@@ -25,7 +26,7 @@ const Page = async () => {
   return (
     <div className="flex py-3 flex-col gap-5 tablet:flex-row">
       <div className="w-full">
-        <Accordion type="multiple" defaultValue={["item-4"]}>
+        <Accordion type="multiple" defaultValue={[]}>
           <AccordionItem value="item-1">
             <AccordionTrigger className="hover:no-underline">
               <h2 className="text-lg font-semibold text-dark-3">Add Category</h2>
@@ -62,7 +63,7 @@ const Page = async () => {
         </Accordion>
       </div>
       <div className="w-full">
-        <Accordion type="multiple" defaultValue={[]}>
+        <Accordion type="multiple" defaultValue={["item-4"]}>
           <AccordionItem value="item-1">
             <AccordionTrigger className="hover:no-underline">
               <h2 className="text-lg font-semibold text-dark-3">Categories</h2>

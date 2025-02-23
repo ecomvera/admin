@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { LuArrowUpDown, LuMoreHorizontal } from "react-icons/lu";
+import { LuArrowUpDown } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

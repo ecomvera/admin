@@ -31,6 +31,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import FileUploaderTest from "./FileUpload";
 
 const AddProductPage = () => {
   const { warehouses: defaultWarehouses, fetchWarehouseLoading } = useWarehouses();
@@ -151,6 +152,7 @@ const AddProductPage = () => {
 
   return (
     <div className="p-2">
+      {/* <FileUploaderTest /> */}
       <ImageContainer colors={colors} setColors={setColors} defaultColors={defaultColors} />
       <VideoContainer video={video} setVideo={setVideo} />
 
