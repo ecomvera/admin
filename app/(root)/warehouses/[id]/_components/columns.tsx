@@ -1,7 +1,7 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { LuArrowUpDown, LuMoreHorizontal } from "react-icons/lu";
+import { LuArrowUpDown } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import { ICategory, IProduct } from "@/types";
 import Link from "next/link";
 import { DeleteProduct } from "@/components/dialogs/deleteProduct";
 import { RemoveWarehouseProduct } from "@/components/dialogs/removeWarehouseProduct";
+import { MoreHorizontal } from "lucide-react";
 
 export const columns: ColumnDef<any>[] = [
   {
@@ -58,7 +59,7 @@ export const columns: ColumnDef<any>[] = [
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
                 <span className="sr-only">Open menu</span>
-                <LuMoreHorizontal className="h-4 w-4" />
+                <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="">
