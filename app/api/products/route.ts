@@ -18,6 +18,7 @@ export async function GET(req: NextApiRequest) {
     colors: true,
     sizes: true,
     category: { select: { name: true, slug: true, parent: { select: { name: true, slug: true } } } },
+    ProductReviews: { select: { rating: true } },
   };
 
   try {

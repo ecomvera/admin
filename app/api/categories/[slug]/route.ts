@@ -62,7 +62,14 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
       where: {
         AND: conditionsArr,
       },
-      include: { images: true, sizes: true, attributes: true, colors: true, productType: { include: { attributes: true } } },
+      include: {
+        ProductReviews: { select: { rating: true } },
+        images: true,
+        sizes: true,
+        attributes: true,
+        colors: true,
+        productType: { include: { attributes: true } },
+      },
     },
   };
 
@@ -126,6 +133,7 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
               colors: true,
               category: { select: { name: true, slug: true } },
               productType: { include: { attributes: true } },
+              ProductReviews: { select: { rating: true } },
             },
           },
         },
