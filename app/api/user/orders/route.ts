@@ -94,6 +94,7 @@ export async function POST(req: NextRequest) {
           userId: body?.userId as string,
           shippingId: body?.deliveryId as string,
           status: body?.status,
+          paymentMode: body?.paymentMode,
           totalAmount: body?.totalAmount as number,
           deliveryCharge: body?.deliveryCharge as number,
           giftWrapCharge: body?.giftWrapCharge as number,

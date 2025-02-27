@@ -26,6 +26,9 @@ export async function GET(req: NextApiRequest) {
     name: true,
     slug: true,
     children: {
+      where: {
+        products: { some: {} },
+      },
       select: {
         id: true,
         name: true,
@@ -55,7 +58,10 @@ export async function GET(req: NextApiRequest) {
     } else if ("group-data" in searchParams) {
       data = await prisma.product.findMany({ select: { id: true, name: true, slug: true } });
     } else if ("shop-by-category" in searchParams) {
-      data = await prisma.category.findMany({ where: { parentId: null }, select: shopByCategoryObj });
+      data = await prisma.category.findMany({
+        where: { parentId: null, children: { some: {} } },
+        select: shopByCategoryObj,
+      });
     } else {
       data = await prisma.product.findMany({
         include: { category: { include: { parent: true } }, colors: true, images: true, attributes: true, sizes: true },
