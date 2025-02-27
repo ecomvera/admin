@@ -21,6 +21,27 @@ export async function GET(req: NextApiRequest) {
     ProductReviews: { select: { rating: true } },
   };
 
+  const shopByCategoryObj = {
+    id: true,
+    name: true,
+    slug: true,
+    children: {
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        products: {
+          select: {
+            images: {
+              take: 1,
+            },
+          },
+          take: 1,
+        },
+      },
+    },
+  };
+
   try {
     let data;
 
@@ -33,6 +54,8 @@ export async function GET(req: NextApiRequest) {
       data = await prisma.product.findMany({ where: { isBestSeller: true }, select: obj });
     } else if ("group-data" in searchParams) {
       data = await prisma.product.findMany({ select: { id: true, name: true, slug: true } });
+    } else if ("shop-by-category" in searchParams) {
+      data = await prisma.category.findMany({ where: { parentId: null }, select: shopByCategoryObj });
     } else {
       data = await prisma.product.findMany({
         include: { category: { include: { parent: true } }, colors: true, images: true, attributes: true, sizes: true },
