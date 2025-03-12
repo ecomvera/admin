@@ -40,3 +40,4 @@ prisma/product-sample.json
 tsconfig.seeds.json
 
 *.sql
+res.json
