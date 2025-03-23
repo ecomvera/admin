@@ -48,17 +48,22 @@ export async function POST(req: NextRequest) {
     !body.status ||
     !body.deliveryCharge === undefined ||
     body.giftWrapCharge === undefined ||
-    !body.subTotal
+    !body.subTotal ||
+    !body.paymentMode
   ) {
     return NextResponse.json({ ok: false, error: "Missing required fields" });
   }
 
   // check the item quantity is available
   const productIds = body.items.map((item: IOrderItem) => item.id);
+  const productSizes = body.items.map((item: IOrderItem) => item.size);
   const productQuantities = await prisma.productSizes.findMany({
     where: {
       productId: {
         in: productIds,
+      },
+      key: {
+        in: productSizes,
       },
     },
     select: { productId: true, quantity: true },
@@ -112,6 +117,30 @@ export async function POST(req: NextRequest) {
           price: item.price,
           totalPrice: item.totalPrice,
         })),
+      });
+
+      await prisma.orderTimeline.createMany({
+        data: [
+          { orderId: order.id, status: "ORDER_CREATED", date: new Date(), completed: true },
+          { orderId: order.id, status: "PROCESSING", completed: body?.status === "PROCESSING" },
+          { orderId: order.id, status: "CONFIRMED", completed: false },
+          { orderId: order.id, status: "OUT_FOR_PICKUP", completed: false },
+          { orderId: order.id, status: "PICKED_UP", completed: false },
+          { orderId: order.id, status: "SHIPPED", completed: false },
+          { orderId: order.id, status: "IN_TRANSIT", completed: false },
+          { orderId: order.id, status: "REACHED_AT_DESTINATION", completed: false },
+          { orderId: order.id, status: "OUT_FOR_DELIVERY", completed: false },
+          { orderId: order.id, status: "DELIVERED", completed: false },
+          { orderId: order.id, status: "PAYMENT_PENDING", completed: body?.status === "PAYMENT_PENDING" },
+          { orderId: order.id, status: "PAYMENT_FAILED", completed: false },
+          { orderId: order.id, status: "CANCELLED", completed: false },
+          { orderId: order.id, status: "FAILED", completed: false },
+          { orderId: order.id, status: "RETURN_REQUESTED", completed: false },
+          { orderId: order.id, status: "RETURNED", completed: false },
+          { orderId: order.id, status: "RETURN_FAILED", completed: false },
+          { orderId: order.id, status: "RETURN_CANCELLED", completed: false },
+          { orderId: order.id, status: "REFUNDED", completed: false },
+        ],
       });
 
       // reduce stock quantity

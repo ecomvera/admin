@@ -20,7 +20,7 @@ export const CreateTransaction = async ({
   mobile,
   amount,
   productinfo,
-  orderID,
+  orderNo,
   udf1 = "",
   udf2 = "",
   udf3 = "",
@@ -32,14 +32,14 @@ export const CreateTransaction = async ({
   mobile: string;
   amount: number;
   productinfo: string;
-  orderID: string;
+  orderNo: string;
   udf1?: string;
   udf2?: string;
   udf3?: string;
   udf4?: string;
   udf5?: string;
 }) => {
-  const txnid = "PAYU_" + Date.now() + "_" + orderID;
+  const txnid = "PAYU_" + Date.now() + "_" + orderNo;
 
   // Prepare the string to hash
   const hashString = `${key}|${txnid}|${amount}|${productinfo}|${firstname}|${email}|${udf1}|${udf2}|${udf3}|${udf4}|${udf5}||||||${salt}`;

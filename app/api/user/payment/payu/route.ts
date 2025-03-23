@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const requiredFields = ["amount", "orderID", "email", "mobile", "firstName"];
+    const requiredFields = ["amount", "orderNo", "email", "mobile", "firstName"];
     for (const field of requiredFields) {
       if (!body[field]) {
         return NextResponse.json({ ok: false, error: `Missing required field: ${field}` });
@@ -22,15 +22,15 @@ export async function POST(req: NextRequest) {
     }
 
     // @ts-ignore
-    const { firstName, email, mobile, amount, orderID } = body;
+    const { firstName, email, mobile, amount, orderNo } = body;
 
     const data = await CreateTransaction({
-      productinfo: `${orderID}, ${authCheck.user?.userId}`,
+      productinfo: `${orderNo}, ${authCheck.user?.userId}`,
       firstname: firstName,
       email,
       mobile,
       amount: parseInt(amount),
-      orderID: orderID,
+      orderNo: orderNo,
     });
 
     return new Response(data, {

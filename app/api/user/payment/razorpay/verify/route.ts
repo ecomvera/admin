@@ -15,7 +15,9 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    if (!body || !body.orderId || !body.razorpayPaymentId || !body.razorpayOrderId || !body.razorpaySignature) {
+    console.log({ body });
+
+    if (!body || !body.orderNo || !body.razorpayPaymentId || !body.razorpayOrderId || !body.razorpaySignature) {
       return NextResponse.json({ ok: false, error: "Missing body" });
     }
 
@@ -29,7 +31,7 @@ export async function POST(req: NextRequest) {
 
     const payment = await prisma.razorpayPayment.create({
       data: {
-        orderId: body.orderId,
+        orderNo: body.orderNo,
         razorpayPaymentId: body.razorpayPaymentId,
         razorpayOrderId: body.razorpayOrderId,
         razorpaySignature: body.razorpaySignature,
@@ -37,7 +39,7 @@ export async function POST(req: NextRequest) {
     });
 
     await prisma.order.update({
-      where: { id: body.orderId },
+      where: { orderNumber: body.orderNo },
       data: { status: "PROCESSING", paymentId: payment.id },
     });
 

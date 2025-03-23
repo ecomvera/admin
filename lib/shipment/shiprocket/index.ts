@@ -96,15 +96,21 @@ export class Shiprocket {
       }
 
       // generate AWB number
-      const awbRes = await fetch(api.generateAWB, {
+      const generateAWB = await fetch(api.generateAWB, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Shiprocket.token}`,
         },
         body: JSON.stringify({ shipment_id: orderRes.shipment_id, courier_id: courier.courier_id }),
-      }).then((res) => res.json());
+      });
 
+      if (!generateAWB.ok) {
+        console.log(`Order id - ${shipment.orderNumber} - Error generating AWB number:`, generateAWB);
+        return { data: null, error: "Error generating AWB number" };
+      }
+
+      const awbRes = await generateAWB.json();
       if (awbRes.awb_assign_status === 0 || awbRes.status_code === 500) {
         console.log(`Order id - ${shipment.orderNumber} - Error generating AWB number:`, awbRes);
         return {
@@ -119,6 +125,7 @@ export class Shiprocket {
           platform,
           response: awbRes.response.data,
           orderNumber: shipment.orderNumber,
+          awbNumber: awbRes.response.data.awb_code,
           pickupDate: awbRes.response.data.pickup_scheduled_date || null,
         },
       });
@@ -247,7 +254,7 @@ export class Shiprocket {
         },
       }).then((res) => res.json());
 
-      return { data: awbRes };
+      return { data: awbRes.tracking_data };
     } catch (error) {
       console.log("[trackCourier] - error -", error);
       return { data: null, error: "something went wrong!" };

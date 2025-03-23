@@ -293,6 +293,7 @@ model Order {
   id              String           @id @default(uuid()) @map("_id")
   orderNumber     String           @unique
   status          String           @default("PENDING")
+  timeline        OrderTimeline[]
   totalAmount     Int
   deliveryCharge  Int
   giftWrapCharge  Int
@@ -317,6 +318,21 @@ model Order {
   ProductReviews  ProductReviews[]
 
   @@map("orders")
+}
+
+// waste 
+model OrderTimeline {
+  id        String    @id @default(uuid()) @map("_id")
+  orderId   String
+  Order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    String
+  date      DateTime?
+  completed Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([orderId, status])
+  @@map("order_timelines")
 }
 
 enum PaymentMode {
@@ -344,6 +360,7 @@ model Shipment {
   platform    String
   response    Json
   pickupDate  DateTime?
+  awbNumber   String?
   orderNumber String    @unique
   Order       Order     @relation(fields: [orderNumber], references: [orderNumber], onDelete: Cascade)
   createdAt   DateTime  @default(now())
@@ -354,8 +371,8 @@ model Shipment {
 
 model RazorpayPayment {
   id                String   @id @default(uuid()) @map("_id")
-  orderId           String   @unique
-  Order             Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderNo           String   @unique
+  Order             Order    @relation(fields: [orderNo], references: [orderNumber], onDelete: Cascade)
   razorpayOrderId   String
   razorpayPaymentId String
   razorpaySignature String
@@ -367,8 +384,8 @@ model RazorpayPayment {
 
 model PayUPayment {
   id        String   @id @default(uuid()) @map("_id")
-  orderId   String   @unique
-  Order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderNo   String   @unique
+  Order     Order    @relation(fields: [orderNo], references: [orderNumber], onDelete: Cascade)
   payuData  Json
   txnId     String
   createdAt DateTime @default(now())

@@ -76,3 +76,38 @@ export const getDiscount = (mrp: number, price: number) => {
 export function boldNumbersInString(str: string) {
   return str.replace(/\d+/g, (match) => `<b>${match}</b>`);
 }
+
+// Helper function to format status labels
+export const formatStatusLabel = (status: string) => {
+  const statusLabels: Record<string, string> = {
+    ORDER_CREATED: "Order Created",
+    PROCESSING: "Processing",
+    CONFIRMED: "Order Confirmed",
+    SHIPPED: "Shipped",
+    OUT_FOR_PICKUP: "Out for Pickup",
+    PICKED_UP: "Picked Up",
+    IN_TRANSIT: "In Transit",
+    REACHED_AT_DESTINATION: "Reached Destination",
+    OUT_FOR_DELIVERY: "Out for Delivery",
+    DELIVERED: "Delivered",
+    PAYMENT_PENDING: "Payment Pending",
+    PAYMENT_FAILED: "Payment Failed",
+    CANCELLED: "Order Cancelled",
+    FAILED: "Order Failed",
+    RETURN_REQUESTED: "Return Requested",
+    RETURNED: "Returned",
+    RETURN_FAILED: "Return Failed",
+    RETURN_CANCELLED: "Return Cancelled",
+    REFUNDED: "Refunded",
+  };
+
+  // return (
+  //   statusLabels[status] ||
+  //   status
+  //     .split("_")
+  //     .map((word) => word.charAt(0) + word.slice(1).toLowerCase())
+  //     .join(" ")
+  // );
+
+  return statusLabels[status] || null;
+};

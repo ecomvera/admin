@@ -15,18 +15,20 @@ export async function POST(req: Request) {
 
   if (!payuData.hash || !payuData.status || !payuData.txnid) {
     console.log("❌ Invalid Response from PayU");
-    return NextResponse.redirect(`${url}/payment-failure`);
+    return NextResponse.redirect(`${url}/order/failure`);
   }
 
   if (payuData.status === "success") {
     console.log("✅ Payment Success:", payuData);
-    console.log({ productInfo: payuData.productinfo });
+    const productInfo = payuData.productinfo as string;
+    console.log({ productInfo });
+    const orderNo = productInfo.split(",")[0].trim();
     // Store transaction in DB & Redirect to client-side success page
-    return NextResponse.redirect(`${url}/payment-success?txnid=${payuData.txnid}`);
+    return NextResponse.redirect(`${url}/order/success?orderNo=${orderNo}&paymentMode=PayU Payment`);
   }
 
   console.log("❌ Payment Failed:", payuData);
-  return NextResponse.redirect(`${url}/payment-failure`);
+  return NextResponse.redirect(`${url}/order/failure`);
 
   // // Generate Hash to verify authenticity
   // const hashString = `${merchantKey}|${payuData.txnid}|${payuData.amount}|${payuData.productinfo}|${payuData.firstname}|${payuData.email}|${payuData.udf1}|${payuData.udf2}|${payuData.udf3}|${payuData.udf4}|${payuData.udf5}||||||${merchantSalt}`;

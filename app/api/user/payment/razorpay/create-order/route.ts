@@ -20,18 +20,16 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    if (!body || !body.amount || !body.id) {
+    if (!body || !body.amount || !body.orderNo) {
       return NextResponse.json({ ok: false, error: "Missing body" });
     }
 
     const order = await prisma.order.findUnique({
-      where: { id: body.id },
+      where: { orderNumber: body.orderNo },
     });
     if (!order) {
       return NextResponse.json({ ok: false, error: "Order not found" });
     }
-
-    console.log(order.userId, authCheck.user?.userId);
 
     if (order.userId !== authCheck.user?.userId) {
       return NextResponse.json({ ok: false, error: "Unauthorized" });
