@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const userOTP = await prisma.otp.findUnique({ where: { phone } });
+  const userOTP = await prisma.oTP.findUnique({ where: { phone } });
   if (!userOTP || userOTP.otp !== otp) {
     return NextResponse.json({
       ok: false,
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
   // generate tokens
   const { accessToken, refreshToken } = generateTokens(user);
 
-  await prisma.otp.delete({ where: { phone } });
+  await prisma.oTP.delete({ where: { phone } });
 
   return NextResponse.json({ ok: true, data: { user, accessToken, refreshToken } });
 }

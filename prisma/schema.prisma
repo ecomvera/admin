@@ -242,11 +242,19 @@ model PasswordReset {
   @@map("password_reset")
 }
 
-model Otp {
-  id       String   @id @default(uuid()) @map("_id")
-  phone    String   @unique
-  otp      String
-  expireAt DateTime
+model EmailVerification {
+  email     String   @id
+  code      String
+  verified  Boolean  @default(false)
+  expireAt  DateTime
+  createdAt DateTime @default(now())
+}
+
+model OTP {
+  phone     String   @id
+  otp       String
+  expireAt  DateTime
+  createdAt DateTime @default(now())
 
   @@map("otps")
 }
