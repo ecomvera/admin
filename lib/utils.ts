@@ -58,13 +58,13 @@ export const success = (msg: string, type?: "success" | "default", action?: Reac
   toast({ title: "Success", description: msg, variant: type || "default", action });
 
 export const generareHash = (str: string) => {
-  const secret = "sodhro";
+  const secret = process.env.NEXT_PUBLIC_SECRET || "";
   const hash = c.createHmac("sha256", secret).update(str).digest("hex");
   return hash;
 };
 
 export const verifyHash = (str: string, hash: string) => {
-  const secret = "sodhro";
+  const secret = process.env.NEXT_PUBLIC_SECRET || "";
   const newHash = c.createHmac("sha256", secret).update(str).digest("hex");
   return newHash === hash;
 };

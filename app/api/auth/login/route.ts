@@ -1,67 +1,68 @@
-"use server";
-
-import { fast2SMS, generateOTP } from "@/lib/otp";
 import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { generateTokens } from "@/lib/token";
+import { type NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
-  const { phone } = await req.json();
+  const { email, password } = await req.json();
 
-  if (!phone) {
+  if (!email || !password) {
     return NextResponse.json({
       ok: false,
-      error: "Phone is required",
+      error: "Email and password are required",
     });
   }
 
   const user = await prisma.user.findUnique({
-    where: { phone: phone },
+    where: { email },
   });
 
   if (!user) {
-    const newUser = await prisma.user.create({
-      data: { phone },
-    });
-
-    if (!newUser) {
-      return NextResponse.json({
-        ok: false,
-        error: "Something went wrong",
-      });
-    }
-  }
-
-  const otp = await generateOTP();
-  const expireAt = new Date(Date.now() + 10 * 60 * 1000);
-  const userOTP = await prisma.otp.upsert({
-    where: { phone },
-    update: { otp, expireAt },
-    create: { phone, otp, expireAt },
-  });
-
-  if (!userOTP) {
     return NextResponse.json({
       ok: false,
-      error: "Something went wrong",
+      error: "Invalid email or password",
     });
   }
 
-  // // send otp sms
-  // const data = await fast2SMS(otp, phone);
+  // Check if password is correct
+  const isPasswordValid = await bcrypt.compare(password, user.password || "");
+  if (!isPasswordValid) {
+    return NextResponse.json({
+      ok: false,
+      error: "Invalid email or password",
+    });
+  }
 
-  // if (!data || !data.return) {
-  //   return NextResponse.json({
-  //     ok: false,
-  //     error: "Something went wrong",
-  //   });
-  // }
+  const productObj = {
+    id: true,
+    name: true,
+    slug: true,
+    price: true,
+    mrp: true,
+    images: { take: 1, select: { url: true } },
+    sizes: true,
+  };
+
+  const userData = await prisma.user.findUnique({
+    where: { email },
+    include: {
+      addresses: true,
+      orders: true,
+      cart: { include: { product: { select: productObj } } },
+      wishlist: { include: { product: { select: productObj } } },
+    },
+  });
+
+  // Generate tokens
+  const { accessToken, refreshToken } = generateTokens(userData);
 
   return NextResponse.json({
     ok: true,
-    message: "OTP sent successfully",
+    message: "Login successful",
     data: {
-      user,
-      otp,
+      user: userData,
+      accessToken,
+      refreshToken,
     },
   });
 }

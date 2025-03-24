@@ -1,11 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { generateTokens } from "@/lib/token";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 
 export async function POST(req: NextRequest) {
-  const { name, email, phone, otp, gender } = await req.json();
+  const { name, email, password, gender } = await req.json();
 
-  if (!otp || !phone || !name || !gender || !email) {
+  if (!name || !email || !password || !gender) {
     return NextResponse.json({
       ok: false,
       error: "Please provide all required fields",
@@ -13,31 +14,23 @@ export async function POST(req: NextRequest) {
   }
 
   const isEmailExist = await prisma.user.findUnique({ where: { email } });
-  if (isEmailExist) {
+  if (isEmailExist && isEmailExist.onBoarded) {
     return NextResponse.json({
       ok: false,
       error: "This email is already registered",
     });
   }
 
-  const userOTP = await prisma.otp.findUnique({ where: { phone } });
-  if (!userOTP || userOTP.otp !== otp) {
-    return NextResponse.json({
-      ok: false,
-      error: "Invalid OTP",
-    });
-  }
-  if (userOTP.expireAt < new Date()) {
-    return NextResponse.json({
-      ok: false,
-      error: "OTP Expired",
-    });
-  }
+  // Hash the password
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  const updatedUser = await prisma.user.update({
-    where: { phone },
-    data: { name, email, phone, gender, onBoarded: true },
+  // Update or create user
+  const updatedUser = await prisma.user.upsert({
+    where: { email },
+    update: { name, email, gender, password: hashedPassword, onBoarded: true },
+    create: { name, email, gender, password: hashedPassword, onBoarded: true },
   });
+
   if (!updatedUser) {
     return NextResponse.json({
       ok: false,
@@ -45,21 +38,42 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  const productObj = {
+    id: true,
+    name: true,
+    slug: true,
+    price: true,
+    mrp: true,
+    images: { take: 1, select: { url: true } },
+    sizes: true,
+  };
+
   const user = await prisma.user.findUnique({
-    where: { phone },
-    include: { addresses: true, orders: true, cart: true, wishlist: true },
+    where: { email },
+    include: {
+      addresses: true,
+      orders: true,
+      cart: { include: { product: { select: productObj } } },
+      wishlist: { include: { product: { select: productObj } } },
+    },
   });
+
   if (!user) {
     return NextResponse.json({
       ok: false,
-      error: "Please register first!",
+      error: "Something went wrong",
     });
   }
 
-  // generate tokens
+  // Generate tokens
   const { accessToken, refreshToken } = generateTokens(user);
 
-  await prisma.otp.delete({ where: { phone } });
-
-  return NextResponse.json({ ok: true, data: { user, accessToken, refreshToken } });
+  return NextResponse.json({
+    ok: true,
+    data: {
+      user,
+      accessToken,
+      refreshToken,
+    },
+  });
 }
