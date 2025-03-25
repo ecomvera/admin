@@ -3,7 +3,9 @@ import nodemailer from "nodemailer";
 type EmailPayload = {
   to: string;
   subject: string;
-  html: string;
+  text?: string;
+  html?: string;
+  attachments?: any[];
 };
 
 // Create a transporter
@@ -20,7 +22,7 @@ const transporter = nodemailer.createTransport({
 export const sendEmail = async (payload: EmailPayload) => {
   try {
     const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM,
+      from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
       ...payload,
     });
 

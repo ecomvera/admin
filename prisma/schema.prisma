@@ -411,3 +411,13 @@ model PayUPayment {
 
   @@map("payu_payments")
 }
+
+model JobApplication {
+  id        String   @id @default(uuid())
+  fullName  String
+  email     String   @unique
+  phone     String
+  jobTitle  String
+  resumeUrl String
+  createdAt DateTime @default(now())
+}
