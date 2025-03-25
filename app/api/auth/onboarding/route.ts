@@ -151,11 +151,11 @@ export async function POST(req: NextRequest) {
 
   // Clean up verification data
   if (email) {
-    await prisma.emailVerification.delete({ where: { email } });
+    await prisma.emailVerification.deleteMany({ where: { email } });
   }
 
   if (phone) {
-    await prisma.oTP.delete({ where: { phone } });
+    await prisma.oTP.deleteMany({ where: { phone } });
   }
 
   return NextResponse.json({
