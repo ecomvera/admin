@@ -32,7 +32,7 @@ export async function POST(request: Request) {
 
     // Send email
     const mailOptions = {
-      to: process.env.JOB_APPLICATION_RECEIVER_EMAIL as string,
+      to: process.env.APPLICATION_RECEIVER_EMAIL as string,
       subject: `New Seller Application: ${data.fullName}`,
       html: createSellerEmailTemplate({ ...data, businessDocument: data.businessDocument?.name }),
       attachments: data.businessDocument

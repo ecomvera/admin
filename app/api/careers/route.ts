@@ -25,7 +25,7 @@ export async function POST(req: Request) {
 
     // Send email
     const mailOptions = {
-      to: process.env.JOB_APPLICATION_RECEIVER_EMAIL as string,
+      to: process.env.APPLICATION_RECEIVER_EMAIL as string,
       subject: `New Job Application: ${fullName}`,
       html: createEmailTemplate({
         fullName,
