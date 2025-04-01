@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { generateOTP } from "@/lib/otp";
+import { generateOTP, sendOTP } from "@/lib/otp";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -28,14 +28,17 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  // In a production environment, you would send the OTP via SMS here
-  // For now, we'll just return it in the response for development purposes
+  const res = await sendOTP(otp, phone);
+
+  if (!res.ok) {
+    return NextResponse.json({
+      ok: false,
+      error: res.error,
+    });
+  }
 
   return NextResponse.json({
     ok: true,
-    message: "OTP sent successfully",
-    data: {
-      otp, // Only for development
-    },
+    message: res.message,
   });
 }

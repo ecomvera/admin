@@ -19,10 +19,24 @@ export const fast2SMS = async (otp: string, number: string) => {
         variables_values: otp,
         route: "otp",
         numbers: number,
+        message: `Your OTP for ${process.env.NEXT_PUBLIC_APP_NAME} is: ${otp}`,
+        flash: 0,
+        language: "english",
+        numbers_type: 1,
+        sender_id: "FSTSMS",
+        variables_name: "OTP",
       }),
     }).then((res) => res.json());
-    return data;
+
+    console.log("data -", data);
+    return { ok: true, message: "OTP sent successfully" };
   } catch (error) {
-    return null;
+    console.log("error -", error);
+    return { ok: false, error: "Something went wrong" };
   }
+};
+
+export const sendOTP = async (otp: string, number: string) => {
+  const res = await fast2SMS(otp, number);
+  return res;
 };

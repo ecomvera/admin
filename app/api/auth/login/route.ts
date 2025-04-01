@@ -53,8 +53,15 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  if (!userData) {
+    return NextResponse.json({
+      ok: false,
+      error: "User not found",
+    });
+  }
+
   // Generate tokens
-  const { accessToken, refreshToken } = generateTokens(userData);
+  const { accessToken, refreshToken } = generateTokens({ id: userData.id });
 
   return NextResponse.json({
     ok: true,
