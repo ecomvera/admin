@@ -46,6 +46,13 @@ export async function POST(req: NextRequest) {
     await sendEmail({
       to: email,
       subject: "Reset Your Silkyester Password",
+      text: `
+      You requested a password reset for your Silkyester account.
+      Click the link below to reset your password:
+      ${resetUrl}
+      This link will expire in 1 hour.
+      If you didn't request this password reset, you can safely ignore this email.
+      `,
       html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
         <div style="text-align: center; margin-bottom: 20px;">
