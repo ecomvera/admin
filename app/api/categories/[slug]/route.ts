@@ -16,64 +16,64 @@ const convertObject = (obj: Record<string, string>) => {
 };
 
 export async function GET(req: NextApiRequest, { params }: { params: { slug: string } }) {
-  const url = new URL(req.url || "");
-  const searchParams = Object.fromEntries(url.searchParams.entries());
-
-  const { slug } = params;
-  const output = convertObject(searchParams);
-
-  const conditionsArr: any[] = [];
-
-  // Add filters by priority
-  if (output.gender && output.gender.length) {
-    conditionsArr.push({ genders: { hasSome: output.gender } });
-  }
-
-  if (output.category && output.category.length) {
-    conditionsArr.push({ productType: { in: output.category } });
-  }
-
-  if (output.colors && output.colors.length) {
-    conditionsArr.push({ colors: { some: { name: { in: output.colors } } } });
-  }
-
-  if (output.sizes && output.sizes.length) {
-    conditionsArr.push({ sizes: { some: { key: { in: output.sizes } } } });
-  }
-
-  if (output.fit && output.fit.length) {
-    conditionsArr.push({ attributes: { some: { value: { in: output.fit } } } });
-  }
-
-  if (output.sleeve && output.sleeve.length) {
-    conditionsArr.push({ attributes: { some: { value: { in: output.sleeve } } } });
-  }
-
-  if (output.neck && output.neck.length) {
-    conditionsArr.push({ attributes: { some: { value: { in: output.neck } } } });
-  }
-
-  // filter by category
-  const categoryArr: any[] = []; // empty for now
-
-  const childrenObj = {
-    parent: { select: { name: true, slug: true } },
-    products: {
-      where: {
-        AND: conditionsArr,
-      },
-      include: {
-        ProductReviews: { select: { rating: true } },
-        images: true,
-        sizes: true,
-        attributes: true,
-        colors: true,
-        productType: { include: { attributes: true } },
-      },
-    },
-  };
-
   try {
+    const url = new URL(req.url || "");
+    const searchParams = Object.fromEntries(url.searchParams.entries());
+
+    const { slug } = params;
+    const output = convertObject(searchParams);
+
+    const conditionsArr: any[] = [];
+
+    // Add filters by priority
+    if (output.gender && output.gender.length) {
+      conditionsArr.push({ genders: { hasSome: output.gender } });
+    }
+
+    if (output.category && output.category.length) {
+      conditionsArr.push({ productType: { in: output.category } });
+    }
+
+    if (output.colors && output.colors.length) {
+      conditionsArr.push({ colors: { some: { name: { in: output.colors } } } });
+    }
+
+    if (output.sizes && output.sizes.length) {
+      conditionsArr.push({ sizes: { some: { key: { in: output.sizes } } } });
+    }
+
+    if (output.fit && output.fit.length) {
+      conditionsArr.push({ attributes: { some: { value: { in: output.fit } } } });
+    }
+
+    if (output.sleeve && output.sleeve.length) {
+      conditionsArr.push({ attributes: { some: { value: { in: output.sleeve } } } });
+    }
+
+    if (output.neck && output.neck.length) {
+      conditionsArr.push({ attributes: { some: { value: { in: output.neck } } } });
+    }
+
+    // filter by category
+    const categoryArr: any[] = []; // empty for now
+
+    const childrenObj = {
+      parent: { select: { name: true, slug: true } },
+      products: {
+        where: {
+          AND: conditionsArr,
+        },
+        include: {
+          ProductReviews: { select: { rating: true } },
+          images: true,
+          sizes: true,
+          attributes: true,
+          colors: true,
+          productType: { include: { attributes: true } },
+        },
+      },
+    };
+
     const start = Date.now();
     let category;
     let products;

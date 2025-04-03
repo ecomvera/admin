@@ -4,45 +4,46 @@ import { type NextRequest, NextResponse } from "next/server";
 import { wait } from "@/lib/wait";
 
 export async function POST(req: NextRequest) {
-  const { email } = await req.json();
+  try {
+    const { email } = await req.json();
 
-  if (!email) {
-    return NextResponse.json({
-      ok: false,
-      error: "Email is required",
+    if (!email) {
+      return NextResponse.json({
+        ok: false,
+        error: "Email is required",
+      });
+    }
+
+    // Check if email already exists and is onboarded
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
     });
-  }
 
-  // Check if email already exists and is onboarded
-  const existingUser = await prisma.user.findUnique({
-    where: { email },
-  });
+    if (existingUser && existingUser.onBoarded) {
+      return NextResponse.json({
+        ok: false,
+        error: "Email already registered. Please sign in instead.",
+      });
+    }
 
-  if (existingUser && existingUser.onBoarded) {
-    return NextResponse.json({
-      ok: false,
-      error: "Email already registered. Please sign in instead.",
+    // Generate a 6-digit verification code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const expireAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    // Save the verification code
+    await prisma.emailVerification.upsert({
+      where: { email },
+      update: { code: verificationCode, expireAt },
+      create: { email, code: verificationCode, expireAt },
     });
-  }
 
-  // Generate a 6-digit verification code
-  const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-  const expireAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    // await wait(3000);
 
-  // Save the verification code
-  await prisma.emailVerification.upsert({
-    where: { email },
-    update: { code: verificationCode, expireAt },
-    create: { email, code: verificationCode, expireAt },
-  });
-
-  // await wait(3000);
-
-  // Send email with verification code
-  await sendEmail({
-    to: email,
-    subject: "Verify your email for Silkyester",
-    html: `
+    // Send email with verification code
+    await sendEmail({
+      to: email,
+      subject: "Verify your email for Silkyester",
+      html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
         <div style="text-align: center; margin-bottom: 20px;">
           <h1 style="color: #333; margin-bottom: 10px;">Welcome to Silkyester</h1>
@@ -62,13 +63,17 @@ export async function POST(req: NextRequest) {
         </div>
       </div>
     `,
-  });
+    });
 
-  return NextResponse.json({
-    ok: true,
-    message: "Verification code sent",
-    data: {
-      // code: verificationCode, // Only for development
-    },
-  });
+    return NextResponse.json({
+      ok: true,
+      message: "Verification code sent",
+      data: {
+        // code: verificationCode, // Only for development
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ ok: false, error: "Something went wrong" });
+  }
 }

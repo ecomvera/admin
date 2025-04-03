@@ -5,93 +5,98 @@ import { IOrderItem, IProduct } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  const authCheck = await authenticate(req);
-  if (!authCheck.ok) {
-    return NextResponse.json({ ok: false, error: authCheck.message });
-  }
-  if (!authCheck.user?.userId) {
-    return NextResponse.json({ ok: false, error: "Authentication error" });
-  }
+  try {
+    const authCheck = await authenticate(req);
+    if (!authCheck.ok) {
+      return NextResponse.json({ ok: false, error: authCheck.message });
+    }
+    if (!authCheck.user?.userId) {
+      return NextResponse.json({ ok: false, error: "Authentication error" });
+    }
 
-  const orders = await prisma.order.findMany({
-    where: { userId: authCheck.user?.userId },
-    include: {
-      items: { include: { product: { select: { id: true, name: true, slug: true, images: true } } } },
-      ProductReviews: true,
-    },
-    orderBy: { createdAt: "desc" },
-  });
+    const orders = await prisma.order.findMany({
+      where: { userId: authCheck.user?.userId },
+      include: {
+        items: { include: { product: { select: { id: true, name: true, slug: true, images: true } } } },
+        ProductReviews: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
 
-  return NextResponse.json({ ok: true, data: orders, orderStatus: status_options });
+    return NextResponse.json({ ok: true, data: orders, orderStatus: status_options });
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ ok: false, error: "Something went wrong" });
+  }
 }
 
 export async function POST(req: NextRequest) {
-  const authCheck = await authenticate(req);
-  if (!authCheck.ok) {
-    return NextResponse.json({ ok: false, error: authCheck.message });
-  }
-  if (!authCheck.user?.userId) {
-    return NextResponse.json({ ok: false, error: "Authentication error" });
-  }
+  try {
+    const authCheck = await authenticate(req);
+    if (!authCheck.ok) {
+      return NextResponse.json({ ok: false, error: authCheck.message });
+    }
+    if (!authCheck.user?.userId) {
+      return NextResponse.json({ ok: false, error: "Authentication error" });
+    }
 
-  const body = await req.json();
-  if (!body) {
-    return NextResponse.json({ ok: false, error: "Missing body" });
-  }
-  if (!body.items || !Array.isArray(body.items) || !body.items.length) {
-    return NextResponse.json({ ok: false, error: "Missing items" });
-  }
+    const body = await req.json();
+    if (!body) {
+      return NextResponse.json({ ok: false, error: "Missing body" });
+    }
+    if (!body.items || !Array.isArray(body.items) || !body.items.length) {
+      return NextResponse.json({ ok: false, error: "Missing items" });
+    }
 
-  if (
-    !body.userId ||
-    !body.deliveryId ||
-    !body.status ||
-    !body.deliveryCharge === undefined ||
-    body.giftWrapCharge === undefined ||
-    !body.subTotal ||
-    !body.paymentMode
-  ) {
-    return NextResponse.json({ ok: false, error: "Missing required fields" });
-  }
+    if (
+      !body.userId ||
+      !body.deliveryId ||
+      !body.status ||
+      !body.deliveryCharge === undefined ||
+      body.giftWrapCharge === undefined ||
+      !body.subTotal ||
+      !body.paymentMode
+    ) {
+      return NextResponse.json({ ok: false, error: "Missing required fields" });
+    }
 
-  // check the item quantity is available
-  const productIds = body.items.map((item: IOrderItem) => item.id);
-  const productSizes = body.items.map((item: IOrderItem) => item.size);
-  const productQuantities = await prisma.productSizes.findMany({
-    where: {
-      productId: {
-        in: productIds,
+    // check the item quantity is available
+    const productIds = body.items.map((item: IOrderItem) => item.id);
+    const productSizes = body.items.map((item: IOrderItem) => item.size);
+    const productQuantities = await prisma.productSizes.findMany({
+      where: {
+        productId: {
+          in: productIds,
+        },
+        key: {
+          in: productSizes,
+        },
       },
-      key: {
-        in: productSizes,
-      },
-    },
-    select: { productId: true, quantity: true },
-  });
+      select: { productId: true, quantity: true },
+    });
 
-  // Check for missing or insufficient items
-  const missingItems = body.items.reduce((acc: { productId: string; availableQuantity: number }[], item: IOrderItem) => {
-    const product = productQuantities.find((p) => p.productId === item.id);
+    // Check for missing or insufficient items
+    const missingItems = body.items.reduce((acc: { productId: string; availableQuantity: number }[], item: IOrderItem) => {
+      const product = productQuantities.find((p) => p.productId === item.id);
 
-    if (!product || item.quantity > product.quantity) {
-      acc.push({
-        productId: item.id,
-        availableQuantity: product ? product.quantity : 0,
+      if (!product || item.quantity > product.quantity) {
+        acc.push({
+          productId: item.id,
+          availableQuantity: product ? product.quantity : 0,
+        });
+      }
+
+      return acc;
+    }, []);
+
+    if (missingItems.length > 0) {
+      return NextResponse.json({
+        ok: false,
+        error: "Some items are not available",
+        missingItems,
       });
     }
 
-    return acc;
-  }, []);
-
-  if (missingItems.length > 0) {
-    return NextResponse.json({
-      ok: false,
-      error: "Some items are not available",
-      missingItems,
-    });
-  }
-
-  try {
     const order = await prisma.$transaction(async (prisma) => {
       const order = await prisma.order.create({
         data: {

@@ -277,6 +277,7 @@ model Address {
   orders        Order[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  isDeleted     Boolean  @default(false)
 
   @@map("addresses")
 }
@@ -295,7 +296,7 @@ model Cart {
 }
 
 model WishList {
-  id        String   @id @default(uuid()) @map("_id")
+  id        String
   quantity  Int
   size      String?
   color     String
@@ -304,6 +305,7 @@ model WishList {
   userId    String
   User      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@unique([userId, id])
   @@map("wishlists")
 }
 
