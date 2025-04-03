@@ -75,7 +75,7 @@ const AddProductPage = () => {
     const data: IProduct = {
       name: capitalize(values.name),
       sku: values.sku,
-      slug: values.name.trim().replace(/\s+/g, "-").toLowerCase(),
+      slug: values.name.trim().replace(/[|']/g, "").replace(/\s+/g, "-").toLowerCase(),
       description: values.description,
       price: Number(values.price),
       mrp: Number(values.mrp),
