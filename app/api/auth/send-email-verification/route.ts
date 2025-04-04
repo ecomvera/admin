@@ -39,6 +39,8 @@ export async function POST(req: NextRequest) {
 
     // await wait(3000);
 
+    const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3011"}/unsubscribe?email=${email}`;
+
     // Send email with verification code
     await sendEmail({
       to: email,
@@ -66,6 +68,8 @@ export async function POST(req: NextRequest) {
         <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
           <p style="color: #999; font-size: 12px;">© ${new Date().getFullYear()} Silkyester. All rights reserved.</p>
         </div>
+
+        <p style="color: #666; font-size: 10px; margin-top: 20px;">If you want to unsubscribe from these emails, please click <a href="${unsubscribeUrl}">here</a></p>
       </div>
     `,
     });
