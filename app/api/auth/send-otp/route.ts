@@ -31,17 +31,7 @@ export async function POST(req: NextRequest) {
 
     const res = await sendOTP(otp, phone);
 
-    if (!res.ok) {
-      return NextResponse.json({
-        ok: false,
-        error: res.error,
-      });
-    }
-
-    return NextResponse.json({
-      ok: true,
-      message: res.message,
-    });
+    return NextResponse.json(res);
   } catch (error) {
     console.log(error);
     return NextResponse.json({ ok: false, error: "Something went wrong" });

@@ -16,27 +16,33 @@ export const fast2SMS = async (otp: string, number: string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        variables_values: otp,
-        route: "otp",
+        // variables_values: otp,
+        route: "dlt",
         numbers: number,
-        message: `Your OTP for ${process.env.NEXT_PUBLIC_APP_NAME} is: ${otp}`,
-        flash: 0,
+        message: `${process.env.NEXT_PUBLIC_APP_NAME} - Your OTP is ${otp}. OTP is valid for 10 minutes.`,
+        // flash: 0,
         language: "english",
-        numbers_type: 1,
+        // numbers_type: 1,
         sender_id: "FSTSMS",
-        variables_name: "OTP",
+        // variables_name: "OTP",
+        // entity_id: "1",
+        // template_id: otp + Date.now(),
       }),
     }).then((res) => res.json());
 
     console.log("data -", data);
-    return { ok: true, message: "OTP sent successfully" };
+
+    if (data.return) {
+      return { ok: true, message: "OTP sent successfully" };
+    }
+
+    return { ok: false, error: "Failed to send OTP" };
   } catch (error) {
     console.log("error -", error);
-    return { ok: false, error: "Something went wrong" };
+    return { ok: false, error: "Failed to send OTP" };
   }
 };
 
 export const sendOTP = async (otp: string, number: string) => {
-  const res = await fast2SMS(otp, number);
-  return res;
+  return await fast2SMS(otp, number);
 };
