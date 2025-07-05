@@ -226,6 +226,7 @@ model User {
   orders         Order[]
   cart           Cart[]
   wishlist       WishList[]
+  payments       Payment[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   ProductReviews ProductReviews[]
@@ -327,10 +328,8 @@ model Order {
   pickupAddress   WareHouse?       @relation(fields: [pickupId], references: [id])
   shipmentId      String?
   shipment        Shipment?
-  paymentMode     PaymentMode
   paymentId       String?
-  paymentMethod1  RazorpayPayment?
-  paymentMethod2  PayUPayment?
+  payment         Payment?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   cancelledAt     DateTime?
@@ -389,30 +388,46 @@ model Shipment {
   @@map("shipments")
 }
 
-model RazorpayPayment {
-  id                String   @id @default(uuid()) @map("_id")
-  orderNo           String   @unique
-  Order             Order    @relation(fields: [orderNo], references: [orderNumber], onDelete: Cascade)
-  razorpayOrderId   String
-  razorpayPaymentId String
-  razorpaySignature String
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+model Payment {
+  id          String      @id @default(uuid()) @map("_id")
+  userId      String
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderNumber String      @unique
+  Order       Order       @relation(fields: [orderNumber], references: [orderNumber], onDelete: NoAction)
+  amount      Int
+  mode        PaymentMode
+  response    Json?
+  status      String      @default("PENDING")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
-  @@map("razorpay_payments")
+  @@map("payments")
 }
 
-model PayUPayment {
-  id        String   @id @default(uuid()) @map("_id")
-  orderNo   String   @unique
-  Order     Order    @relation(fields: [orderNo], references: [orderNumber], onDelete: Cascade)
-  payuData  Json
-  txnId     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// model RazorpayPayment {
+//   id                String   @id @default(uuid()) @map("_id")
+//   orderNo           String   @unique
+//   Order             Order    @relation(fields: [orderNo], references: [orderNumber], onDelete: Cascade)
+//   razorpayOrderId   String
+//   razorpayPaymentId String
+//   razorpaySignature String
+//   createdAt         DateTime @default(now())
+//   updatedAt         DateTime @updatedAt
 
-  @@map("payu_payments")
-}
+//   @@map("razorpay_payments")
+// }
+
+// model PayUPayment {
+//   id        String   @id @default(uuid()) @map("_id")
+//   orderNo   String   @unique
+//   Order     Order    @relation(fields: [orderNo], references: [orderNumber], onDelete: Cascade)
+//   payuData  Json
+//   txnId     String
+//   createdAt DateTime @default(now())
+//   updatedAt DateTime @updatedAt
+
+//   @@map("payu_payments")
+// }
 
 model JobApplication {
   id        String   @id @default(uuid())

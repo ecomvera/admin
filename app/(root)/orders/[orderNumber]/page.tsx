@@ -9,6 +9,8 @@ import {
 import { getData } from "@/lib/utils";
 import OrderDetails from "@/app/(root)/orders/[orderNumber]/_components/OrderDetails";
 import { Package } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import clsx from "clsx";
 export const dynamic = "force-dynamic";
 
 const page = async ({ params }: { params: { orderNumber: string } }) => {
@@ -21,9 +23,22 @@ const page = async ({ params }: { params: { orderNumber: string } }) => {
         <div className="flex flex-col">
           <div className="head-text flex gap-3">
             <Package className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6" />
-            <h2>Order #{params.orderNumber}</h2>
+            <h2>Order #{params.orderNumber}</h2>{" "}
+            <Badge
+              variant="outline"
+              className={clsx(
+                "rounded-2xl px-2 text-xs font-medium",
+                data.status === "completed"
+                  ? "bg-green-50 text-green-700 border-green-200"
+                  : "bg-red-50 text-red-700 border-red-200"
+              )}
+            >
+              {data.status}
+            </Badge>
           </div>
-          <p className="text-xs sm:text-sm text-gray-500">View and manage order</p>
+          <p className="text-xs sm:text-sm text-gray-500">
+            View and manage order
+          </p>
         </div>
 
         <Breadcrumb className="w-fit flex-1 mt-1">
@@ -43,7 +58,11 @@ const page = async ({ params }: { params: { orderNumber: string } }) => {
         </Breadcrumb>
       </div>
 
-      {!data ? <div>failed to load</div> : <OrderDetails order={data} pickupLocations={pickupLocations} />}
+      {!data ? (
+        <div>failed to load</div>
+      ) : (
+        <OrderDetails order={data} pickupLocations={pickupLocations} />
+      )}
     </main>
   );
 };

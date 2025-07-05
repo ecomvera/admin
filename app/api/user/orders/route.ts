@@ -17,13 +17,23 @@ export async function GET(req: NextRequest) {
     const orders = await prisma.order.findMany({
       where: { userId: authCheck.user?.userId },
       include: {
-        items: { include: { product: { select: { id: true, name: true, slug: true, images: true } } } },
+        items: {
+          include: {
+            product: {
+              select: { id: true, name: true, slug: true, images: true },
+            },
+          },
+        },
         ProductReviews: true,
       },
       orderBy: { createdAt: "desc" },
     });
 
-    return NextResponse.json({ ok: true, data: orders, orderStatus: status_options });
+    return NextResponse.json({
+      ok: true,
+      data: orders,
+      orderStatus: status_options,
+    });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ ok: false, error: "Something went wrong" });
@@ -49,6 +59,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (
+      !body.orderNumber ||
       !body.userId ||
       !body.deliveryId ||
       !body.status ||
@@ -58,6 +69,17 @@ export async function POST(req: NextRequest) {
       !body.paymentMode
     ) {
       return NextResponse.json({ ok: false, error: "Missing required fields" });
+    }
+
+    // check order number is unique
+    const isExist = await prisma.order.findUnique({
+      where: { orderNumber: body.orderNumber as string },
+    });
+    if (isExist) {
+      return NextResponse.json({
+        ok: false,
+        error: "Something went wrong! Please try again.",
+      });
     }
 
     // check the item quantity is available
@@ -76,18 +98,24 @@ export async function POST(req: NextRequest) {
     });
 
     // Check for missing or insufficient items
-    const missingItems = body.items.reduce((acc: { productId: string; availableQuantity: number }[], item: IOrderItem) => {
-      const product = productQuantities.find((p) => p.productId === item.id);
+    const missingItems = body.items.reduce(
+      (
+        acc: { productId: string; availableQuantity: number }[],
+        item: IOrderItem
+      ) => {
+        const product = productQuantities.find((p) => p.productId === item.id);
 
-      if (!product || item.quantity > product.quantity) {
-        acc.push({
-          productId: item.id,
-          availableQuantity: product ? product.quantity : 0,
-        });
-      }
+        if (!product || item.quantity > product.quantity) {
+          acc.push({
+            productId: item.id,
+            availableQuantity: product ? product.quantity : 0,
+          });
+        }
 
-      return acc;
-    }, []);
+        return acc;
+      },
+      []
+    );
 
     if (missingItems.length > 0) {
       return NextResponse.json({
@@ -104,7 +132,6 @@ export async function POST(req: NextRequest) {
           userId: body?.userId as string,
           shippingId: body?.deliveryId as string,
           status: body?.status,
-          paymentMode: body?.paymentMode,
           totalAmount: body?.totalAmount as number,
           deliveryCharge: body?.deliveryCharge as number,
           giftWrapCharge: body?.giftWrapCharge as number,
@@ -126,17 +153,34 @@ export async function POST(req: NextRequest) {
 
       await prisma.orderTimeline.createMany({
         data: [
-          { orderId: order.id, status: "ORDER_CREATED", date: new Date(), completed: true },
-          { orderId: order.id, status: "PROCESSING", completed: body?.status === "PROCESSING" },
+          {
+            orderId: order.id,
+            status: "ORDER_CREATED",
+            date: new Date(),
+            completed: true,
+          },
+          {
+            orderId: order.id,
+            status: "PROCESSING",
+            completed: body?.status === "PROCESSING",
+          },
           { orderId: order.id, status: "CONFIRMED", completed: false },
           { orderId: order.id, status: "OUT_FOR_PICKUP", completed: false },
           { orderId: order.id, status: "PICKED_UP", completed: false },
           { orderId: order.id, status: "SHIPPED", completed: false },
           { orderId: order.id, status: "IN_TRANSIT", completed: false },
-          { orderId: order.id, status: "REACHED_AT_DESTINATION", completed: false },
+          {
+            orderId: order.id,
+            status: "REACHED_AT_DESTINATION",
+            completed: false,
+          },
           { orderId: order.id, status: "OUT_FOR_DELIVERY", completed: false },
           { orderId: order.id, status: "DELIVERED", completed: false },
-          { orderId: order.id, status: "PAYMENT_PENDING", completed: body?.status === "PAYMENT_PENDING" },
+          {
+            orderId: order.id,
+            status: "PAYMENT_PENDING",
+            completed: body?.status === "PAYMENT_PENDING",
+          },
           { orderId: order.id, status: "PAYMENT_FAILED", completed: false },
           { orderId: order.id, status: "CANCELLED", completed: false },
           { orderId: order.id, status: "FAILED", completed: false },
@@ -152,11 +196,28 @@ export async function POST(req: NextRequest) {
       await Promise.all(
         body.items.map(async (item: IOrderItem) => {
           await prisma.productSizes.update({
-            where: { key_productId_productColor: { productId: item.id, key: item.size, productColor: item.color } },
+            where: {
+              key_productId_productColor: {
+                productId: item.id,
+                key: item.size,
+                productColor: item.color,
+              },
+            },
             data: { quantity: { decrement: item.quantity } },
           });
         })
       );
+
+      // create payment
+      await prisma.payment.create({
+        data: {
+          userId: body.userId,
+          orderNumber: order.orderNumber,
+          amount: order.totalAmount,
+          mode: body.paymentMode,
+          status: "PENDING",
+        },
+      });
 
       return order;
     });

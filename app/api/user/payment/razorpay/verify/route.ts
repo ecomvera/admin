@@ -15,9 +15,14 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    console.log({ body });
-
-    if (!body || !body.orderNo || !body.razorpayPaymentId || !body.razorpayOrderId || !body.razorpaySignature) {
+    if (
+      !body ||
+      !body.orderNo ||
+      !body.razorpayPaymentId ||
+      !body.razorpayOrderId ||
+      !body.razorpaySignature ||
+      !body.response
+    ) {
       return NextResponse.json({ ok: false, error: "Missing body" });
     }
 
@@ -29,14 +34,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Invalid signature" });
     }
 
-    const payment = await prisma.razorpayPayment.create({
+    const payment = await prisma.payment.update({
+      where: {
+        orderNumber: body.orderNo,
+        userId: authCheck.user?.userId,
+      },
       data: {
-        orderNo: body.orderNo,
-        razorpayPaymentId: body.razorpayPaymentId,
-        razorpayOrderId: body.razorpayOrderId,
-        razorpaySignature: body.razorpaySignature,
+        status: "PAID",
+        response: body.response,
       },
     });
+    if (!payment) {
+      return NextResponse.json({ ok: false, error: "Payment not found" });
+    }
 
     await prisma.order.update({
       where: { orderNumber: body.orderNo },

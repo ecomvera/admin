@@ -1,3 +1,10 @@
+export interface IUser {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+}
+
 export interface IAddress {
   name: string;
   line1: string;
@@ -146,6 +153,7 @@ export interface IOrder {
   id: string;
   orderNumber: string;
   userId: string;
+  user: IUser;
   shippingId: string;
   shippingAddress: IAddress;
   items: IOrderItem[];
@@ -158,8 +166,10 @@ export interface IOrder {
   createdAt: string;
   updatedAt: string;
   shipment: any;
+  payment: any;
   cancelledAt?: string;
   cancelledBy?: string;
+  paymentMode: string;
 }
 
 export interface IOrderItem {

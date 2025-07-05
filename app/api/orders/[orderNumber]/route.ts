@@ -18,6 +18,8 @@ export async function GET(req: NextRequest, { params }: { params: { orderNumber:
         items: { include: { product: { select: { name: true, sku: true, slug: true, images: { take: 1 } } } } },
         shippingAddress: true,
         shipment: true,
+        payment: true,
+        user: { select: { name: true, email: true, phone: true } },
       },
     });
 

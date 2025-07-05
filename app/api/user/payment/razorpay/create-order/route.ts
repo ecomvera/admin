@@ -26,6 +26,9 @@ export async function POST(req: NextRequest) {
 
     const order = await prisma.order.findUnique({
       where: { orderNumber: body.orderNo },
+      include: {
+        payment: { select: { status: true } },
+      },
     });
     if (!order) {
       return NextResponse.json({ ok: false, error: "Order not found" });
@@ -34,9 +37,12 @@ export async function POST(req: NextRequest) {
     if (order.userId !== authCheck.user?.userId) {
       return NextResponse.json({ ok: false, error: "Unauthorized" });
     }
-
-    if (order.paymentId) {
-      return NextResponse.json({ ok: false, error: "Payment already initiated", paymentId: order.paymentId });
+    if (order.payment?.status === "PAID") {
+      return NextResponse.json({
+        ok: false,
+        error: "Payment already initiated",
+        paymentId: order.paymentId,
+      });
     }
 
     const options = {

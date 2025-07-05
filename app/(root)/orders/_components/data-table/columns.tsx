@@ -46,6 +46,15 @@ export const columns: ColumnDef<any>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "user",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="User" />,
+    cell: ({ row }) => {
+      const user = row.getValue("user") as { name?: string } | null;
+      return <div className="w-[80px]">{user?.name || "-"}</div>;
+    },
+    enableSorting: false,
+  },
+  {
     accessorKey: "items",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Items" />,
     cell: ({ row }) => <DataTableViewItems row={row} />,
