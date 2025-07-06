@@ -1,8 +1,10 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+"use client";
 import { Button } from "../ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "../ui/use-toast";
 import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import { Video, Upload, Loader2 } from "lucide-react";
 
 const VideoContainer = ({ video, setVideo }: { video: string; setVideo: (url: string) => void }) => {
   const fileInputRef = useRef(null);
@@ -10,7 +12,6 @@ const VideoContainer = ({ video, setVideo }: { video: string; setVideo: (url: st
   const [uploading, setUploading] = useState(false);
 
   const handleUploadVideo = async (file: File) => {
-    console.log(file.size / 1024 / 1024);
     if (file.size / 1024 / 1024 > 100) {
       toast({
         title: "Error",
@@ -30,10 +31,8 @@ const VideoContainer = ({ video, setVideo }: { video: string; setVideo: (url: st
         method: "POST",
         body: formData,
       });
-
       const data = await res.json();
       if (res.ok) {
-        console.log(data);
         setVideo(data.data.secure_url);
       } else {
         toast({
@@ -58,13 +57,16 @@ const VideoContainer = ({ video, setVideo }: { video: string; setVideo: (url: st
 
   useEffect(() => {
     if (!file) return;
-
     handleUploadVideo(file);
   }, [file]);
 
   return (
-    <div className="mt-3">
-      <p className="text-sm text-muted-foreground">Product Video</p>
+    <div className="space-y-4">
+      <div>
+        <h3 className="text-lg font-medium">Product Video</h3>
+        <p className="text-sm text-gray-500">Upload a video to showcase your product (Max: 100MB)</p>
+      </div>
+
       <input
         id="video"
         type="file"
@@ -74,27 +76,43 @@ const VideoContainer = ({ video, setVideo }: { video: string; setVideo: (url: st
         className="hidden"
       />
 
-      {file || video ? (
-        uploading ? (
-          <p>uploading...</p>
-        ) : (
-          <div className="w-[200px]">
-            <AspectRatio ratio={0.8 / 1}>
-              <video controls className="w-full h-full">
-                <source src={video} type="video/mp4" />
-              </video>
-            </AspectRatio>
-          </div>
-        )
+      {video ? (
+        <Card>
+          <CardContent className="p-4">
+            <div className="w-full max-w-sm">
+              <AspectRatio ratio={9 / 16}>
+                <video controls className="w-full h-full rounded-lg">
+                  <source src={video} type="video/mp4" />
+                </video>
+              </AspectRatio>
+            </div>
+          </CardContent>
+        </Card>
+      ) : uploading ? (
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-600 mb-4" />
+            <p className="text-gray-600">Uploading video...</p>
+          </CardContent>
+        </Card>
       ) : (
-        <Button
-          variant="outline"
-          className="flex items-center "
-          // @ts-ignore
-          onClick={() => fileInputRef.current.click()}
-        >
-          <span className="mr-2 text-xl mt-[-3px]">+</span> Add Video
-        </Button>
+        <Card className="border-dashed">
+          <CardContent className="flex flex-col items-center justify-center py-8">
+            <Video className="h-12 w-12 text-gray-400 mb-4" />
+            <p className="text-gray-500 text-center mb-4">No video uploaded yet. Add a video to showcase your product.</p>
+            <Button
+              variant="outline"
+              onClick={() => {
+                // @ts-ignore
+                fileInputRef.current?.click();
+              }}
+              className="flex items-center gap-2"
+            >
+              <Upload className="h-4 w-4" />
+              Upload Video
+            </Button>
+          </CardContent>
+        </Card>
       )}
     </div>
   );

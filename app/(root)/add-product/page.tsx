@@ -12,10 +12,10 @@ import AddProductPage from "@/app/(root)/add-product/_components/AddProductPage"
 const Page = () => {
   return (
     <main>
-      <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">
+      <div className="flex items-center justify-between gap-3 md:py-4 md:px-2 mb-5">
         <div className="flex flex-col">
           <div className="head-text flex gap-3">
-            <PackagePlus className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6" />
+            <PackagePlus className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6 text-gray-500" />
             <h2>Add Product</h2>
           </div>
           <p className="text-xs sm:text-sm text-gray-500">Add new product</p>

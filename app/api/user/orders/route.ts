@@ -98,24 +98,18 @@ export async function POST(req: NextRequest) {
     });
 
     // Check for missing or insufficient items
-    const missingItems = body.items.reduce(
-      (
-        acc: { productId: string; availableQuantity: number }[],
-        item: IOrderItem
-      ) => {
-        const product = productQuantities.find((p) => p.productId === item.id);
+    const missingItems = body.items.reduce((acc: { productId: string; availableQuantity: number }[], item: IOrderItem) => {
+      const product = productQuantities.find((p) => p.productId === item.id);
 
-        if (!product || item.quantity > product.quantity) {
-          acc.push({
-            productId: item.id,
-            availableQuantity: product ? product.quantity : 0,
-          });
-        }
+      if (!product || item.quantity > product.quantity) {
+        acc.push({
+          productId: item.id,
+          availableQuantity: product ? product.quantity : 0,
+        });
+      }
 
-        return acc;
-      },
-      []
-    );
+      return acc;
+    }, []);
 
     if (missingItems.length > 0) {
       return NextResponse.json({
