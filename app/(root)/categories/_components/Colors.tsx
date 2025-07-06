@@ -23,7 +23,7 @@ const Colors = ({ colors: data, isLoading }: { colors: IColor[]; isLoading: bool
     if (name === "" || hex === "") return error("Color is required");
 
     setLoading(true);
-    const res = await createColorDB(capitalize(name.trim()), hex);
+    const res = await createColorDB(capitalize(name.trim()), hex.trim());
     setLoading(false);
     if (!res?.ok) return error(res?.error);
 
