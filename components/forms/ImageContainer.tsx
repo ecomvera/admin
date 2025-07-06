@@ -44,9 +44,10 @@ const ImageContainer = ({ colors, setColors, defaultColors }: Props) => {
           </Button>
           {displayColorPicker && (
             <div className="absolute right-0 top-12 z-50">
-              <div className="fixed inset-0" onClick={() => setDisplayColorPicker(false)} />
+              <div className="fixed inset-0" onClick={() => setDisplayColorPicker(false)}></div>
               <div className="bg-white rounded-lg shadow-lg border p-2">
                 <TwitterPicker
+                  className="picker"
                   width="276px"
                   triangle="hide"
                   colors={defaultColors.map((c) => c.hex)}
