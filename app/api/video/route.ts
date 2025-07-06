@@ -31,3 +31,46 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: false, error: "Failed to upload" });
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const reqUrl = new URL(req.url || "");
+    const searchParams = Object.fromEntries(reqUrl.searchParams.entries());
+    const { public_ids } = searchParams;
+
+    if (!public_ids) {
+      return NextResponse.json({ error: "public_ids is required" });
+    }
+
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    const url = `https://api.cloudinary.com/v1_1/${cloudName}/resources/video/upload`;
+    const auth = Buffer.from(`${apiKey}:${apiSecret}`).toString("base64");
+
+    const response = await fetch(`${url}?public_ids=${public_ids}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Basic ${auth}`,
+      },
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      return NextResponse.json({
+        ok: true,
+        data: "Video deleted successfully",
+      });
+    } else {
+      const error = await response.json();
+      return NextResponse.json({
+        ok: false,
+        error: error?.error?.message || "Something went wrong",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ ok: false, error: "Failed to delete video" });
+  }
+}
