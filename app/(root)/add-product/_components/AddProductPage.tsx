@@ -307,7 +307,7 @@ const AddProductPage = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400"
+                className="w-full h-12 text-lg font-semibold bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 rounded"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">

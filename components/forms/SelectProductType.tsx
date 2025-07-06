@@ -20,7 +20,7 @@ const SelectProductType = ({
     <FormItem className="flex w-full flex-col">
       <FormLabel className="text-base text-dark-3">{label}</FormLabel>
       <Select onValueChange={(v) => onChange(v)} value={value}>
-        <SelectTrigger className="text-base">
+        <SelectTrigger className="text-base rounded">
           <SelectValue placeholder={isLoading ? "Loading..." : "Select"} />
         </SelectTrigger>
         <SelectContent>

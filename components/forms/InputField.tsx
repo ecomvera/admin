@@ -28,7 +28,7 @@ const InputField = ({
             {textarea ? (
               <Textarea placeholder={placeholder} rows={5} {...field} />
             ) : (
-              <Input type={type} className="" placeholder={placeholder} {...field} />
+              <Input type={type} className="rounded" placeholder={placeholder} {...field} />
             )}
           </FormControl>
           <FormMessage />

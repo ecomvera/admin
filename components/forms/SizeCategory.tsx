@@ -29,7 +29,7 @@ const SizeCategory = ({
         }}
         value={value}
       >
-        <SelectTrigger className="text-base">
+        <SelectTrigger className="text-base rounded">
           <SelectValue placeholder={isLoading ? "Loading..." : "Select"} />
         </SelectTrigger>
         <SelectContent>

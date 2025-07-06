@@ -63,7 +63,7 @@ const WarehouseInput = ({ label, warehouses, setWarehouses, defaultWarehouses }:
           }}
           value=""
         >
-          <SelectTrigger className="text-base">
+          <SelectTrigger className="text-base rounded">
             <SelectValue placeholder={`Select`} />
           </SelectTrigger>
           <SelectContent>
