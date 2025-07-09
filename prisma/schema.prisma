@@ -341,16 +341,16 @@ model Order {
 
 // waste 
 model OrderTimeline {
-  id        String    @id @default(uuid()) @map("_id")
-  orderId   String
-  Order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  status    String
-  date      DateTime?
-  completed Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          String   @id @default(uuid()) @map("_id")
+  orderNumber String
+  Order       Order    @relation(fields: [orderNumber], references: [orderNumber], onDelete: Cascade)
+  status      String
+  message     String?
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  @@unique([orderId, status])
+  @@unique([orderNumber, status])
   @@map("order_timelines")
 }
 

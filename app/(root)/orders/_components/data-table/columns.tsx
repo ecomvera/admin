@@ -68,7 +68,7 @@ export const columns: ColumnDef<any>[] = [
     accessorKey: "status",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
-      const status = status_options.find((status) => status.value === row.getValue("status"));
+      const status = status_options.find((status) => status.label === row.getValue("status"));
 
       if (!status) {
         return null;

@@ -1,6 +1,7 @@
 import { status_options } from "@/constants";
 import { authenticate } from "@/lib/middleware/auth";
 import { prisma } from "@/lib/prisma";
+import { formatStatusLabel } from "@/lib/utils";
 import { IOrderItem, IProduct } from "@/types";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -119,13 +120,19 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    const validStatus = formatStatusLabel(body.status);
+    if (!validStatus) {
+      console.log("Invalid status", body.status);
+      return NextResponse.json({ ok: false, error: "Invalid status" });
+    }
+
     const order = await prisma.$transaction(async (prisma) => {
       const order = await prisma.order.create({
         data: {
           orderNumber: body?.orderNumber as string,
           userId: body?.userId as string,
           shippingId: body?.deliveryId as string,
-          status: body?.status,
+          status: validStatus,
           totalAmount: body?.totalAmount as number,
           deliveryCharge: body?.deliveryCharge as number,
           giftWrapCharge: body?.giftWrapCharge as number,
@@ -145,46 +152,26 @@ export async function POST(req: NextRequest) {
         })),
       });
 
-      await prisma.orderTimeline.createMany({
-        data: [
-          {
-            orderId: order.id,
-            status: "ORDER_CREATED",
-            date: new Date(),
-            completed: true,
-          },
-          {
-            orderId: order.id,
+      await prisma.orderTimeline.create({
+        data: {
+          orderNumber: order.orderNumber,
+          status: "ORDER_CREATED",
+          message: "Order created",
+          completed: true,
+        },
+      });
+
+      // if payment mode is COD, then create new order status "PROCESSING"
+      if (body.paymentMode === "CASH_ON_DELIVERY") {
+        await prisma.orderTimeline.create({
+          data: {
+            orderNumber: order.orderNumber,
             status: "PROCESSING",
-            completed: body?.status === "PROCESSING",
-          },
-          { orderId: order.id, status: "CONFIRMED", completed: false },
-          { orderId: order.id, status: "OUT_FOR_PICKUP", completed: false },
-          { orderId: order.id, status: "PICKED_UP", completed: false },
-          { orderId: order.id, status: "SHIPPED", completed: false },
-          { orderId: order.id, status: "IN_TRANSIT", completed: false },
-          {
-            orderId: order.id,
-            status: "REACHED_AT_DESTINATION",
+            message: "Processing",
             completed: false,
           },
-          { orderId: order.id, status: "OUT_FOR_DELIVERY", completed: false },
-          { orderId: order.id, status: "DELIVERED", completed: false },
-          {
-            orderId: order.id,
-            status: "PAYMENT_PENDING",
-            completed: body?.status === "PAYMENT_PENDING",
-          },
-          { orderId: order.id, status: "PAYMENT_FAILED", completed: false },
-          { orderId: order.id, status: "CANCELLED", completed: false },
-          { orderId: order.id, status: "FAILED", completed: false },
-          { orderId: order.id, status: "RETURN_REQUESTED", completed: false },
-          { orderId: order.id, status: "RETURNED", completed: false },
-          { orderId: order.id, status: "RETURN_FAILED", completed: false },
-          { orderId: order.id, status: "RETURN_CANCELLED", completed: false },
-          { orderId: order.id, status: "REFUNDED", completed: false },
-        ],
-      });
+        });
+      }
 
       // reduce stock quantity
       await Promise.all(

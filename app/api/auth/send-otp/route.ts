@@ -14,7 +14,14 @@ export async function POST(req: NextRequest) {
     }
 
     const otp = await generateOTP();
-    const expireAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+    const expireAt = new Date(Date.now() + 5 * 60 * 1000);
+
+    // create user if not exists
+    const user = await prisma.user.upsert({
+      where: { phone },
+      create: { phone },
+      update: {},
+    });
 
     const userOTP = await prisma.oTP.upsert({
       where: { phone },
@@ -31,7 +38,11 @@ export async function POST(req: NextRequest) {
 
     const res = await sendOTP(otp, phone);
 
-    return NextResponse.json(res);
+    if (!res.ok) {
+      return NextResponse.json(res);
+    }
+
+    return NextResponse.json({ ...res, onBoarded: user.onBoarded });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ ok: false, error: "Something went wrong" });

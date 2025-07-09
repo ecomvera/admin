@@ -16,21 +16,14 @@ export const fast2SMS = async (otp: string, number: string) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // variables_values: otp,
         route: "dlt",
+        sender_id: "SILKYE",
+        message: 189464,
+        variables_values: otp,
         numbers: number,
-        message: `${process.env.NEXT_PUBLIC_APP_NAME} - Your OTP is ${otp}. OTP is valid for 10 minutes.`,
-        // flash: 0,
-        language: "english",
-        // numbers_type: 1,
-        sender_id: "FSTSMS",
-        // variables_name: "OTP",
-        // entity_id: "1",
-        // template_id: otp + Date.now(),
+        flash: 0,
       }),
     }).then((res) => res.json());
-
-    console.log("data -", data);
 
     if (data.return) {
       return { ok: true, message: "OTP sent successfully" };

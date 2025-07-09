@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { otp, phone } = await req.json();
+    const { otp, phone, name, gender } = await req.json();
 
     if (!otp || !phone) {
       return NextResponse.json({
@@ -37,8 +37,13 @@ export async function POST(req: NextRequest) {
       sizes: true,
     };
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.update({
       where: { phone },
+      data: {
+        onBoarded: true,
+        ...(name && { name }),
+        ...(gender && { gender }),
+      },
       include: {
         addresses: true,
         orders: true,
@@ -49,7 +54,7 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json({
         ok: false,
-        error: "Please register first!",
+        error: "Something went wrong",
       });
     }
 

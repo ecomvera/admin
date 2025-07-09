@@ -24,22 +24,33 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Invalid status" });
     }
 
-    const order = await prisma.order.update({
+    await prisma.payment.update({
+      where: { orderNumber: body.orderNo },
+      data: { status: "FAILED" },
+    });
+
+    await prisma.order.update({
       where: { orderNumber: body.orderNo },
       data: { status: validStatus },
     });
-    if (!order) {
-      return NextResponse.json({ ok: false, error: "Order not found" });
-    }
 
-    // need to revisit
-    await prisma.orderTimeline.upsert({
-      where: { orderNumber_status: { orderNumber: order.orderNumber, status: body.status } },
-      update: { status: body.status, message: validStatus, completed: true },
-      create: { orderNumber: order.orderNumber, status: body.status, message: validStatus, completed: true },
+    await prisma.orderTimeline.updateMany({
+      where: { orderNumber: body.orderNo },
+      data: {
+        completed: true,
+      },
     });
 
-    return NextResponse.json({ ok: true, data: order });
+    await prisma.orderTimeline.create({
+      data: {
+        orderNumber: body.orderNo,
+        status: body.status,
+        message: validStatus,
+        completed: true,
+      },
+    });
+
+    return NextResponse.json({ ok: true });
   } catch (error) {
     console.log(error);
     return NextResponse.json({ ok: false, error: "Something went wrong" });

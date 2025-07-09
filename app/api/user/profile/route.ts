@@ -22,8 +22,13 @@ export async function PATCH(req: NextRequest) {
       data: { ...body },
     });
     return NextResponse.json({ ok: true, data: user });
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
+
+    if (error.code === "P2002") {
+      return NextResponse.json({ ok: false, error: "Email already exists" });
+    }
+
     return NextResponse.json({ ok: false, error: "Something went wrong" });
   }
 }

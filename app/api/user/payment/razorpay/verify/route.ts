@@ -50,7 +50,16 @@ export async function POST(req: NextRequest) {
 
     await prisma.order.update({
       where: { orderNumber: body.orderNo },
-      data: { status: "PROCESSING", paymentId: payment.id },
+      data: { status: "Processing", paymentId: payment.id },
+    });
+
+    await prisma.orderTimeline.create({
+      data: {
+        orderNumber: body.orderNo,
+        status: "PROCESSING",
+        message: "Processing",
+        completed: false,
+      },
     });
 
     // notification
