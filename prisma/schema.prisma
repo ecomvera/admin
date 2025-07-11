@@ -142,8 +142,6 @@ model Product {
   warehouses     WareHouseProducts[]
   ProductReviews ProductReviews[]
 
-  search_vector Unsupported("tsvector")?
-
   @@index([sku, slug])
   @@map("products")
 }

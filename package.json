@@ -8,7 +8,8 @@
     "start": "next start -p 3010",
     "lint": "next lint",
     "seed": "npx prisma db seed",
-    "prisma": "npx prisma generate && npx prisma db push"
+    "prisma": "npx prisma generate && npx prisma db push",
+    "add-vector": "npx tsx prisma/add-search-vector.ts"
   },
   "prisma": {
     "seed": "ts-node --project tsconfig.seeds.json prisma/seed.ts"
