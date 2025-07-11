@@ -1,180 +1,102 @@
-import { defaultGenders } from "@/constants";
+import { convertFilters, convertObject } from "@/lib/api-filters";
 import { prisma } from "@/lib/prisma";
-import type { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-const convertObject = (obj: Record<string, string>) => {
-  const result: Record<string, string[]> = {};
-
-  Object.keys(obj).forEach((key) => {
-    if (key === "category") return (result[key] = obj[key].split("_"));
-    let value = obj[key].replace("-", " ");
-    result[key] = value.split("_");
-  });
-
-  return result;
+const productSelects = {
+  id: true,
+  name: true,
+  slug: true,
+  price: true,
+  mrp: true,
+  images: { take: 1 },
 };
 
-export async function GET(req: NextApiRequest, { params }: { params: { slug: string } }) {
+export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   try {
+    console.log("\x1b[32m%s\x1b[0m", `🔍 Category [${params.slug}] API called`);
+
     const url = new URL(req.url || "");
     const searchParams = Object.fromEntries(url.searchParams.entries());
+    const queryParams = convertObject(searchParams);
 
+    const page = parseInt(url.searchParams.get("page") || "1");
+    const limit = parseInt(url.searchParams.get("limit") || "20");
+    const offset = (page - 1) * limit;
+
+    const conditions = convertFilters(queryParams);
     const { slug } = params;
-    const output = convertObject(searchParams);
-
-    const conditionsArr: any[] = [];
-
-    // Add filters by priority
-    if (output.gender && output.gender.length) {
-      conditionsArr.push({ genders: { hasSome: output.gender } });
-    }
-
-    if (output.category && output.category.length) {
-      conditionsArr.push({ productType: { in: output.category } });
-    }
-
-    if (output.colors && output.colors.length) {
-      conditionsArr.push({ colors: { some: { name: { in: output.colors } } } });
-    }
-
-    if (output.sizes && output.sizes.length) {
-      conditionsArr.push({ sizes: { some: { key: { in: output.sizes } } } });
-    }
-
-    if (output.fit && output.fit.length) {
-      conditionsArr.push({ attributes: { some: { value: { in: output.fit } } } });
-    }
-
-    if (output.sleeve && output.sleeve.length) {
-      conditionsArr.push({ attributes: { some: { value: { in: output.sleeve } } } });
-    }
-
-    if (output.neck && output.neck.length) {
-      conditionsArr.push({ attributes: { some: { value: { in: output.neck } } } });
-    }
-
-    // filter by category
-    const categoryArr: any[] = []; // empty for now
-
-    const childrenObj = {
-      parent: { select: { name: true, slug: true } },
-      products: {
-        where: {
-          AND: conditionsArr,
-        },
-        include: {
-          ProductReviews: { select: { rating: true } },
-          images: true,
-          sizes: true,
-          attributes: true,
-          colors: true,
-          productType: { include: { attributes: true } },
-        },
-      },
-    };
-
-    const start = Date.now();
-    let category;
-    let products;
-    let productTypes;
-    let genders;
-    let productSizes;
 
     // fetch category with subcategories without filters
     const categoryData = await prisma.category.findUnique({
-      where: { slug: slug },
+      where: { slug },
       include: {
         children: {
           select: {
             name: true,
             slug: true,
-            products: { select: { sizeCategory: true, genders: true, productType: { include: { attributes: true } } } },
+            products: { where: { AND: conditions }, select: { id: true } },
           },
         },
-        products: { select: { sizeCategory: true, genders: true, productType: { include: { attributes: true } } } },
+        products: { where: { AND: conditions }, select: { id: true } },
+        parent: {
+          select: {
+            name: true,
+            slug: true,
+          },
+        },
       },
     });
 
-    // if parent category then fetch products from its subcategories with filters
-    if (!categoryData?.parentId) {
-      category = await prisma.category.findUnique({
-        where: { slug: slug },
-        include: { children: { where: { AND: categoryArr }, include: childrenObj } },
-      });
-      productTypes = [...new Set(categoryData?.children.map((item) => item.products.map((p) => p.productType)).flat())];
-      productSizes = [...new Set(categoryData?.children.map((item) => item.products.map((p) => p.sizeCategory)).flat())];
-      genders = [...new Set(categoryData?.children?.flatMap((item) => item.products.flatMap((p) => p.genders)) || [])];
-    } else {
-      // if sub category then fetch products with filters
-      category = await prisma.category.findUnique({
-        where: { slug: slug },
-        include: childrenObj,
-      });
-
-      genders = [...new Set(categoryData?.products?.flatMap((item) => item.genders) || [])];
-      productSizes = [...new Set(categoryData?.products.map((item) => item.sizeCategory))];
-    }
-
-    // If no category, check for collection
     if (!categoryData) {
-      category = await prisma.collection.findUnique({
-        where: { slug: slug },
-      });
-      // fetch products with filters
-      const productsData = await prisma.collectionProducts.findMany({
-        where: { collectionId: category?.id, product: { category: { AND: categoryArr }, AND: conditionsArr } },
-        select: {
-          product: {
-            include: {
-              images: true,
-              sizes: true,
-              attributes: true,
-              colors: true,
-              category: { select: { name: true, slug: true } },
-              productType: { include: { attributes: true } },
-              ProductReviews: { select: { rating: true } },
-            },
-          },
-        },
-      });
-      // fetch sub categories of all products in group category
-      const subcategoriesData = await prisma.collectionProducts.findMany({
-        where: { collectionId: category?.id },
-        select: {
-          product: {
-            include: { category: { select: { name: true, slug: true } }, productType: { include: { attributes: true } } },
-          },
-        },
-      });
-      products = productsData.map((item) => item.product);
-
-      // set unique sub categories
-      productTypes = [...new Set(subcategoriesData.map((item) => item.product.productType.name))];
-
-      // set unique product sizes
-      productSizes = [...new Set(subcategoriesData.map((item) => item.product.sizeCategory))];
-
-      // set unique genders
-      genders = [...new Set(subcategoriesData.map((item) => item.product.genders).flat())];
+      return NextResponse.json({ ok: false, error: "Category not found" }, { status: 404 });
     }
 
-    const duration = Date.now() - start;
-    console.log("\x1b[32m%s\x1b[0m", `Categories [id] - Database query time: ${duration} ms`);
+    let category;
+    let parentCategory;
+    let subCategories;
+    let productIds: string[] = [];
+    let products;
+
+    category = {
+      name: categoryData.name,
+      slug: categoryData.slug,
+    };
+    if (categoryData.parentId) {
+      parentCategory = {
+        name: categoryData.parent?.name,
+        slug: categoryData.parent?.slug,
+      };
+      productIds = categoryData.products.map((product) => product.id);
+    } else {
+      subCategories = categoryData.children.map((child) => ({
+        name: child.name,
+        slug: child.slug,
+      }));
+      productIds = categoryData.children.flatMap((child) => child.products || []).map((product) => product.id);
+    }
+
+    // Fetch products with pagination
+    products = await prisma.product.findMany({
+      where: { id: { in: productIds } },
+      select: productSelects,
+      skip: offset,
+      take: limit,
+    });
 
     return NextResponse.json({
       ok: true,
-      category: category,
-      products: products,
-      productTypes: productTypes,
-      genders: genders,
-      productSizes: productSizes,
+      category,
+      parentCategory,
+      subCategories,
+      products,
+      pagination: {
+        page,
+        limit,
+        total: productIds.length,
+        totalPages: Math.ceil(productIds.length / limit),
+      },
     });
-  } catch (error: any) {
-    console.error(error);
-    return NextResponse.json({
-      ok: false,
-      error: error.message,
-    });
+  } catch (error) {
+    return NextResponse.json({ ok: false, error: "Failed to fetch category" }, { status: 500 });
   }
 }

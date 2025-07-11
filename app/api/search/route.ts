@@ -1,46 +1,8 @@
+import { convertFilters, convertObject } from "@/lib/api-filters";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
-
-// Converts URLSearchParams to proper object with split values
-const convertObject = (obj: Record<string, string>) => {
-  const result: Record<string, string[] | string> = {};
-  for (const key in obj) {
-    if (key === "q") result[key] = obj[key];
-    else result[key] = obj[key].replace("-", " ").split("_");
-  }
-  return result;
-};
-
-// Build Prisma filter conditions
-const convertFilters = (obj: Record<string, string[] | string>) => {
-  const filters: any[] = [];
-
-  if (obj.gender) filters.push({ genders: { hasSome: obj.gender } });
-  if (obj.category) filters.push({ productType: { in: obj.category } });
-  if (obj.color) filters.push({ colors: { some: { name: { in: obj.color } } } });
-  if (obj.size) filters.push({ sizes: { some: { key: { in: obj.size } } } });
-
-  // remove key like [q, page, limit] and already handled filters
-  const keysToIgnore = ["q", "page", "limit", "gender", "category", "color", "size"];
-  for (const key of keysToIgnore) {
-    delete obj[key];
-  }
-
-  // Handle attributes like brand, material, etc.
-  for (const key of Object.keys(obj)) {
-    if (obj[key]) {
-      filters.push({
-        attributes: {
-          some: { value: { in: obj[key] } },
-        },
-      });
-    }
-  }
-
-  return filters;
-};
 
 // Preprocess search query for PostgreSQL full-text
 const preprocessSearchQuery = (query: string) => {
@@ -78,8 +40,7 @@ export async function GET(req: Request) {
       SELECT _id
       FROM products
       WHERE search_vector @@ to_tsquery('english', ${searchQuery})
-      ORDER BY ts_rank(search_vector, to_tsquery('english', ${searchQuery})) DESC
-      LIMIT ${limit} OFFSET ${offset};
+      ORDER BY ts_rank(search_vector, to_tsquery('english', ${searchQuery})) DESC;
     `;
 
     const ids = productIds.map((p) => p._id);
@@ -93,14 +54,17 @@ export async function GET(req: Request) {
         id: { in: ids },
         AND: conditions,
       },
-      include: {
-        images: true,
-        sizes: true,
-        attributes: true,
-        colors: true,
-        category: { select: { name: true, slug: true } },
-        productType: { include: { attributes: true } },
-      },
+      select: { id: true, name: true, slug: true, price: true, mrp: true, images: { take: 1 } },
+      skip: offset,
+      take: limit,
+      // include: {
+      //   images: true,
+      //   sizes: true,
+      //   attributes: true,
+      //   colors: true,
+      //   category: { select: { name: true, slug: true } },
+      //   productType: { include: { attributes: true } },
+      // },
     });
 
     // Optional: get total count for pagination
