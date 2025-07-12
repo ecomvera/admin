@@ -29,7 +29,13 @@ export const updateCategoryNameDB = async (id: string, name: string, slug: strin
   }
 };
 
-export const createSubCategoryDB = async (categoryId: string, name: string, slug: string, wearType: string) => {
+export const createSubCategoryDB = async (
+  categoryId: string,
+  name: string,
+  slug: string,
+  wearType: string,
+  garmentType: string
+) => {
   try {
     const rootCategory = await prisma.category.findUnique({ where: { id: categoryId } });
     if (!rootCategory) {
@@ -37,7 +43,7 @@ export const createSubCategoryDB = async (categoryId: string, name: string, slug
     }
 
     const category = await prisma.category.create({
-      data: { name, slug, wearType, parentId: rootCategory.id },
+      data: { name, slug, wearType, garmentType, parentId: rootCategory.id },
     });
 
     return { ok: true, data: category };

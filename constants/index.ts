@@ -53,7 +53,7 @@ export const sidebarLinks = [
 ];
 
 export const defaultGenders = ["Male", "Female", "Unisex"];
-export const sizeCategories = ["standard", "numeric", "footwear"];
+export const sizeCategories = ["topwear", "bottomwear", "footwear"];
 
 export const status_options = [
   {

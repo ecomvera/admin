@@ -10,14 +10,18 @@ import { Checkbox } from "../ui/checkbox";
 import { useCategoryStore } from "@/stores/category";
 import { capitalize } from "lodash";
 import { error, success } from "@/lib/utils";
+import { useTypes } from "@/hook/useTypes";
 
 const AddSubCategory = ({ parentCategories: data, isLoading }: { parentCategories: ICategory[]; isLoading: boolean }) => {
   const { addCategory, categories, setCategories } = useCategoryStore();
+  const { types, fetchingTypes } = useTypes();
+
   const [name, setName] = useState("");
   const [autoGen, setAutoGen] = useState(true);
   const [slug, setSlug] = useState("");
   const [parentId, setParentId] = useState("");
   const [wearType, setWearType] = useState("");
+  const [garmentType, setGarmentType] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleInput = (e: any) => {
@@ -30,9 +34,10 @@ const AddSubCategory = ({ parentCategories: data, isLoading }: { parentCategorie
     if (!parentId) return error("Please select a parent category");
     if (!name) return error("Name is required");
     if (!wearType) return error("Wear type is required");
+    if (!garmentType) return error("Garment type is required");
 
     setLoading(true);
-    const res = await createSubCategoryDB(parentId, capitalize(name.trim()), slug, wearType);
+    const res = await createSubCategoryDB(parentId, capitalize(name.trim()), slug, wearType, garmentType);
     setLoading(false);
     if (!res?.ok) {
       error(res?.error || "Something went wrong");
@@ -98,16 +103,59 @@ const AddSubCategory = ({ parentCategories: data, isLoading }: { parentCategorie
         />
       </div>
 
-      <RadioGroup className="flex" value={wearType} onValueChange={setWearType}>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="topwear" id="topwear" />
-          <Label htmlFor="topwear">TopWear</Label>
-        </div>
-        <div className="flex items-center space-x-2">
-          <RadioGroupItem value="bottomwear" id="bottomwear" />
-          <Label htmlFor="bottomwear">BottomWear</Label>
-        </div>
-      </RadioGroup>
+      <div>
+        <Label className="text-base text-dark-3">Wear Type</Label>
+        <RadioGroup className="flex mt-2" value={wearType} onValueChange={setWearType}>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="topwear" id="topwear" />
+            <Label htmlFor="topwear">TopWear</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="bottomwear" id="bottomwear" />
+            <Label htmlFor="bottomwear">BottomWear</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="footwear" id="footwear" />
+            <Label htmlFor="footwear">Footwear</Label>
+          </div>
+        </RadioGroup>
+      </div>
+
+      <div>
+        <Label className="text-base text-dark-3">Garment type</Label>
+        <Select
+          onValueChange={(v) => {
+            if (["no-types", "loading"].includes(v)) return error("Please select a garment type");
+            setGarmentType(v);
+          }}
+          value={garmentType}
+        >
+          <SelectTrigger className="text-base mt-2">
+            <SelectValue placeholder="select ..." />
+          </SelectTrigger>
+          <SelectContent>
+            {types.length === 0 && (
+              <SelectItem disabled value="no-types">
+                No types available
+              </SelectItem>
+            )}
+            {fetchingTypes && (
+              <SelectItem disabled value="loading">
+                Loading types...
+              </SelectItem>
+            )}
+            {!fetchingTypes && types.length > 0 && (
+              <>
+                {types.map((type) => (
+                  <SelectItem key={type.id} value={type.name}>
+                    {type.name}
+                  </SelectItem>
+                ))}
+              </>
+            )}
+          </SelectContent>
+        </Select>
+      </div>
 
       <Button type={loading ? "button" : "submit"} className="bg-dark-3 w-[100px] rounded-xl">
         {loading ? "Adding..." : "Add"}
