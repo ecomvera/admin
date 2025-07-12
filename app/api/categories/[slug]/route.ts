@@ -34,6 +34,8 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
           select: {
             name: true,
             slug: true,
+            garmentType: true,
+            wearType: true,
             products: { where: { AND: conditions }, select: { id: true } },
           },
         },
@@ -42,6 +44,8 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
           select: {
             name: true,
             slug: true,
+            garmentType: true,
+            wearType: true,
           },
         },
       },
@@ -60,6 +64,10 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     category = {
       name: categoryData.name,
       slug: categoryData.slug,
+      garmentType: categoryData.garmentType
+        ? [categoryData.garmentType]
+        : categoryData.children.map((child) => child.garmentType),
+      wearType: categoryData.wearType ? [categoryData.wearType] : categoryData.children.map((child) => child.wearType),
     };
     if (categoryData.parentId) {
       parentCategory = {

@@ -95,16 +95,17 @@ model CollectionProducts {
 }
 
 model Category {
-  id        String     @id @default(uuid()) @map("_id")
-  name      String
-  slug      String     @unique
-  wearType  String?
-  parent    Category?  @relation("subCategory", fields: [parentId], references: [id])
-  parentId  String?
-  children  Category[] @relation("subCategory")
-  products  Product[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id          String     @id @default(uuid()) @map("_id")
+  name        String
+  slug        String     @unique
+  wearType    String?
+  garmentType String?
+  parent      Category?  @relation("subCategory", fields: [parentId], references: [id])
+  parentId    String?
+  children    Category[] @relation("subCategory")
+  products    Product[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
   @@map("categories")
 }
