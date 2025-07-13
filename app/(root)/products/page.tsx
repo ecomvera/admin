@@ -19,8 +19,6 @@ const Page = async () => {
   const categories = await getData("/api/categories");
   const products = await getData("/api/products?table-data");
 
-  console.log("productpage", ProductsPage);
-
   // Calculate stats
   const totalProducts = products?.length || 0;
   const totalValue =
@@ -34,8 +32,6 @@ const Page = async () => {
       const totalQuantity = product.sizes?.reduce((acc: number, size: any) => acc + size.quantity, 0) || 0;
       return totalQuantity < 10;
     }).length || 0;
-
-  console.log(totalProducts, totalValue, lowStockProducts);
 
   return (
     <div className="container mx-auto p-6 space-y-6">
@@ -119,7 +115,8 @@ const Page = async () => {
               <p className="text-muted-foreground">Failed to load products</p>
             </div>
           ) : (
-            <ProductsPage products={products} categories={categories || []} />
+            <></>
+            // <ProductsPage products={products} categories={categories || []} />
           )}
         </CardContent>
       </Card>
