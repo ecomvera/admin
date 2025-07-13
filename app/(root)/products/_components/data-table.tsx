@@ -92,7 +92,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
     <div className="space-y-4">
       {/* Enhanced Filters Section */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        {/* <div className="flex flex-1 items-center space-x-2">
+        <div className="flex flex-1 items-center space-x-2">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -139,9 +139,9 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
               {activeFiltersCount} filter{activeFiltersCount > 1 ? "s" : ""}
             </Badge>
           )}
-        </div> */}
+        </div>
 
-        {/* <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
@@ -185,7 +185,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-        </div> */}
+        </div>
       </div>
 
       {/* Enhanced Table */}
