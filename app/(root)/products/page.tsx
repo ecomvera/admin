@@ -7,21 +7,17 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import ProductsPage from "./_components/ProductsPage";
 import { getData } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { lazy } from "react";
+
+const ProductsPage = lazy(() => import("@/app/(root)/products/_components/ProductsPage"));
 
 export const dynamic = "force-dynamic";
 
 const Page = async () => {
   const categories = await getData("/api/categories");
   const products = await getData("/api/products?table-data");
-
-  console.log("ProductsPage:", ProductsPage);
-
-  if (!ProductsPage) {
-    return <div>Error: ProductsPage component not found</div>;
-  }
 
   // Calculate stats
   const totalProducts = products?.length || 0;
