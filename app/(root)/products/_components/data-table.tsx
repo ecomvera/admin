@@ -67,6 +67,9 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
     },
   });
 
+  console.log("table", table);
+  console.log({ LuChevronDown, LuSearch, LuFilter, LuColumns, LuRefreshCw });
+
   React.useEffect(() => {
     if (category) {
       setSubCategories(categories.find((item) => item.name === category)?.children || []);
