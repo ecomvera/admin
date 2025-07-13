@@ -93,7 +93,7 @@ export function DataTableRowActions<TData>({ row }: DataTableRowActionsProps<any
                   <DropdownMenuRadioItem
                     key={status.value}
                     value={status.value}
-                    onClick={() => handleChangeStatus(status.value)}
+                    onClick={() => handleChangeStatus(status.label)}
                     disabled={isUpdating || status.value === order.status}
                   >
                     <status.icon className="w-4 h-4 mr-2" style={{ color: status.color }} />
