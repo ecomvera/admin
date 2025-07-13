@@ -115,8 +115,8 @@ export const columns: ColumnDef<IProduct>[] = [
       );
     },
     cell: ({ row }) => {
-      const price = Number.parseFloat(row.getValue("price"));
-      const mrp = Number.parseFloat(row.getValue("mrp"));
+      const price = Number.parseFloat(row.getValue("price") || "0");
+      const mrp = Number.parseFloat(row.getValue("mrp") || "0");
 
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
@@ -141,8 +141,8 @@ export const columns: ColumnDef<IProduct>[] = [
     accessorKey: "mrp",
     header: () => <div className="text-right">MRP</div>,
     cell: ({ row }) => {
-      const mrp = Number.parseFloat(row.getValue("mrp"));
-      const price = Number.parseFloat(row.getValue("price"));
+      const mrp = Number.parseFloat(row.getValue("mrp") || "0");
+      const price = Number.parseFloat(row.getValue("price") || "0");
 
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
