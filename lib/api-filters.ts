@@ -13,7 +13,7 @@ export const convertFilters = (obj: Record<string, string[] | string>) => {
   const filters: any[] = [];
 
   if (obj.gender) filters.push({ genders: { hasSome: obj.gender } });
-  if (obj.category) filters.push({ productType: { in: obj.category } });
+  if (obj.category) filters.push({ productType: { name: { in: obj.category } } });
   if (obj.color) filters.push({ colors: { some: { name: { in: obj.color } } } });
   if (obj.size) filters.push({ sizes: { some: { key: { in: obj.size } } } });
 

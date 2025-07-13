@@ -16,8 +16,6 @@ export async function GET(req: NextRequest) {
     // @ts-ignore
     const wearTypeArr: string[] = obj.wear_type;
 
-    console.log(garmentTypeArr, wearTypeArr);
-
     let attributes;
     let sizes;
     let colors;

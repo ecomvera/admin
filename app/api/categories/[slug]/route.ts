@@ -83,6 +83,10 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       productIds = categoryData.children.flatMap((child) => child.products || []).map((product) => product.id);
     }
 
+    // removing duplicates
+    category.garmentType = [...new Set(category.garmentType)];
+    category.wearType = [...new Set(category.wearType)];
+
     // Fetch products with pagination
     products = await prisma.product.findMany({
       where: { id: { in: productIds } },
@@ -105,6 +109,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       },
     });
   } catch (error) {
+    console.log(error);
     return NextResponse.json({ ok: false, error: "Failed to fetch category" }, { status: 500 });
   }
 }
