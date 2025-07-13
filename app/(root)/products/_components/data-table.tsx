@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { LuChevronDown, LuSearch, LuFilter, LuColumns, LuRefreshCw } from "react-icons/lu";
+import { LuChevronDown, LuSearch, LuFilter, LuRefreshCw } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -30,6 +30,7 @@ import type { ICategory } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { Columns2 } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   isLoading: boolean;
@@ -66,9 +67,6 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
       globalFilter,
     },
   });
-
-  console.log("table", table);
-  console.log({ LuChevronDown, LuSearch, LuFilter, LuColumns, LuRefreshCw });
 
   React.useEffect(() => {
     if (category) {
@@ -163,7 +161,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" size="sm" className="h-8 bg-transparent">
-                <LuColumns className="mr-2 h-4 w-4" />
+                <Columns2 className="mr-2 h-4 w-4" />
                 Columns
                 <LuChevronDown className="ml-2 h-4 w-4" />
               </Button>
