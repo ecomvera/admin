@@ -127,10 +127,10 @@ export const columns: ColumnDef<IProduct>[] = [
 
       return (
         <div className="text-right space-y-1">
-          <div className="font-medium">{formatted}</div>
+          <div className="font-medium">{formatted || "N/A"}</div>
           {discount > 0 && (
             <Badge variant="outline" className="text-xs text-green-600">
-              {discount}% off
+              {discount || "0"}% off
             </Badge>
           )}
         </div>
@@ -151,7 +151,9 @@ export const columns: ColumnDef<IProduct>[] = [
 
       return (
         <div className="text-right">
-          <div className={`font-medium ${price < mrp ? "line-through text-muted-foreground text-sm" : ""}`}>{formatted}</div>
+          <div className={`font-medium ${price < mrp ? "line-through text-muted-foreground text-sm" : ""}`}>
+            {formatted || "N/A"}
+          </div>
         </div>
       );
     },
