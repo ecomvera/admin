@@ -189,7 +189,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
       </div>
 
       {/* Enhanced Table */}
-      {/* <Card>
+      <Card>
         <div className="rounded-lg border-0">
           <Table>
             <TableHeader>
@@ -219,7 +219,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
               </TableBody>
             ) : (
               <TableBody>
-                {table.getRowModel().rows?.length ? (
+                {/* {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
@@ -244,12 +244,12 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                       </div>
                     </TableCell>
                   </TableRow>
-                )}
+                )} */}
               </TableBody>
             )}
           </Table>
         </div>
-      </Card> */}
+      </Card>
 
       {/* Enhanced Pagination */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
