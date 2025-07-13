@@ -229,7 +229,9 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                       {row.getVisibleCells().map((cell) => {
                         return (
                           <TableCell key={cell.id} className="py-4">
-                            {flexRender(cell.column.columnDef.cell ?? "", cell.getContext())}
+                            {cell?.column?.columnDef?.cell
+                              ? flexRender(cell.column.columnDef.cell, cell.getContext())
+                              : null}
                           </TableCell>
                         );
                       })}
