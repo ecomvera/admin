@@ -92,9 +92,9 @@ export const columns: ColumnDef<IProduct>[] = [
 
       return (
         <div className="space-y-1">
-          <div className="font-medium">{totalQuantity}</div>
+          <div className="font-medium">{totalQuantity || 0}</div>
           <Badge variant={status.variant} className="text-xs">
-            {status.label}
+            {status?.label || "N/A"}
           </Badge>
         </div>
       );
