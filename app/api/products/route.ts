@@ -50,7 +50,9 @@ export async function GET(req: NextApiRequest) {
 
     const start = Date.now();
     if ("table-data" in searchParams) {
-      data = await prisma.product.findMany({ include: { category: { include: { parent: true } }, sizes: true } });
+      data = await prisma.product.findMany({
+        include: { category: { include: { parent: true } }, sizes: true, images: { take: 1 } },
+      });
     } else if ("new-arrivals" in searchParams) {
       data = await prisma.product.findMany({ where: { isNewArrival: true }, select: obj });
     } else if ("best-sellers" in searchParams) {

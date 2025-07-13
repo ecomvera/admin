@@ -33,8 +33,8 @@ export const columns: ColumnDef<IProduct>[] = [
       const product = row.original;
       return (
         <div className="flex items-center space-x-3">
-          <Avatar className="h-10 w-10">
-            <AvatarImage src={product.images?.[0].url || "/placeholder.svg"} alt={product.name} />
+          <Avatar className="h-10 w-10 rounded">
+            <AvatarImage src={product.images?.[0].url || "/placeholder.svg"} alt={product.name} className="object-cover" />
             <AvatarFallback>
               <LuPackage className="h-4 w-4" />
             </AvatarFallback>
