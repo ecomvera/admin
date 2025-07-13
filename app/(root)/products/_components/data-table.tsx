@@ -13,7 +13,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { LuChevronDown, LuSearch, LuFilter, LuRefreshCw } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -30,7 +29,7 @@ import type { ICategory } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Columns2 } from "lucide-react";
+import { ChevronDown, Columns2, RotateCcw, Search, TrainFrontTunnel } from "lucide-react";
 
 interface DataTableProps<TData, TValue> {
   isLoading: boolean;
@@ -47,6 +46,8 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [globalFilter, setGlobalFilter] = React.useState("");
+
+  console.log({ ChevronDown, Columns2, RotateCcw, Search, TrainFrontTunnel });
 
   const table = useReactTable({
     data,
@@ -67,8 +68,6 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
       globalFilter,
     },
   });
-
-  console.log({ LuChevronDown, LuSearch, LuFilter, LuRefreshCw, Columns2 });
 
   React.useEffect(() => {
     if (category) {
@@ -97,7 +96,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 items-center space-x-2">
           <div className="relative flex-1 max-w-sm">
-            <LuSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search products..."
               value={globalFilter ?? ""}
@@ -138,7 +137,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
 
           {activeFiltersCount > 0 && (
             <Badge variant="secondary" className="ml-2">
-              <LuFilter className="mr-1 h-3 w-3" />
+              <TrainFrontTunnel className="mr-1 h-3 w-3" />
               {activeFiltersCount} filter{activeFiltersCount > 1 ? "s" : ""}
             </Badge>
           )}
@@ -156,7 +155,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
             }}
             className="h-8"
           >
-            <LuRefreshCw className="mr-2 h-4 w-4" />
+            <RotateCcw className="mr-2 h-4 w-4" />
             Reset
           </Button>
 
@@ -165,7 +164,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
               <Button variant="outline" size="sm" className="h-8 bg-transparent">
                 <Columns2 className="mr-2 h-4 w-4" />
                 Columns
-                <LuChevronDown className="ml-2 h-4 w-4" />
+                <ChevronDown className="ml-2 h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-[200px]">

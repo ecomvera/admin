@@ -82,11 +82,11 @@ const Page = async () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {/* {new Intl.NumberFormat("en-IN", {
+              {new Intl.NumberFormat("en-IN", {
                 style: "currency",
                 currency: "INR",
                 notation: "compact",
-              }).format(totalValue)} */}
+              }).format(totalValue)}
             </div>
             <p className="text-xs text-muted-foreground">Total inventory value</p>
           </CardContent>
