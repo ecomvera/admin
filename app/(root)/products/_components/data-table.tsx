@@ -234,8 +234,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                         console.log("context", cell.getContext());
                         return (
                           <TableCell key={cell.id} className="py-4">
-                            hola
-                            {/* {flexRender(cell.column.columnDef.cell, cell.getContext())} */}
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </TableCell>
                         );
                       })}
