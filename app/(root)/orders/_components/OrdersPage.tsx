@@ -21,10 +21,8 @@ const OrdersPage = ({ data }: { data: any[] }) => {
   }, []);
 
   return (
-    <div className="p-2">
-      <div className="flex h-full min-h-screen w-full flex-col ">
-        <DataTable isLoading={isLoading} data={orders} columns={columns} />
-      </div>
+    <div className="p-6">
+      <DataTable isLoading={isLoading} data={orders} columns={columns} />
     </div>
   );
 };
