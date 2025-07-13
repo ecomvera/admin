@@ -47,6 +47,8 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [globalFilter, setGlobalFilter] = React.useState("");
 
+  console.log("flexRender", flexRender);
+
   const table = useReactTable({
     data,
     columns,
@@ -226,11 +228,12 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                       data-state={row.getIsSelected() && "selected"}
                       className="hover:bg-muted/50 transition-colors"
                     >
-                      {/* {row.getVisibleCells().map((cell) => (
+                      {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="py-4">
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          hola
+                          {/* {flexRender(cell.column.columnDef.cell, cell.getContext())} */}
                         </TableCell>
-                      ))} */}
+                      ))}
                     </TableRow>
                   ))
                 ) : (
