@@ -2,12 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { error, success } from "@/lib/utils";
 import { useEnumsStore } from "@/stores/enums";
 import { upperFirst } from "lodash";
 import { createProductTypeDB } from "@/lib/actions/type.action";
 import TypeAttributes from "./TypeAttributes";
+import { Separator } from "@/components/ui/separator";
+import { Plus } from "lucide-react";
 
 const Types = () => {
   const { addType } = useEnumsStore();
@@ -21,6 +24,7 @@ const Types = () => {
     setLoading(true);
     const res = await createProductTypeDB(upperFirst(name.trim()));
     setLoading(false);
+
     if (!res?.ok) return error(res?.error);
 
     addType(res?.data?.id as string, res?.data?.name as string);
@@ -29,20 +33,34 @@ const Types = () => {
   };
 
   return (
-    <div className="px-2 flex flex-col pt-[1px]">
-      <form onSubmit={onSubmit} className="flex items-center gap-2">
-        <Input
-          placeholder="Add product type e.g. Shirt | T-Shirt"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="rounded"
-        />
-        <Button disabled={loading || name === ""} className="bg-dark-3 w-[100px] rounded" onClick={onSubmit}>
-          {loading ? "Adding..." : "Add"}
-        </Button>
-      </form>
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-lg font-semibold">Add New Product Type</h3>
+          <p className="text-sm text-muted-foreground">Create product types like Shirt, T-Shirt, Jeans, etc.</p>
+        </div>
 
-      <TypeAttributes />
+        <form onSubmit={onSubmit} className="flex gap-3">
+          <div className="flex-1">
+            <Input
+              placeholder="Add product type e.g. Shirt | T-Shirt"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <Button disabled={loading || name === ""} type="submit" className="flex items-center gap-2">
+            <Plus className="h-4 w-4" />
+            {loading ? "Adding..." : "Add Type"}
+          </Button>
+        </form>
+      </div>
+
+      <Separator />
+
+      <div>
+        <h3 className="text-lg font-semibold mb-4">Manage Types & Attributes</h3>
+        <TypeAttributes />
+      </div>
     </div>
   );
 };
