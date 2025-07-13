@@ -232,7 +232,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                         console.log("context", cell.getContext());
                         return (
                           <TableCell key={cell.id} className="py-4">
-                            {cell.column.columnDef.cell ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
+                            {flexRender(cell.column.columnDef.cell ?? "", cell.getContext())}
                           </TableCell>
                         );
                       })}
