@@ -219,18 +219,18 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
               </TableBody>
             ) : (
               <TableBody>
-                {/* {table.getRowModel().rows?.length ? (
+                {table.getRowModel().rows?.length ? (
                   table.getRowModel().rows.map((row) => (
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
                       className="hover:bg-muted/50 transition-colors"
                     >
-                      {row.getVisibleCells().map((cell) => (
+                      {/* {row.getVisibleCells().map((cell) => (
                         <TableCell key={cell.id} className="py-4">
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
-                      ))}
+                      ))} */}
                     </TableRow>
                   ))
                 ) : (
@@ -244,7 +244,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                       </div>
                     </TableCell>
                   </TableRow>
-                )} */}
+                )}
               </TableBody>
             )}
           </Table>
