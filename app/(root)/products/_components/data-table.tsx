@@ -228,12 +228,17 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                       data-state={row.getIsSelected() && "selected"}
                       className="hover:bg-muted/50 transition-colors"
                     >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="py-4">
-                          hola
-                          {/* {flexRender(cell.column.columnDef.cell, cell.getContext())} */}
-                        </TableCell>
-                      ))}
+                      {row.getVisibleCells().map((cell) => {
+                        console.log("cell", cell);
+                        console.log("object", cell.column.columnDef.cell);
+                        console.log("context", cell.getContext());
+                        return (
+                          <TableCell key={cell.id} className="py-4">
+                            hola
+                            {/* {flexRender(cell.column.columnDef.cell, cell.getContext())} */}
+                          </TableCell>
+                        );
+                      })}
                     </TableRow>
                   ))
                 ) : (
