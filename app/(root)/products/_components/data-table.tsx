@@ -47,8 +47,6 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  console.log("flexRender", flexRender);
-
   const table = useReactTable({
     data,
     columns,
@@ -234,7 +232,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                         console.log("context", cell.getContext());
                         return (
                           <TableCell key={cell.id} className="py-4">
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            {cell.column.columnDef.cell ? flexRender(cell.column.columnDef.cell, cell.getContext()) : null}
                           </TableCell>
                         );
                       })}
