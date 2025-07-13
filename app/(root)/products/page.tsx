@@ -17,15 +17,7 @@ const Page = async () => {
   const categories = await getData("/api/categories");
   const products = await getData("/api/products?table-data");
 
-  console.log("Breadcrumb", Breadcrumb);
-  console.log("PackageSearch", PackageSearch);
-
-  console.log("Fetched products:", products);
-  console.log("Fetched categories:", categories);
-
   console.log("ProductsPage:", ProductsPage);
-  console.log("products:", products);
-  console.log("categories:", categories);
 
   if (!ProductsPage) {
     return <div>Error: ProductsPage component not found</div>;
