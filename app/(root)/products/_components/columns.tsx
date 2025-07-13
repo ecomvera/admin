@@ -67,7 +67,7 @@ export const columns: ColumnDef<IProduct>[] = [
     accessorKey: "subCategory",
     header: "Sub Category",
     cell: ({ row }) => {
-      const data: { name: string } = row.getValue("category");
+      const data: { name: string } = row.getValue("category") || {};
       return (
         <Badge variant="secondary" className="text-xs">
           {data?.name || "None"}
