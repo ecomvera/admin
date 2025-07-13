@@ -7,7 +7,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import ProductsPage from "@/app/(root)/products/_components/ProductsPage";
+import ProductsPage from "./_components/ProductsPage";
 import { getData } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
