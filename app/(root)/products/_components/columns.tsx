@@ -53,7 +53,7 @@ export const columns: ColumnDef<IProduct>[] = [
     accessorKey: "category",
     header: "Category",
     cell: ({ row }) => {
-      const data: ICategory = row.getValue("category");
+      const data: ICategory = row.getValue("category") || {};
       return (
         <div className="space-y-1">
           <Badge variant="outline" className="text-xs">
