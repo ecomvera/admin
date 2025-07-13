@@ -34,7 +34,7 @@ export const columns: ColumnDef<IProduct>[] = [
       return (
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10 rounded">
-            <AvatarImage src={product.images?.[0].url || "/placeholder.svg"} alt={product.name} className="object-cover" />
+            {/* <AvatarImage src={product.images?.[0].url || "/placeholder.svg"} alt={product.name} className="object-cover" /> */}
             <AvatarFallback>
               <LuPackage className="h-4 w-4" />
             </AvatarFallback>
