@@ -115,8 +115,7 @@ const Page = async () => {
               <p className="text-muted-foreground">Failed to load products</p>
             </div>
           ) : (
-            <></>
-            // <ProductsPage products={products} categories={categories || []} />
+            <ProductsPage products={products} categories={categories || []} />
           )}
         </CardContent>
       </Card>
