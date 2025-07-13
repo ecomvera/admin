@@ -79,7 +79,7 @@ export const columns: ColumnDef<IProduct>[] = [
     accessorKey: "sizes",
     header: "Stock",
     cell: ({ row }) => {
-      const data: { quantity: number }[] = row.getValue("sizes");
+      const data: { quantity: number }[] = row.getValue("sizes") || [];
       const totalQuantity = data?.reduce((acc, item) => acc + item.quantity, 0) || 0;
 
       const getStockStatus = (quantity: number) => {
