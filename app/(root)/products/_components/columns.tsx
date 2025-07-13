@@ -1,7 +1,7 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { LuArrowUpDown } from "react-icons/lu";
+import type { ColumnDef } from "@tanstack/react-table";
+import { LuArrowUpDown, LuMoreHorizontal, LuExternalLink, LuEye, LuPackage } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,34 +11,56 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ICategory, IProduct } from "@/types";
+import type { ICategory, IProduct } from "@/types";
 import Link from "next/link";
 import { DeleteProduct } from "@/components/dialogs/deleteProduct";
-import { MoreHorizontal } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { MdEditDocument } from "react-icons/md";
 
 export const columns: ColumnDef<IProduct>[] = [
   {
     accessorKey: "name",
     header: ({ column }) => {
       return (
-        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Name
+        <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="h-8 px-2">
+          Product
           <LuArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
-    cell: ({ row }) => (
-      <div className="lowercase ml-2 tablet:ml-4">
-        <Link href={`/p/${row.original.slug}`}>{row.getValue("name")}</Link>
-      </div>
-    ),
+    cell: ({ row }) => {
+      const product = row.original;
+      return (
+        <div className="flex items-center space-x-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={product.images?.[0].url || "/placeholder.svg"} alt={product.name} />
+            <AvatarFallback>
+              <LuPackage className="h-4 w-4" />
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <Link href={`/p/${product.slug}`} className="font-medium text-foreground hover:text-primary transition-colors">
+              {product.name}
+            </Link>
+            <p className="text-sm text-muted-foreground truncate">SKU: {product.sku || "N/A"}</p>
+          </div>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "category",
     header: "Category",
     cell: ({ row }) => {
       const data: ICategory = row.getValue("category");
-      return <div className="capitalize">{data?.parent?.name}</div>;
+      return (
+        <div className="space-y-1">
+          <Badge variant="outline" className="text-xs">
+            {data?.parent?.name || "Uncategorized"}
+          </Badge>
+        </div>
+      );
     },
   },
   {
@@ -46,74 +68,140 @@ export const columns: ColumnDef<IProduct>[] = [
     header: "Sub Category",
     cell: ({ row }) => {
       const data: { name: string } = row.getValue("category");
-      return <div className="capitalize">{data?.name}</div>;
+      return (
+        <Badge variant="secondary" className="text-xs">
+          {data?.name || "None"}
+        </Badge>
+      );
     },
   },
   {
     accessorKey: "sizes",
-    header: "Quantity",
+    header: "Stock",
     cell: ({ row }) => {
       const data: { quantity: number }[] = row.getValue("sizes");
-      const totalQuantity = data.reduce((acc, item) => acc + item.quantity, 0);
-      return <div className="capitalize">{totalQuantity || 0}</div>;
+      const totalQuantity = data?.reduce((acc, item) => acc + item.quantity, 0) || 0;
+
+      const getStockStatus = (quantity: number) => {
+        if (quantity === 0) return { label: "Out of Stock", variant: "destructive" as const };
+        if (quantity < 10) return { label: "Low Stock", variant: "secondary" as const };
+        return { label: "In Stock", variant: "default" as const };
+      };
+
+      const status = getStockStatus(totalQuantity);
+
+      return (
+        <div className="space-y-1">
+          <div className="font-medium">{totalQuantity}</div>
+          <Badge variant={status.variant} className="text-xs">
+            {status.label}
+          </Badge>
+        </div>
+      );
     },
   },
   {
     accessorKey: "price",
     header: ({ column }) => {
       return (
-        <div className="flex justify-end" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Amount <LuArrowUpDown className="ml-2 h-4 w-4" />
-        </div>
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="h-8 px-2 ml-auto"
+        >
+          Price
+          <LuArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       );
     },
     cell: ({ row }) => {
-      const price = parseFloat(row.getValue("price"));
-      // Format the price as a dollar price
+      const price = Number.parseFloat(row.getValue("price"));
+      const mrp = Number.parseFloat(row.getValue("mrp"));
+
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
       }).format(price);
-      return <div className="text-right font-medium">{formatted}</div>;
+
+      const discount = mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0;
+
+      return (
+        <div className="text-right space-y-1">
+          <div className="font-medium">{formatted}</div>
+          {discount > 0 && (
+            <Badge variant="outline" className="text-xs text-green-600">
+              {discount}% off
+            </Badge>
+          )}
+        </div>
+      );
     },
   },
   {
     accessorKey: "mrp",
     header: () => <div className="text-right">MRP</div>,
     cell: ({ row }) => {
-      const mrp = parseFloat(row.getValue("mrp"));
-      // Format the mrp as a dollar mrp
+      const mrp = Number.parseFloat(row.getValue("mrp"));
+      const price = Number.parseFloat(row.getValue("price"));
+
       const formatted = new Intl.NumberFormat("en-IN", {
         style: "currency",
         currency: "INR",
       }).format(mrp);
-      return <div className="text-right font-medium">{formatted}</div>;
+
+      return (
+        <div className="text-right">
+          <div className={`font-medium ${price < mrp ? "line-through text-muted-foreground text-sm" : ""}`}>{formatted}</div>
+        </div>
+      );
     },
   },
   {
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const product = row.original;
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button>
-              <MoreHorizontal className="h-4 w-4" />
-            </button>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <LuMoreHorizontal className="h-4 w-4" />
+            </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="">
+          <DropdownMenuContent align="end" className="w-[200px]">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link href={`/e/${row.original.slug}?path=/products`}>
-              <DropdownMenuItem className="hover:cursor-pointer">Edit</DropdownMenuItem>
-            </Link>
-            <Link href={`/p/${row.original.slug}`}>
-              <DropdownMenuItem className="hover:cursor-pointer">View product details</DropdownMenuItem>
-            </Link>
-            <DropdownMenuItem onClick={() => {}} disabled className="hover:cursor-pointer">
-              Mark as <code className="text-red-600 ml-2">outofstock</code>
-            </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DeleteProduct id={row.original.id || ""} />
+
+            <Link href={`/p/${product.slug}`}>
+              <DropdownMenuItem className="cursor-pointer">
+                <LuEye className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+            </Link>
+
+            <Link href={`/e/${product.slug}?path=/products`}>
+              <DropdownMenuItem className="cursor-pointer">
+                <MdEditDocument className="mr-2 h-4 w-4" />
+                Edit Product
+              </DropdownMenuItem>
+            </Link>
+
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.slug || "")} className="cursor-pointer">
+              <LuExternalLink className="mr-2 h-4 w-4" />
+              Copy Link
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
+              Mark as Out of Stock
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DeleteProduct id={product.id || ""} />
           </DropdownMenuContent>
         </DropdownMenu>
       );
