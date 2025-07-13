@@ -141,7 +141,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
           )}
         </div> */}
 
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
@@ -185,7 +185,7 @@ function DataTable<TData, TValue>({ isLoading, columns, data, categories }: Data
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div> */}
       </div>
 
       {/* Enhanced Table */}
