@@ -2,12 +2,13 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-
 import { Button } from "@/components/ui/button";
 import { addWareHouse } from "@/lib/actions/warehouse.action";
 import InputField from "./InputField";
 import { error, success } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { User, Building2, MapPin, Save } from "lucide-react";
 
 const formSchema = Yup.object({
   contactPersonName: Yup.string()
@@ -29,6 +30,7 @@ const formSchema = Yup.object({
 
 const CreateWarehousePage = () => {
   const router = useRouter();
+
   const formik = useFormik({
     initialValues: {
       contactPersonName: "",
@@ -45,17 +47,14 @@ const CreateWarehousePage = () => {
     onSubmit: async (values) => {
       try {
         formik.isSubmitting = true;
-        console.log({ values });
         const res = await addWareHouse(values);
         if (!res?.ok) {
           error(res?.error || "Something went wrong");
           return;
         }
-
         formik.resetForm();
         success("Warehouse added successfully");
-        // router.push("/warehouses");
-        window.location.href = "/warehouses";
+        router.push("/warehouses");
       } catch (err) {
         console.error(err);
         error("Something went wrong");
@@ -66,30 +65,98 @@ const CreateWarehousePage = () => {
   });
 
   return (
-    <div className="laptop:px-4 max-w-mobile mt-5 sm:mt-2">
-      <form onSubmit={formik.handleSubmit} className="space-y-3 mt-0">
-        <InputField formik={formik} label="Contact Person Name" name="contactPersonName" placeholder="Name" />
-        <InputField formik={formik} label="Contact Person Mobile" name="contactPersonMobile" placeholder="Mobile" />
-        <InputField formik={formik} label="Contact Person Email" name="contactPersonEmail" placeholder="Email" />
-        <InputField formik={formik} label="Address" placeholder="Address" />
-        <div className="flex gap-4">
-          <InputField formik={formik} label="City" placeholder="City" />
-          <InputField formik={formik} label="State" placeholder="State" />
-        </div>
-        <div className="flex gap-4">
-          <InputField formik={formik} label="Country" placeholder="Country" />
-          <InputField formik={formik} label="Pincode" placeholder="Pincode" type="number" />
-        </div>
-        <InputField
-          formik={formik}
-          onChange={(e) => formik.setFieldValue("warehouseName", e.target.value.split(" ").join("-").toLowerCase())}
-          label="Warehouse Name"
-          name="warehouseName"
-          placeholder="Warehouse Name"
-        />
-        <Button type="submit" className="rounded" disabled={formik.isSubmitting}>
-          {formik.isSubmitting ? "adding..." : "Add Warehouse"}
-        </Button>
+    <div className="max-w-4xl mx-auto space-y-6">
+      <form onSubmit={formik.handleSubmit} className="space-y-6">
+        {/* Contact Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <User className="h-5 w-5" />
+              Contact Information
+            </CardTitle>
+            <CardDescription>Details of the person responsible for this warehouse</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <InputField formik={formik} label="Contact Person Name" name="contactPersonName" placeholder="Enter full name" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField
+                formik={formik}
+                label="Mobile Number"
+                name="contactPersonMobile"
+                placeholder="Enter 10-digit mobile number"
+                type="tel"
+              />
+              <InputField
+                formik={formik}
+                label="Email Address"
+                name="contactPersonEmail"
+                placeholder="Enter email address"
+                type="email"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Warehouse Details */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5" />
+              Warehouse Details
+            </CardTitle>
+            <CardDescription>Basic information about the warehouse facility</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <InputField
+              formik={formik}
+              onChange={(e) => formik.setFieldValue("warehouseName", e.target.value.split(" ").join("-").toLowerCase())}
+              label="Warehouse Name"
+              name="warehouseName"
+              placeholder="Enter warehouse identifier name"
+            />
+          </CardContent>
+        </Card>
+
+        {/* Location Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5" />
+              Location Information
+            </CardTitle>
+            <CardDescription>Complete address details of the warehouse</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <InputField formik={formik} label="Street Address" name="address" placeholder="Enter complete street address" />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField formik={formik} label="City" name="city" placeholder="Enter city name" />
+              <InputField formik={formik} label="State/Province" name="state" placeholder="Enter state or province" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InputField formik={formik} label="Country" name="country" placeholder="Enter country name" />
+              <InputField formik={formik} label="Postal/ZIP Code" name="pincode" placeholder="Enter postal code" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Submit Button */}
+        <Card>
+          <CardContent className="pt-6">
+            <Button type="submit" disabled={formik.isSubmitting} className="w-full h-12 text-lg font-semibold">
+              {formik.isSubmitting ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Creating Warehouse...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Save className="h-5 w-5" />
+                  Create Warehouse
+                </div>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
       </form>
     </div>
   );

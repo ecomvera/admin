@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     console.log("\x1b[32m%s\x1b[0m", "Warehouses api called!");
-    const data = await prisma.wareHouse.findMany();
+    const data = await prisma.wareHouse.findMany({ include: { products: true } });
 
     return NextResponse.json({
       ok: true,

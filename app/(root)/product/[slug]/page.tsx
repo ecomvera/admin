@@ -1,4 +1,4 @@
-import ProductDetails from "@/app/(root)/p/[slug]/_components/ProductDetails";
+import ProductDetails from "@/app/(root)/product/[slug]/_components/ProductDetails";
 import { getData } from "@/lib/utils";
 export const dynamic = "force-dynamic";
 

@@ -1,4 +1,4 @@
-import { Warehouse } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,18 +11,23 @@ import CreateWarehousePage from "@/app/(root)/warehouses/create/_components/Crea
 
 const Page = () => {
   return (
-    <main>
-      <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">
-        <div className="flex flex-col">
-          <div className="head-text flex gap-3">
-            <Warehouse className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6" />
-            <h2>New Warehouse</h2>
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Header Section */}
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <Plus className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Create Warehouse</h1>
+              <p className="text-muted-foreground">Add a new warehouse location to your inventory system</p>
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-gray-500">Add new warehouse</p>
         </div>
 
-        <Breadcrumb className="w-fit flex-1 mt-1">
-          <BreadcrumbList className="justify-end text-xs sm:text-sm gap-[2px]">
+        <Breadcrumb>
+          <BreadcrumbList>
             <BreadcrumbItem>
               <BreadcrumbLink href="/">Home</BreadcrumbLink>
             </BreadcrumbItem>
@@ -39,7 +44,7 @@ const Page = () => {
       </div>
 
       <CreateWarehousePage />
-    </main>
+    </div>
   );
 };
 

@@ -1,3 +1,10 @@
+"use client";
+
+import type React from "react";
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+
 const InputField = ({
   formik,
   value,
@@ -15,27 +22,25 @@ const InputField = ({
   placeholder?: string;
   type?: string;
 }) => {
+  const fieldName = name || label.toLowerCase().replace(/\s+/g, "");
+  const hasError = formik.touched[fieldName] && formik.errors[fieldName];
+
   return (
-    <div className="flex flex-col w-full">
-      <label htmlFor={label} className="text-sm">
+    <div className="space-y-2">
+      <Label htmlFor={fieldName} className="text-sm font-medium">
         {label}
-      </label>
-      <input
-        className="border rounded px-2 py-1 text-sm sm:text-[15px] w-full"
-        id={name || label.toLowerCase()}
-        name={name || label.toLowerCase()}
+      </Label>
+      <Input
+        id={fieldName}
+        name={fieldName}
         type={type}
-        placeholder={placeholder || `Enter ${label}`}
+        placeholder={placeholder || `Enter ${label.toLowerCase()}`}
         onChange={onChange || formik.handleChange}
         onBlur={formik.handleBlur}
-        value={value || formik.values[name || label]}
+        value={value || formik.values[fieldName] || ""}
+        className={hasError ? "border-red-500 focus:border-red-500" : ""}
       />
-      {formik.errors[name || label.toLowerCase()]?.message ||
-      (formik.touched[name || label.toLowerCase()] && formik.errors[name || label.toLowerCase()]) ? (
-        <div className="text-red-500 text-xs">
-          {formik.errors[name || label.toLowerCase()]?.message || formik.errors[name || label.toLowerCase()]}
-        </div>
-      ) : null}
+      {hasError && <p className="text-sm text-red-500">{formik.errors[fieldName]?.message || formik.errors[fieldName]}</p>}
     </div>
   );
 };
