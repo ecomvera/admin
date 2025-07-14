@@ -17,6 +17,7 @@ import { DeleteProduct } from "@/components/dialogs/deleteProduct";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MdEditDocument } from "react-icons/md";
+import { Ellipsis } from "lucide-react";
 
 export const columns: ColumnDef<IProduct>[] = [
   {
@@ -183,7 +184,7 @@ export const columns: ColumnDef<IProduct>[] = [
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="h-8 w-8 p-0">
               <span className="sr-only">Open menu</span>
-              <LuMoreHorizontal className="h-4 w-4" />
+              <Ellipsis className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
