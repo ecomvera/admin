@@ -1,7 +1,6 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
-import { LuArrowUpDown, LuMoreHorizontal, LuExternalLink, LuEye, LuPackage } from "react-icons/lu";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,8 +15,7 @@ import Link from "next/link";
 import { DeleteProduct } from "@/components/dialogs/deleteProduct";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MdEditDocument } from "react-icons/md";
-import { Ellipsis } from "lucide-react";
+import { ArrowDown, Ellipsis, ExternalLink, Eye, FilePenLine, Package } from "lucide-react";
 
 export const columns: ColumnDef<IProduct>[] = [
   {
@@ -26,7 +24,7 @@ export const columns: ColumnDef<IProduct>[] = [
       return (
         <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")} className="h-8 px-2">
           Product
-          <LuArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
@@ -35,9 +33,9 @@ export const columns: ColumnDef<IProduct>[] = [
       return (
         <div className="flex items-center space-x-3">
           <Avatar className="h-10 w-10 rounded">
-            {/* <AvatarImage src={product.images?.[0].url || "/placeholder.svg"} alt={product.name} className="object-cover" /> */}
+            <AvatarImage src={product.images?.[0].url || "/placeholder.svg"} alt={product.name} className="object-cover" />
             <AvatarFallback>
-              <LuPackage className="h-4 w-4" />
+              <Package className="h-4 w-4" />
             </AvatarFallback>
           </Avatar>
           <div className="min-w-0 flex-1">
@@ -111,7 +109,7 @@ export const columns: ColumnDef<IProduct>[] = [
           className="h-8 px-2 ml-auto"
         >
           Price
-          <LuArrowUpDown className="ml-2 h-4 w-4" />
+          <ArrowDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
@@ -165,20 +163,6 @@ export const columns: ColumnDef<IProduct>[] = [
     cell: ({ row }) => {
       const product = row.original;
 
-      console.log({
-        DropdownMenu,
-        DropdownMenuContent,
-        DropdownMenuItem,
-        DropdownMenuLabel,
-        DropdownMenuSeparator,
-        DropdownMenuTrigger,
-      });
-
-      console.log({ LuMoreHorizontal });
-      console.log({ LuEye });
-      console.log({ MdEditDocument });
-      console.log({ LuExternalLink });
-
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -193,20 +177,20 @@ export const columns: ColumnDef<IProduct>[] = [
 
             <Link href={`/p/${product.slug}`}>
               <DropdownMenuItem className="cursor-pointer">
-                <LuEye className="mr-2 h-4 w-4" />
+                <Eye className="mr-2 h-4 w-4" />
                 View Details
               </DropdownMenuItem>
             </Link>
 
             <Link href={`/e/${product.slug}?path=/products`}>
               <DropdownMenuItem className="cursor-pointer">
-                <MdEditDocument className="mr-2 h-4 w-4" />
+                <FilePenLine className="mr-2 h-4 w-4" />
                 Edit Product
               </DropdownMenuItem>
             </Link>
 
             <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.slug || "")} className="cursor-pointer">
-              <LuExternalLink className="mr-2 h-4 w-4" />
+              <ExternalLink className="mr-2 h-4 w-4" />
               Copy Link
             </DropdownMenuItem>
 
