@@ -14,6 +14,8 @@ export const dynamic = "force-dynamic";
 const Page = async ({ params, searchParams }: { params: { slug: string }; searchParams: any }) => {
   const data = await getData(`/api/products/${params.slug}`);
 
+  console.log(data);
+
   return (
     <main>
       <div className="flex items-center justify-between gap-3 md:py-4 md:px-2">

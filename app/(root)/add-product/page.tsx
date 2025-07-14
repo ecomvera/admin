@@ -1,4 +1,4 @@
-import { PackagePlus } from "lucide-react";
+import { PackagePlusIcon, PackageSearch } from "lucide-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,14 +11,18 @@ import AddProductPage from "@/app/(root)/add-product/_components/AddProductPage"
 
 const Page = () => {
   return (
-    <main>
-      <div className="flex items-center justify-between gap-3 md:py-4 md:px-2 mb-5">
-        <div className="flex flex-col">
-          <div className="head-text flex gap-3">
-            <PackagePlus className="mt-[2px] h-5 w-5 sm:h-6 sm:w-6 text-gray-500" />
-            <h2>Add Product</h2>
+    <main className="container mx-auto p-6 space-y-6">
+      <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <PackagePlusIcon className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Add Product</h1>
+              <p className="text-muted-foreground">Add new product</p>
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-gray-500">Add new product</p>
         </div>
 
         <Breadcrumb className="w-fit flex-1 mt-1">

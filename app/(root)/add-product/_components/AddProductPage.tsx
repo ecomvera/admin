@@ -94,6 +94,7 @@ const AddProductPage = () => {
       price: "",
       mrp: "",
       material: "",
+      sku: "",
       weight: "",
       hasDeliveryFee: false,
       inStock: false,
