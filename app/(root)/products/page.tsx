@@ -9,9 +9,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { getData } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { lazy } from "react";
-
-const ProductsPage = lazy(() => import("@/app/(root)/products/_components/ProductsPage"));
+import ProductsPage from "@/app/(root)/products/_components/ProductsPage";
 
 export const dynamic = "force-dynamic";
 
