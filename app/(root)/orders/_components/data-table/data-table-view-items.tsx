@@ -40,7 +40,7 @@ export function DataTableViewItems<TData>({ row }: DataTableViewItemsProps<any>)
           <DropdownMenuSeparator />
           {items?.length > 0 ? (
             items.map((item, i) => (
-              <DropdownMenuItem key={i} className="cursor-pointer flex items-center justify-between">
+              <DropdownMenuItem key={i} className="cursor-pointer flex items-center gap-2 justify-between">
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary" className="text-xs">
                     {item.quantity}x
@@ -51,7 +51,7 @@ export function DataTableViewItems<TData>({ row }: DataTableViewItemsProps<any>)
                   {new Intl.NumberFormat("en-IN", {
                     style: "currency",
                     currency: "INR",
-                  }).format(item.price * item.quantity)}
+                  }).format(item.product.price * item.quantity)}
                 </div>
               </DropdownMenuItem>
             ))
