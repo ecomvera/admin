@@ -158,55 +158,69 @@ export const columns: ColumnDef<IProduct>[] = [
       );
     },
   },
-  // {
-  //   id: "actions",
-  //   enableHiding: false,
-  //   cell: ({ row }) => {
-  //     const product = row.original;
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const product = row.original;
 
-  //     return (
-  //       <DropdownMenu>
-  //         <DropdownMenuTrigger asChild>
-  //           <Button variant="ghost" className="h-8 w-8 p-0">
-  //             <span className="sr-only">Open menu</span>
-  //             <LuMoreHorizontal className="h-4 w-4" />
-  //           </Button>
-  //         </DropdownMenuTrigger>
-  //         <DropdownMenuContent align="end" className="w-[200px]">
-  //           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-  //           <DropdownMenuSeparator />
+      console.log({
+        DropdownMenu,
+        DropdownMenuContent,
+        DropdownMenuItem,
+        DropdownMenuLabel,
+        DropdownMenuSeparator,
+        DropdownMenuTrigger,
+      });
 
-  //           <Link href={`/p/${product.slug}`}>
-  //             <DropdownMenuItem className="cursor-pointer">
-  //               <LuEye className="mr-2 h-4 w-4" />
-  //               View Details
-  //             </DropdownMenuItem>
-  //           </Link>
+      console.log({ LuMoreHorizontal });
+      console.log({ LuEye });
+      console.log({ MdEditDocument });
+      console.log({ LuExternalLink });
 
-  //           <Link href={`/e/${product.slug}?path=/products`}>
-  //             <DropdownMenuItem className="cursor-pointer">
-  //               <MdEditDocument className="mr-2 h-4 w-4" />
-  //               Edit Product
-  //             </DropdownMenuItem>
-  //           </Link>
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <LuMoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-[200px]">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
 
-  //           <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.slug || "")} className="cursor-pointer">
-  //             <LuExternalLink className="mr-2 h-4 w-4" />
-  //             Copy Link
-  //           </DropdownMenuItem>
+            <Link href={`/p/${product.slug}`}>
+              <DropdownMenuItem className="cursor-pointer">
+                <LuEye className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+            </Link>
 
-  //           <DropdownMenuSeparator />
+            <Link href={`/e/${product.slug}?path=/products`}>
+              <DropdownMenuItem className="cursor-pointer">
+                <MdEditDocument className="mr-2 h-4 w-4" />
+                Edit Product
+              </DropdownMenuItem>
+            </Link>
 
-  //           <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
-  //             Mark as Out of Stock
-  //           </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigator.clipboard.writeText(product.slug || "")} className="cursor-pointer">
+              <LuExternalLink className="mr-2 h-4 w-4" />
+              Copy Link
+            </DropdownMenuItem>
 
-  //           <DropdownMenuSeparator />
+            <DropdownMenuSeparator />
 
-  //           <DeleteProduct id={product.id || ""} />
-  //         </DropdownMenuContent>
-  //       </DropdownMenu>
-  //     );
-  //   },
-  // },
+            <DropdownMenuItem disabled className="cursor-not-allowed opacity-50">
+              Mark as Out of Stock
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator />
+
+            <DeleteProduct id={product.id || ""} />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
 ];
