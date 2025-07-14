@@ -166,7 +166,13 @@ const AddProductPage = () => {
           <CardDescription>Upload product images and videos to showcase your product</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <ImageContainer colors={colors} setColors={setColors} defaultColors={defaultColors} />
+          <ImageContainer
+            files={files}
+            setFiles={setFiles}
+            colors={colors}
+            setColors={setColors}
+            defaultColors={defaultColors}
+          />
           <Separator />
           <VideoContainer video={video} setVideo={setVideo} />
         </CardContent>

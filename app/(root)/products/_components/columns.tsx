@@ -182,7 +182,7 @@ export const columns: ColumnDef<IProduct>[] = [
               </DropdownMenuItem>
             </Link>
 
-            <Link href={`/e/${product.slug}?path=/products`}>
+            <Link href={`/edit-product/${product.slug}?path=/products`}>
               <DropdownMenuItem className="cursor-pointer">
                 <FilePenLine className="mr-2 h-4 w-4" />
                 Edit Product

@@ -142,7 +142,7 @@ const ProductDetail = ({
         {data.category?.parent?.name} / {data.category?.name}
       </div>
 
-      <Link href={`/e/${data.slug}?path=/p/${data.slug}`}>
+      <Link href={`/edit-product/${data.slug}?path=/p/${data.slug}`}>
         <Button variant="outline" size="sm" className="mr-2 text-lg border-blue-700">
           Edit
         </Button>

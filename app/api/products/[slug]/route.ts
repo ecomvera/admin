@@ -18,7 +18,8 @@ export async function GET(req: NextApiRequest, { params }: { params: { slug: str
         images: true,
         attributes: true,
         sizes: true,
-        warehouses: { select: { id: true, warehouse: { select: { pincode: true } } } },
+        productType: true,
+        warehouses: { include: { warehouse: { select: { id: true, warehouseName: true } } } },
         ProductReviews: { include: { user: { select: { name: true } } } },
       },
     });

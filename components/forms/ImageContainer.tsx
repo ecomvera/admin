@@ -5,18 +5,19 @@ import ImagesGrid from "./ImagesGrid";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TwitterPicker } from "react-color";
-import type { IColor } from "@/types";
+import type { IColor, IImageFile } from "@/types";
 import { error } from "@/lib/utils";
-import { useFileStore } from "@/stores/product";
 import { Plus, Palette, X } from "lucide-react";
 
 interface Props {
+  files: IImageFile[];
+  setFiles: (files: IImageFile[]) => void;
   colors: IColor[];
   setColors: (colors: IColor[]) => void;
   defaultColors: IColor[];
 }
 
-const ImageContainer = ({ colors, setColors, defaultColors }: Props) => {
+const ImageContainer = ({ files, setFiles, colors, setColors, defaultColors }: Props) => {
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const pickedColor = (color: string) => {
@@ -58,7 +59,6 @@ const ImageContainer = ({ colors, setColors, defaultColors }: Props) => {
           )}
         </div>
       </div>
-
       <div className="space-y-4">
         {colors.map((color) => (
           <ColorContainer
@@ -67,6 +67,8 @@ const ImageContainer = ({ colors, setColors, defaultColors }: Props) => {
             colors={colors}
             setColors={setColors}
             defaultColors={defaultColors}
+            files={files}
+            setFiles={setFiles}
           />
         ))}
         {colors.length === 0 && (
@@ -89,13 +91,16 @@ const ColorContainer = ({
   colors,
   setColors,
   defaultColors,
+  files,
+  setFiles,
 }: {
   color: string;
   colors: IColor[];
   setColors: (colors: IColor[]) => void;
   defaultColors: IColor[];
+  files: IImageFile[];
+  setFiles: (files: IImageFile[]) => void;
 }) => {
-  const { files, setFiles } = useFileStore();
   const [displayColorPicker, setDisplayColorPicker] = useState(false);
 
   const updateColor = (newColor: any) => {
@@ -130,7 +135,8 @@ const ColorContainer = ({
                       triangle="hide"
                       colors={defaultColors.map((c) => c.hex)}
                       color={color}
-                      onChange={(newColor: any) => updateColor(newColor.hex.toUpperCase())}
+                      onChange={(newColor: any) => updateColor(newColor.hex)}
+                      className="picker"
                     />
                   </div>
                 </div>
