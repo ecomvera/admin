@@ -32,7 +32,7 @@ const transporter = nodemailer.createTransport({
 export const sendEmail = async (payload: EmailPayload) => {
   try {
     const info = await transporter.sendMail({
-      from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
+      from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM_ADDRESS}>`,
       ...payload,
     });
 
